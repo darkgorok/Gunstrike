@@ -4,7 +4,6 @@ using VContainer;
 
 public class DialogManager : MonoBehaviour
 {
-    public static DialogManager Instance;
     public GameObject Panel;
     public Transform Container;
     public Image leftIconImage, rightIconImage;
@@ -38,7 +37,6 @@ public class DialogManager : MonoBehaviour
 
     private void Start()
     {
-        Instance = this;
         Panel.SetActive(false);
     }
 

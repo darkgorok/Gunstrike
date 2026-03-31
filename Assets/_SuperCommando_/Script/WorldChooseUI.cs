@@ -12,12 +12,14 @@ public class WorldChooseUI : MonoBehaviour
 
     private IProgressService progressService;
     private ILevelSelectionState levelSelectionState;
+    private IMainMenuSceneService mainMenuSceneService;
 
     [Inject]
-    public void Construct(IProgressService progressService, ILevelSelectionState levelSelectionState)
+    public void Construct(IProgressService progressService, ILevelSelectionState levelSelectionState, IMainMenuSceneService mainMenuSceneService)
     {
         this.progressService = progressService;
         this.levelSelectionState = levelSelectionState;
+        this.mainMenuSceneService = mainMenuSceneService;
     }
 
     private void Awake()
@@ -62,7 +64,7 @@ public class WorldChooseUI : MonoBehaviour
 
     public void Back_performed()
     {
-        MainMenuHomeScene.Instance.OpenStartMenu();
+        mainMenuSceneService.OpenStartMenu();
     }
 
     private void OnEnable()

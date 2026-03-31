@@ -13,14 +13,16 @@ public sealed class LegacyProgressService : IProgressService
 
     private readonly IKeyValueStore keyValueStore;
     private readonly IInventoryService inventoryService;
+    private readonly IDefaultGameConfigService defaultGameConfigService;
     private bool isFirstOpenMainMenu = true;
     private int levelPlaying = -1;
     private int totalLevel = 1;
 
-    public LegacyProgressService(IKeyValueStore keyValueStore, IInventoryService inventoryService)
+    public LegacyProgressService(IKeyValueStore keyValueStore, IInventoryService inventoryService, IDefaultGameConfigService defaultGameConfigService)
     {
         this.keyValueStore = keyValueStore;
         this.inventoryService = inventoryService;
+        this.defaultGameConfigService = defaultGameConfigService;
     }
 
     public bool RemoveAds
@@ -55,7 +57,7 @@ public sealed class LegacyProgressService : IProgressService
 
     public int SavedCoins
     {
-        get => keyValueStore.GetInt(CoinsKey, DefaultValue.Instance != null ? DefaultValue.Instance.defaultCoin : 99999);
+        get => keyValueStore.GetInt(CoinsKey, defaultGameConfigService.DefaultCoin);
         set => keyValueStore.SetInt(CoinsKey, value);
     }
 

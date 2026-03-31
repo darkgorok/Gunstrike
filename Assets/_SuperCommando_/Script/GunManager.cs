@@ -5,7 +5,6 @@ using VContainer;
 
 public class GunManager : MonoBehaviour
 {
-    public static GunManager Instance;
     public List<GunTypeID> listGun;
     [ReadOnly] public List<GunTypeID> listGunPicked;
 
@@ -26,13 +25,12 @@ public class GunManager : MonoBehaviour
     {
         ProjectScope.Inject(this);
 
-        if (GunManager.Instance != null)
+        if (Object.FindObjectsByType<GunManager>(FindObjectsSortMode.None).Length > 1)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
         for (int i = 0; i < listGun.Count; i++)
         {
             AddGun(listGun[i]);

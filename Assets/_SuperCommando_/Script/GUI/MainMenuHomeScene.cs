@@ -1,63 +1,67 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using VContainer;
 
-public class MainMenuHomeScene : MonoBehaviour {
-	public static MainMenuHomeScene Instance;
-
-	public GameObject StartMenu;
-	public GameObject WorldsChoose;
+public class MainMenuHomeScene : MonoBehaviour
+{
+    public GameObject StartMenu;
+    public GameObject WorldsChoose;
     public GameObject LoadingScreen;
     public GameObject Settings;
-	SoundManager soundManager;
+
     private IAdsService adsService;
     private ISceneLoader sceneLoader;
     private IAudioService audioService;
     private IProgressService progressService;
+    private IDefaultGameConfigService defaultGameConfigService;
+
     [Header("Sound and Music")]
     public Image soundImage;
     public Image musicImage;
     public Sprite soundImageOn, soundImageOff, musicImageOn, musicImageOff;
 
     [Inject]
-    public void Construct(IAdsService adsService, ISceneLoader sceneLoader, IAudioService audioService, IProgressService progressService)
+    public void Construct(
+        IAdsService adsService,
+        ISceneLoader sceneLoader,
+        IAudioService audioService,
+        IProgressService progressService,
+        IDefaultGameConfigService defaultGameConfigService)
     {
         this.adsService = adsService;
         this.sceneLoader = sceneLoader;
         this.audioService = audioService;
         this.progressService = progressService;
+        this.defaultGameConfigService = defaultGameConfigService;
     }
 
-    void Awake(){
+    void Awake()
+    {
         ProjectScope.Inject(this);
-		Instance = this;
-		soundManager = FindObjectOfType<SoundManager> ();
     }
-    
-	void Start () {
-        // if (AdmobController.Instance)
-        {
-            //  AdmobController.Instance.LoadAllAds();
-            adsService.ShowRectBanner(false);
-        }
+
+    void Start()
+    {
+        adsService.ShowRectBanner(false);
 
         if (!progressService.IsSetDefaultValue)
         {
             progressService.IsSetDefaultValue = true;
-            if (DefaultValue.Instance)
+            if (defaultGameConfigService.HasDefaults)
             {
-                progressService.Bullets = DefaultValue.Instance.defaultBulletMax ? int.MaxValue : DefaultValue.Instance.defaultBullet;
-                progressService.SaveLives = DefaultValue.Instance.defaultLives;
+                progressService.Bullets = defaultGameConfigService.DefaultBulletMax ? int.MaxValue : defaultGameConfigService.DefaultBullet;
+                progressService.SaveLives = defaultGameConfigService.DefaultLives;
             }
         }
 
         StartMenu.SetActive(false);
-        WorldsChoose.SetActive (false);
-		LoadingScreen.SetActive (false);
+        WorldsChoose.SetActive(false);
+        LoadingScreen.SetActive(false);
         Settings.SetActive(false);
+
         audioService.PlayMenuMusic();
         if (progressService.IsFirstOpenMainMenu)
         {
@@ -68,19 +72,14 @@ public class MainMenuHomeScene : MonoBehaviour {
         audioService.PlayMusic(audioService.MenuMusic);
         StartMenu.SetActive(true);
 
-        soundManager = FindObjectOfType<SoundManager>();
-
         soundImage.sprite = progressService.IsSoundEnabled ? soundImageOn : soundImageOff;
         musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
         if (!progressService.IsSoundEnabled)
             audioService.SoundVolume = 0;
         if (!progressService.IsMusicEnabled)
             audioService.MusicVolume = 0;
-
-        audioService.PlayGameMusic();
     }
 
-    #region Music and Sound
     public void TurnSound()
     {
         progressService.IsSoundEnabled = !progressService.IsSoundEnabled;
@@ -94,7 +93,6 @@ public class MainMenuHomeScene : MonoBehaviour {
         musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
         audioService.MusicVolume = progressService.IsMusicEnabled ? audioService.GameplayMusicVolume : 0f;
     }
-    #endregion
 
     public void TurnExitPanel(bool open)
     {
@@ -120,9 +118,7 @@ public class MainMenuHomeScene : MonoBehaviour {
     {
 #if UNITY_PURCHASING
         if (Purchaser.Instance)
-        {
             Purchaser.Instance.BuyRemoveAds();
-        }
 #endif
     }
 
@@ -133,24 +129,23 @@ public class MainMenuHomeScene : MonoBehaviour {
         StartMenu.SetActive(!open);
     }
 
-	public void OpenWorldChoose(){
+    public void OpenWorldChoose()
+    {
         StartMenu.SetActive(false);
-        WorldsChoose.SetActive (true);
-
+        WorldsChoose.SetActive(true);
         audioService.PlaySfx(audioService.ClickClip);
     }
 
-	public void OpenStartMenu(){
+    public void OpenStartMenu()
+    {
         StartMenu.SetActive(true);
-        WorldsChoose.SetActive (false);
-
+        WorldsChoose.SetActive(false);
         audioService.PlaySfx(audioService.ClickClip);
     }
 
     public void LoadScene(string name)
     {
         WorldsChoose.SetActive(false);
-        //SceneManager.LoadSceneAsync(name);
         sceneLoader.BeginLoad(this, name, LoadingScreenViewResolver.Resolve(LoadingScreen, slider, progressText));
     }
 
@@ -158,7 +153,8 @@ public class MainMenuHomeScene : MonoBehaviour {
     public Slider slider;
     public Text progressText;
 
-    public void Exit(){
-		Application.Quit ();
-	}
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }

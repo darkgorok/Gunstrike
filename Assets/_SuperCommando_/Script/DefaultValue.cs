@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DefaultValue : MonoBehaviour
 {
-    public static DefaultValue Instance;
     [Header("DEFAULT VALUE")]
     public int defaultLives = 3;
     [HideInInspector] public int defaultCoin = 100;
@@ -14,7 +13,6 @@ public class DefaultValue : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
     }
     void Start()
     {

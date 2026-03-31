@@ -9,15 +9,17 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance { get; private set; }
     public GameObject testLevelMap;
 
-    private CameraFollow Camera;
+    [SerializeField] private CameraFollow cameraFollow;
     private ILevelCatalogService levelCatalogService;
     private IProgressService progressService;
+    private IDefaultGameConfigService defaultGameConfigService;
 
     [Inject]
-    public void Construct(ILevelCatalogService levelCatalogService, IProgressService progressService)
+    public void Construct(ILevelCatalogService levelCatalogService, IProgressService progressService, IDefaultGameConfigService defaultGameConfigService)
     {
         this.levelCatalogService = levelCatalogService;
         this.progressService = progressService;
+        this.defaultGameConfigService = defaultGameConfigService;
     }
 
     private void Awake()
@@ -25,13 +27,13 @@ public class LevelManager : MonoBehaviour
         ProjectScope.Inject(this);
         Instance = this;
 
-        if (FindObjectOfType<LevelMapType>())
+        if (Object.FindFirstObjectByType<LevelMapType>() != null)
         {
             Debug.LogError("Notice: There are a Level on this scene!");
             return;
         }
 
-        if (DefaultValue.Instance)
+        if (defaultGameConfigService.HasDefaults)
         {
             GameObject levelMap = levelCatalogService.LoadLevelMap(progressService.LevelPlaying);
             if (levelMap != null)
@@ -45,6 +47,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-        Camera = FindObjectOfType<CameraFollow>();
+        if (cameraFollow == null)
+            cameraFollow = Object.FindFirstObjectByType<CameraFollow>();
     }
 }

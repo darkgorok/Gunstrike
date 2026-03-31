@@ -19,15 +19,17 @@ public class TheGate : MonoBehaviour {
 	Vector3 oriGatePos;
     private IAudioService audioService;
     private IGameSessionService gameSession;
+    private IFloatingTextService floatingTextService;
 
 	public FloatingTextParameter lockMessage;
 	public FloatingTextParameter unlockMessage;
 
     [Inject]
-    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IFloatingTextService floatingTextService)
     {
         this.audioService = audioService;
         this.gameSession = gameSession;
+        this.floatingTextService = floatingTextService;
     }
 
 	void Awake(){
@@ -91,7 +93,7 @@ public class TheGate : MonoBehaviour {
         if (!gameSession.HasKey && isLocked)
         {
             audioService.PlaySfx(soundLocked);
-            FloatingTextManager.Instance.ShowText(lockMessage, transform.position);
+            floatingTextService.ShowText(lockMessage, transform.position);
             return false;
         }
         else if (gameSession.HasKey && isLocked)
@@ -101,7 +103,7 @@ public class TheGate : MonoBehaviour {
             isLocked = false;
             statusDoorSr.sprite = isLocked ? lockedSprite : openImage;
             audioService.PlaySfx(soundUnlock);
-            FloatingTextManager.Instance.ShowText(unlockMessage, transform.position);
+            floatingTextService.ShowText(unlockMessage, transform.position);
             return true;
         }
         else

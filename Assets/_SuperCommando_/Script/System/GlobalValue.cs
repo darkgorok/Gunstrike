@@ -15,6 +15,7 @@ public class GlobalValue : MonoBehaviour
     public const string ChoosenCharacterInstanceID = "ChoosenCharacterInstanceID";
 
     private static IKeyValueStore Store => ProjectScope.IsInitialized ? ProjectScope.Resolve<IKeyValueStore>() : FallbackStore;
+    private static IDefaultGameConfigService DefaultConfig => ProjectScope.IsInitialized ? ProjectScope.Resolve<IDefaultGameConfigService>() : null;
 
     private static int GetInt(string key, int defaultValue = 0)
     {
@@ -111,7 +112,7 @@ public class GlobalValue : MonoBehaviour
 
     public static int SavedCoins
     {
-        get { return GetInt(Coins, DefaultValue.Instance != null ? DefaultValue.Instance.defaultCoin : 99999); }
+        get { return GetInt(Coins, DefaultConfig?.DefaultCoin ?? 99999); }
         set { SetInt(Coins, value); }
     }
 

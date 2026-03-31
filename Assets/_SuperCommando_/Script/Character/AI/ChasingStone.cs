@@ -31,14 +31,25 @@ public class ChasingStone : MonoBehaviour, ICanTakeDamage
         ProjectScope.Inject(this);
     }
 
+    private Player CurrentPlayer
+    {
+        get
+        {
+            if (player == null && gameSession != null)
+                player = gameSession.Player;
+
+            return player;
+        }
+    }
+
     public void Init(float yOffset = 0.5f, float xOffset = 0, bool isUseRadar = false)
     {
-        if (gameSession?.Player != null)
+        if (CurrentPlayer != null)
         {
             Vector3 targetPosition = new Vector3(
-                gameSession.Player.transform.position.x + xOffset,
-                gameSession.Player.transform.position.y + yOffset,
-                gameSession.Player.transform.position.z);
+                CurrentPlayer.transform.position.x + xOffset,
+                CurrentPlayer.transform.position.y + yOffset,
+                CurrentPlayer.transform.position.z);
             direction = (targetPosition - transform.position).normalized;
         }
 
@@ -47,22 +58,21 @@ public class ChasingStone : MonoBehaviour, ICanTakeDamage
 
     private void Start()
     {
-        player = gameSession != null ? gameSession.Player : FindObjectOfType<Player>();
-        if (direction == Vector2.zero && player != null)
-            direction = (player.transform.position - transform.position).normalized;
+        if (direction == Vector2.zero && CurrentPlayer != null)
+            direction = (CurrentPlayer.transform.position - transform.position).normalized;
 
         speed = Random.Range(speedMin, speedMax);
     }
 
     private void Update()
     {
-        if (player == null)
+        if (CurrentPlayer == null)
             return;
 
         if (isChasingPlayer && isUseRadar)
         {
-            transform.position = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-            if (Vector2.Distance(player.transform.position, transform.position) < 0.1f)
+            transform.position = Vector2.MoveTowards(transform.position, CurrentPlayer.transform.position, speed * Time.deltaTime);
+            if (Vector2.Distance(CurrentPlayer.transform.position, transform.position) < 0.1f)
                 isChasingPlayer = false;
 
             return;

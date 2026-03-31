@@ -47,14 +47,18 @@ public class DialogUITrigger : MonoBehaviour
     private IControllerInputService controllerInputService;
     private IGameSessionService gameSession;
     private IGameplayPresentationService presentationService;
+    private ICameraRigService cameraRigService;
+    private IDialogFlowService dialogFlowService;
 
     [Inject]
-    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameSessionService gameSession, IGameplayPresentationService presentationService)
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameSessionService gameSession, IGameplayPresentationService presentationService, ICameraRigService cameraRigService, IDialogFlowService dialogFlowService)
     {
         this.audioService = audioService;
         this.controllerInputService = controllerInputService;
         this.gameSession = gameSession;
         this.presentationService = presentationService;
+        this.cameraRigService = cameraRigService;
+        this.dialogFlowService = dialogFlowService;
     }
 
     private void Awake()
@@ -78,9 +82,9 @@ public class DialogUITrigger : MonoBehaviour
 
         audioService.PlaySfx(soundDetectPlayer, 0.8f);
         if (setCameraLimitMin)
-            CameraFollow.Instance._min.x = transform.position.x - limitLeftPos;
+            cameraRigService.MinBounds = new Vector2(transform.position.x - limitLeftPos, cameraRigService.MinBounds.y);
         if (setCameraLimitMax)
-            CameraFollow.Instance._max.x = transform.position.x + limitRightPos;
+            cameraRigService.MaxBounds = new Vector2(transform.position.x + limitRightPos, cameraRigService.MaxBounds.y);
 
         gameSession.Player.velocity.x = 0;
         audioService.PauseMusic(true);
@@ -90,23 +94,23 @@ public class DialogUITrigger : MonoBehaviour
 
         if (setCameraLimitMin)
         {
-            Vector3 targetPos = CameraFollow.Instance.transform.position;
-            targetPos.z = CameraFollow.Instance.transform.position.z;
+            Vector3 targetPos = cameraRigService.Position;
+            targetPos.z = cameraRigService.Position.z;
 
-            CameraFollow.Instance.isFollowing = false;
-            Vector3 mainCameraStartPoint = CameraFollow.Instance.transform.position;
+            cameraRigService.IsFollowing = false;
+            Vector3 mainCameraStartPoint = cameraRigService.Position;
 
             float percent = 0f;
-            Vector3 targetBack = new Vector3(CameraFollow.Instance._min.x + CameraFollow.Instance.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
+            Vector3 targetBack = new Vector3(cameraRigService.MinBounds.x + cameraRigService.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
             while (percent < 1f)
             {
                 percent += Time.deltaTime;
                 percent = Mathf.Clamp01(percent);
-                CameraFollow.Instance.transform.position = Vector3.Lerp(targetPos, targetBack, percent);
+                cameraRigService.Position = Vector3.Lerp(targetPos, targetBack, percent);
                 yield return null;
             }
 
-            CameraFollow.Instance.isFollowing = true;
+            cameraRigService.IsFollowing = true;
         }
 
         if (hideBossOnStart)
@@ -121,7 +125,7 @@ public class DialogUITrigger : MonoBehaviour
 
         isTalk = true;
         isTalking = true;
-        DialogManager.Instance.StartDialog(isFirstTalk ? dialogs : talkAgainDialogs, gameObject, disableWhenDone, isFinishLevel, hideSmallFaceIcon, this);
+        dialogFlowService.StartDialog(isFirstTalk ? dialogs : talkAgainDialogs, gameObject, disableWhenDone, isFinishLevel, hideSmallFaceIcon, this);
         isFirstTalk = false;
     }
 

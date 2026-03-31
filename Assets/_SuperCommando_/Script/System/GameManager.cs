@@ -11,8 +11,6 @@ public class GameManager : MonoBehaviour
         Continue
     }
 
-    public static GameManager Instance { get; private set; }
-
     public enum GameState { Menu, Playing, Dead, Finish, Waiting }
     public GameState State
     {
@@ -61,9 +59,9 @@ public class GameManager : MonoBehaviour
         set
         {
             if (value)
-                KeyUI.Instance.Get();
+                keyPresentationService.ShowCollected();
             else
-                KeyUI.Instance.Used();
+                keyPresentationService.ShowUsed();
 
             runtimeState.HasKey = value;
         }
@@ -97,38 +95,53 @@ public class GameManager : MonoBehaviour
         set => runtimeState.Coin = value;
     }
 
-    private MenuManager menuManager;
+    [SerializeField] private Player cachedPlayer;
     private SessionTransition pendingTransition = SessionTransition.None;
     private float pendingTransitionTimer = -1f;
 
     private ISceneLoader sceneLoader;
     private IAudioService audioService;
+    private ICameraRigService cameraRigService;
     private IControllerInputService controllerInputService;
     private ICharacterSelectionService characterSelectionService;
     private IProgressService progressService;
     private IInventoryService inventoryService;
     private IGameSessionRuntimeState runtimeState;
     private IListenerBroadcastService listenerBroadcastService;
+    private IGameplayPresentationService gameplayPresentationService;
+    private IMenuFlowService menuFlowService;
+    private IKeyPresentationService keyPresentationService;
+    private IDefaultGameConfigService defaultGameConfigService;
 
     [Inject]
     public void Construct(
         ISceneLoader sceneLoader,
         IAudioService audioService,
+        ICameraRigService cameraRigService,
         IControllerInputService controllerInputService,
         ICharacterSelectionService characterSelectionService,
         IProgressService progressService,
         IInventoryService inventoryService,
         IGameSessionRuntimeState runtimeState,
-        IListenerBroadcastService listenerBroadcastService)
+        IListenerBroadcastService listenerBroadcastService,
+        IGameplayPresentationService gameplayPresentationService,
+        IMenuFlowService menuFlowService,
+        IKeyPresentationService keyPresentationService,
+        IDefaultGameConfigService defaultGameConfigService)
     {
         this.sceneLoader = sceneLoader;
         this.audioService = audioService;
+        this.cameraRigService = cameraRigService;
         this.controllerInputService = controllerInputService;
         this.characterSelectionService = characterSelectionService;
         this.progressService = progressService;
         this.inventoryService = inventoryService;
         this.runtimeState = runtimeState;
         this.listenerBroadcastService = listenerBroadcastService;
+        this.gameplayPresentationService = gameplayPresentationService;
+        this.menuFlowService = menuFlowService;
+        this.keyPresentationService = keyPresentationService;
+        this.defaultGameConfigService = defaultGameConfigService;
     }
 
     private void Awake()
@@ -136,28 +149,33 @@ public class GameManager : MonoBehaviour
         ProjectScope.Inject(this);
         Application.targetFrameRate = 60;
         isSpecialBullet = false;
-        Instance = this;
         State = GameState.Menu;
-        Player = FindObjectOfType<Player>();
+        cachedPlayer = ResolvePlayer();
+        Player = cachedPlayer;
 
         var selectedCharacter = characterSelectionService.CurrentCharacterPrefab;
-        if (selectedCharacter != null)
+        if (selectedCharacter != null && Player != null)
         {
             Instantiate(selectedCharacter, Player.transform.position, Player.transform.rotation);
             Destroy(Player.gameObject);
-            Player = FindObjectOfType<Player>();
+            cachedPlayer = ResolvePlayer();
+            Player = cachedPlayer;
         }
 
         GameObject startPoint = GameObject.FindGameObjectWithTag("StartPoint");
-        if (startPoint != null)
+        if (startPoint != null && Player != null)
             Player.transform.position = startPoint.transform.position;
     }
 
     private void Start()
     {
-        menuManager = FindObjectOfType<MenuManager>();
         currentCheckpoint = Player.transform.position;
         audioService.PlaySfx(audioService.BeginMainMenuClip);
+    }
+
+    private Player ResolvePlayer()
+    {
+        return cachedPlayer != null ? cachedPlayer : Object.FindFirstObjectByType<Player>();
     }
 
     private void Update()
@@ -173,7 +191,7 @@ public class GameManager : MonoBehaviour
 
     public void AddBullet(int addbullet)
     {
-        if (DefaultValue.Instance && DefaultValue.Instance.defaultBulletMax)
+        if (defaultGameConfigService.DefaultBulletMax)
         {
             Debug.LogWarning("NO LIMIT BULLET");
             return;
@@ -184,9 +202,9 @@ public class GameManager : MonoBehaviour
 
     public void PauseCamera(bool pause)
     {
-        CameraFollow.Instance.pauseCamera = pause;
+        cameraRigService.PauseCamera = pause;
         if (!pause)
-            CameraFollow.Instance.MoveCameraToPlayerPos();
+            cameraRigService.MoveToPlayerPosition();
     }
 
     public void SaveCheckPoint(Vector2 newCheckpoint)
@@ -197,9 +215,9 @@ public class GameManager : MonoBehaviour
     public void ShowFloatingText(string text, Vector2 positon, Color color)
     {
         GameObject floatingText = Instantiate(FloatingText);
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(positon);
+        Vector3 screenPosition = cameraRigService.WorldToScreenPoint(positon);
 
-        floatingText.transform.SetParent(menuManager.transform, false);
+        floatingText.transform.SetParent(menuFlowService.UiRoot, false);
         floatingText.transform.position = screenPosition;
 
         FloatingText floatingTextComponent = floatingText.GetComponent<FloatingText>();
@@ -254,16 +272,16 @@ public class GameManager : MonoBehaviour
             State = GameState.Waiting;
             Player.Kill();
             controllerInputService.StopMove();
-            MenuManager.Instance.GUI.SetActive(false && !hideGUI);
+            gameplayPresentationService.SetGameplayUiVisible(false && !hideGUI);
             audioService.PauseMusic(true);
-            MenuManager.Instance.OpenSaveMe(true);
+            menuFlowService.OpenSaveMe(true);
             return;
         }
 
         listenerBroadcastService.Notify(listener => listener.IGameOver());
         controllerInputService.StopMove();
         State = GameState.Dead;
-        MenuManager.Instance.GameOver();
+        menuFlowService.ShowGameOver();
         audioService.PlaySfx(audioService.GameOverClip, 0.5f);
         audioService.PauseMusic(true);
         progressService.ResetLives();
@@ -272,7 +290,7 @@ public class GameManager : MonoBehaviour
     public void Continue()
     {
         listenerBroadcastService.Notify(listener => listener.IOnRespawn());
-        MenuManager.Instance.OpenSaveMe(false);
+        menuFlowService.OpenSaveMe(false);
         Player.RespawnAt(currentCheckpoint);
         pendingTransition = SessionTransition.Continue;
         pendingTransitionTimer = 1.5f;
@@ -280,7 +298,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetLevel()
     {
-        MenuManager.Instance.RestartGame();
+        menuFlowService.RestartGame();
     }
 
     private void ShortKey()
@@ -311,7 +329,7 @@ public class GameManager : MonoBehaviour
             CompleteFinishTransition();
         }
 
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKey(KeyCode.U))
         {
             progressService.UnlockAllLevels();
             sceneLoader.LoadImmediateAsync(1);
@@ -352,7 +370,7 @@ public class GameManager : MonoBehaviour
         pendingTransition = SessionTransition.None;
         pendingTransitionTimer = -1f;
         State = GameState.Playing;
-        MenuManager.Instance.GUI.SetActive(!hideGUI);
+        gameplayPresentationService.SetGameplayUiVisible(!hideGUI);
         audioService.PauseMusic(false);
     }
 

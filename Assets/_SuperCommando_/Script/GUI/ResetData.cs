@@ -1,11 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using VContainer;
 
 public class ResetData : MonoBehaviour
 {
-    SoundManager soundManager;
     private ISceneLoader sceneLoader;
     private IProgressService progressService;
     private ICharacterSelectionService characterSelectionService;
@@ -31,7 +30,6 @@ public class ResetData : MonoBehaviour
 
     void Start()
     {
-        soundManager = FindObjectOfType<SoundManager>();
         characterSelectionService.RefreshSelectedCharacter();
     }
 
@@ -39,7 +37,6 @@ public class ResetData : MonoBehaviour
     {
         progressService.ResetAllPreservingRemoveAds();
         sceneLoader.LoadImmediateAsync(SceneManager.GetActiveScene().buildIndex);
-
         audioService.PlaySfx(audioService.ClickClip);
     }
 
@@ -47,7 +44,6 @@ public class ResetData : MonoBehaviour
     {
         progressService.UnlockAllLevels();
         sceneLoader.LoadImmediateAsync(SceneManager.GetActiveScene().buildIndex);
-
         audioService.PlaySfx(audioService.ClickClip);
     }
 }

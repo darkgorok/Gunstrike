@@ -14,11 +14,13 @@ public class DialogHandler : MonoBehaviour
     private int currentMessage = 0;
     private AudioClip soundMessages;
     private IAudioService audioService;
+    private IDialogFlowService dialogFlowService;
 
     [Inject]
-    public void Construct(IAudioService audioService)
+    public void Construct(IAudioService audioService, IDialogFlowService dialogFlowService)
     {
         this.audioService = audioService;
+        this.dialogFlowService = dialogFlowService;
     }
 
     private void Awake()
@@ -42,7 +44,7 @@ public class DialogHandler : MonoBehaviour
     {
         if (currentMessage >= 1)
         {
-            DialogManager.Instance.Next();
+            dialogFlowService.Next();
             Destroy(gameObject);
             return;
         }
@@ -60,7 +62,7 @@ public class DialogHandler : MonoBehaviour
     public void Skip()
     {
         audioService?.PlaySfx(skipSound);
-        DialogManager.Instance.Skip();
+        dialogFlowService.Skip();
         Destroy(gameObject);
     }
 

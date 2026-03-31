@@ -3,8 +3,6 @@ using VContainer;
 
 public class KeyUI : MonoBehaviour
 {
-    public static KeyUI Instance;
-
     private Animator anim;
     private IGameSessionService gameSession;
 
@@ -17,7 +15,6 @@ public class KeyUI : MonoBehaviour
     private void Awake()
     {
         ProjectScope.Inject(this);
-        Instance = this;
         anim = GetComponent<Animator>();
     }
 

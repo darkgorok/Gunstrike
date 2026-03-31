@@ -1,10 +1,9 @@
 using UnityEngine;
 using VContainer;
 
+[RequireComponent(typeof(Camera))]
 public class CameraFollow : MonoBehaviour
 {
-    public static CameraFollow Instance;
-
     [Tooltip("Litmited the camera moving within this box collider")]
     public float limitLeft = -6;
     public float limitRight = 1000;
@@ -22,9 +21,7 @@ public class CameraFollow : MonoBehaviour
     bool lookAheadStopped;
 
     [Header("ZOOM IN ZOOM OUT")]
-    [Tooltip("Zoom Speed")]
     public bool allowAutoZoomIn = false;
-    [Tooltip("How long player don't move to active zoom action")]
     public float timeDelay = 3f;
     public float speed = 10f;
     [Range(50, 100)]
@@ -36,7 +33,8 @@ public class CameraFollow : MonoBehaviour
     public float zoomSpeed = 1;
     private bool isZooming = false;
     float originalSize, ZoomSize;
-    Camera camera;
+
+    [SerializeField] private Camera cachedCamera;
 
     [ReadOnly] public bool manualControl = false;
     [ReadOnly] public bool pauseCamera = false;
@@ -53,7 +51,8 @@ public class CameraFollow : MonoBehaviour
     private void Awake()
     {
         ProjectScope.Inject(this);
-        Instance = this;
+        if (cachedCamera == null)
+            cachedCamera = GetComponent<Camera>();
     }
 
     public void MoveCameraToPlayerPos()
@@ -63,10 +62,9 @@ public class CameraFollow : MonoBehaviour
 
     void Start()
     {
-        camera = GetComponent<Camera>();
-        maxSize = camera.orthographicSize;
+        maxSize = cachedCamera.orthographicSize;
         minSize = maxSize * (minPercent / 100f);
-        originalSize = camera.orthographicSize;
+        originalSize = cachedCamera.orthographicSize;
 
         focusArea = new FocusArea(gameSession.Player.controller.boxcollider.bounds, focusAreaSize);
         _min = new Vector2(limitLeft, -100);
@@ -133,15 +131,15 @@ public class CameraFollow : MonoBehaviour
 
         if (isZooming)
         {
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, ZoomSize, zoomSpeed * Time.deltaTime);
+            cachedCamera.orthographicSize = Mathf.Lerp(cachedCamera.orthographicSize, ZoomSize, zoomSpeed * Time.deltaTime);
         }
         else if (timeCounting >= timeDelay && allowAutoZoomIn)
         {
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, minSize, speed * Time.deltaTime);
+            cachedCamera.orthographicSize = Mathf.Lerp(cachedCamera.orthographicSize, minSize, speed * Time.deltaTime);
         }
         else
         {
-            camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, maxSize, speed * Time.deltaTime * 3);
+            cachedCamera.orthographicSize = Mathf.Lerp(cachedCamera.orthographicSize, maxSize, speed * Time.deltaTime * 3);
         }
 
         currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
@@ -151,7 +149,7 @@ public class CameraFollow : MonoBehaviour
         transform.position = (Vector3)focusPosition + Vector3.forward * -10;
     }
 
-    public float CameraHalfWidth => Camera.main.orthographicSize * ((float)Screen.width / Screen.height);
+    public float CameraHalfWidth => cachedCamera.orthographicSize * ((float)Screen.width / Screen.height);
 
     void OnDrawGizmos()
     {
@@ -159,7 +157,8 @@ public class CameraFollow : MonoBehaviour
         Gizmos.DrawCube(focusArea.centre, focusAreaSize);
         Gizmos.color = Color.yellow;
 
-        Vector2 boxSize = new Vector2(limitRight - limitLeft, Camera.main.orthographicSize * 2);
+        var gizmoCamera = cachedCamera != null ? cachedCamera : GetComponent<Camera>();
+        Vector2 boxSize = new Vector2(limitRight - limitLeft, gizmoCamera.orthographicSize * 2);
         Vector2 center = new Vector2((limitRight + limitLeft) * 0.5f, transform.position.y);
         Gizmos.DrawWireCube(center, boxSize);
     }
@@ -215,4 +214,12 @@ public class CameraFollow : MonoBehaviour
     {
         isZooming = false;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (cachedCamera == null)
+            TryGetComponent(out cachedCamera);
+    }
+#endif
 }

@@ -20,14 +20,18 @@ public class Menu_AskSaveMe : MonoBehaviour
     private IProgressService progressService;
     private IAudioService audioService;
     private IGameSessionService gameSession;
+    private IMenuFlowService menuFlowService;
+    private ILevelMapSettingsService levelMapSettingsService;
 
     [Inject]
-    public void Construct(IAdsService adsService, IProgressService progressService, IAudioService audioService, IGameSessionService gameSession)
+    public void Construct(IAdsService adsService, IProgressService progressService, IAudioService audioService, IGameSessionService gameSession, IMenuFlowService menuFlowService, ILevelMapSettingsService levelMapSettingsService)
     {
         this.adsService = adsService;
         this.progressService = progressService;
         this.audioService = audioService;
         this.gameSession = gameSession;
+        this.menuFlowService = menuFlowService;
+        this.levelMapSettingsService = levelMapSettingsService;
     }
 
     private void Awake()
@@ -37,7 +41,7 @@ public class Menu_AskSaveMe : MonoBehaviour
 
     private void OnEnable()
     {
-        if (progressService.SaveLives > 0 || (LevelMapType.Instance && LevelMapType.Instance.playerNoLimitLife))
+        if (progressService.SaveLives > 0 || levelMapSettingsService.PlayerNoLimitLife)
         {
             progressService.SaveLives--;
             Continue();
@@ -71,7 +75,7 @@ public class Menu_AskSaveMe : MonoBehaviour
 
         gameSession.GameOver(true);
         Time.timeScale = 1f;
-        MenuManager.Instance.OpenSaveMe(false);
+        menuFlowService.OpenSaveMe(false);
         Destroy(this);
     }
 

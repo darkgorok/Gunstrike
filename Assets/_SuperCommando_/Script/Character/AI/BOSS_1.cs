@@ -147,14 +147,16 @@ public class BOSS_1 : BossManager, ICanTakeDamage, IListener
     private IControllerInputService controllerInputService;
     private IGameplayPresentationService presentationService;
     private IGameSessionService gameSession;
+    private IBossHealthbarService bossHealthbarService;
 
     [Inject]
-    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameplayPresentationService presentationService, IGameSessionService gameSession)
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameplayPresentationService presentationService, IGameSessionService gameSession, IBossHealthbarService bossHealthbarService)
     {
         this.audioService = audioService;
         this.controllerInputService = controllerInputService;
         this.presentationService = presentationService;
         this.gameSession = gameSession;
+        this.bossHealthbarService = bossHealthbarService;
     }
 
     private void Awake()
@@ -205,7 +207,7 @@ public class BOSS_1 : BossManager, ICanTakeDamage, IListener
 
         if (bossType == BOSSTYPE.BOSS)
         {
-            BossHealthbar.Instance.Init(bossIcon, health);
+            bossHealthbarService.Init(bossIcon, health);
         }
         else
         {
@@ -784,7 +786,7 @@ public class BOSS_1 : BossManager, ICanTakeDamage, IListener
 
         if (bossType == BOSSTYPE.BOSS)
         {
-            BossHealthbar.Instance.UpdateHealth(currentHealth);
+            bossHealthbarService.UpdateHealth(currentHealth);
         }
         else if (healthBar != null)
         {

@@ -24,11 +24,12 @@ public class GroupEnemySystem : MonoBehaviour
     public float moveCameraSpeed = 5;
     public GETKEYTYPE getKeyType;
 
+    [SerializeField] private CameraFollow mainCamera;
+
     private bool isWorked = false;
     private int currentGroup = 0;
     private AudioSource soundWarningScr;
     private bool isCameraLooking = false;
-    private CameraFollow mainCamera;
     private Vector3 mainCameraStartPoint;
     private float moveCameraPercent = 0f;
     private bool moveCameraToTarget = true;
@@ -52,7 +53,9 @@ public class GroupEnemySystem : MonoBehaviour
     private void Start()
     {
         ProjectScope.Inject(this);
-        mainCamera = FindObjectOfType<CameraFollow>();
+        if (mainCamera == null)
+            mainCamera = Object.FindFirstObjectByType<CameraFollow>();
+
         StartCoroutine(InitCo());
 
         soundWarningScr = gameObject.AddComponent<AudioSource>();
@@ -233,9 +236,7 @@ public class GroupEnemySystem : MonoBehaviour
 
         GameObject[] pickGroup = EnemyGroup[nextGroup - 1].miniGroup;
         foreach (GameObject enemy in pickGroup)
-        {
             enemy.SetActive(true);
-        }
 
         foreach (GameObject enemy in pickGroup)
         {
@@ -269,4 +270,12 @@ public class GroupEnemySystem : MonoBehaviour
     {
         public GameObject[] miniGroup;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (mainCamera == null)
+            mainCamera = Object.FindFirstObjectByType<CameraFollow>();
+    }
+#endif
 }

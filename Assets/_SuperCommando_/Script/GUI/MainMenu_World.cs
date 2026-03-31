@@ -8,6 +8,8 @@ public class MainMenu_World : MonoBehaviour
     public int worldNumber = 1;
     public GameObject Locked;
 
+    [SerializeField] private Button cachedButton;
+
     private IProgressService progressService;
 
     [Inject]
@@ -19,6 +21,8 @@ public class MainMenu_World : MonoBehaviour
     private void Awake()
     {
         ProjectScope.Inject(this);
+        if (cachedButton == null)
+            cachedButton = GetComponent<Button>();
     }
 
     private void Start()
@@ -31,7 +35,15 @@ public class MainMenu_World : MonoBehaviour
         else
         {
             Locked.SetActive(true);
-            GetComponent<Button>().interactable = false;
+            cachedButton.interactable = false;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (cachedButton == null)
+            TryGetComponent(out cachedButton);
+    }
+#endif
 }

@@ -3,7 +3,6 @@ using VContainer;
 
 public class ControllerInput : MonoBehaviour, IListener
 {
-    public static ControllerInput Instance;
     public GameObject rangeAttack;
     Player Player;
 
@@ -23,19 +22,22 @@ public class ControllerInput : MonoBehaviour, IListener
     }
 
     private IGameSessionService gameSession;
+    private IMenuFlowService menuFlowService;
+    private IKeyboardBindingService keyboardBindingService;
     bool shooting;
     bool isMovingLeft, isMovingRight;
 
     [Inject]
-    public void Construct(IGameSessionService gameSession)
+    public void Construct(IGameSessionService gameSession, IMenuFlowService menuFlowService, IKeyboardBindingService keyboardBindingService)
     {
         this.gameSession = gameSession;
+        this.menuFlowService = menuFlowService;
+        this.keyboardBindingService = keyboardBindingService;
     }
 
     private void Awake()
     {
         ProjectScope.Inject(this);
-        Instance = this;
     }
 
     private void OnEnable()
@@ -44,17 +46,27 @@ public class ControllerInput : MonoBehaviour, IListener
             StopMove();
     }
 
+    private Player CurrentPlayer
+    {
+        get
+        {
+            if (Player == null && gameSession != null)
+                Player = gameSession.Player;
+
+            return Player;
+        }
+    }
+
     void Start()
     {
-        Player = gameSession != null ? gameSession.Player : FindObjectOfType<Player>();
-        if (Player == null)
+        if (CurrentPlayer == null)
             Debug.LogError("There are no Player character on scene");
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(DefaultValueKeyboard.Instance.keyPause))
-            MenuManager.Instance.Pause();
+        if (Input.GetKeyDown(keyboardBindingService.Pause))
+            menuFlowService.Pause();
 
         if (isMovingRight)
             MoveRight();
@@ -62,22 +74,22 @@ public class ControllerInput : MonoBehaviour, IListener
             MoveLeft();
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
-            MenuManager.Instance.RestartGame();
+            menuFlowService.RestartGame();
 
-        if (gameSession != null && gameSession.Player != null)
-            gameSession.Player.Shoot(shooting);
+        if (CurrentPlayer != null)
+            CurrentPlayer.Shoot(shooting);
 
-        if (Input.GetKeyDown(DefaultValueKeyboard.Instance.keyShot))
+        if (Input.GetKeyDown(keyboardBindingService.Shot))
             Shot(true);
-        else if (Input.GetKeyUp(DefaultValueKeyboard.Instance.keyShot))
+        else if (Input.GetKeyUp(keyboardBindingService.Shot))
             Shot(false);
 
-        if (Input.GetKeyDown(DefaultValueKeyboard.Instance.keyJump))
+        if (Input.GetKeyDown(keyboardBindingService.Jump))
             Jump();
-        else if (Input.GetKeyUp(DefaultValueKeyboard.Instance.keyJump))
+        else if (Input.GetKeyUp(keyboardBindingService.Jump))
             JumpOff();
 
-        if (Input.GetKeyDown(DefaultValueKeyboard.Instance.keyThrow))
+        if (Input.GetKeyDown(keyboardBindingService.Throw))
             ThrowGrenade();
     }
 
@@ -86,48 +98,44 @@ public class ControllerInput : MonoBehaviour, IListener
         btnJump.SetActive(isOn);
     }
 
-    public void TurnMelee(bool isOn)
-    {
-    }
+    public void TurnMelee(bool isOn) { }
 
     public void TurnRange(bool isOn)
     {
         btnRange.SetActive(isOn);
     }
 
-    public void TurnDash(bool isOn)
-    {
-    }
+    public void TurnDash(bool isOn) { }
 
     public void MoveLeft()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
         {
-            Player.MoveLeft();
+            CurrentPlayer.MoveLeft();
             isMovingLeft = true;
         }
     }
 
     public void MoveRight()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
         {
-            Player.MoveRight();
+            CurrentPlayer.MoveRight();
             isMovingRight = true;
         }
     }
 
     public void FallDown()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
-            Player.FallDown();
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
+            CurrentPlayer.FallDown();
     }
 
     public void StopMove()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
         {
-            Player.StopMove();
+            CurrentPlayer.StopMove();
             isMovingLeft = false;
             isMovingRight = false;
         }
@@ -135,14 +143,14 @@ public class ControllerInput : MonoBehaviour, IListener
 
     public void Jump()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
-            Player.Jump();
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
+            CurrentPlayer.Jump();
     }
 
     public void JumpOff()
     {
-        if (gameSession != null && gameSession.State == GameManager.GameState.Playing)
-            Player.JumpOff();
+        if (gameSession != null && gameSession.State == GameManager.GameState.Playing && CurrentPlayer != null)
+            CurrentPlayer.JumpOff();
     }
 
     public void Shot(bool hold)
@@ -152,8 +160,8 @@ public class ControllerInput : MonoBehaviour, IListener
 
     private void OnDisable()
     {
-        if (Player != null)
-            Player.StopMove();
+        if (CurrentPlayer != null)
+            CurrentPlayer.StopMove();
 
         isMovingLeft = false;
         isMovingRight = false;
@@ -161,39 +169,16 @@ public class ControllerInput : MonoBehaviour, IListener
 
     public void ThrowGrenade()
     {
-        if (gameSession != null && gameSession.Player != null)
-            gameSession.Player.ThrowGrenade();
+        if (CurrentPlayer != null)
+            CurrentPlayer.ThrowGrenade();
     }
 
-    public void IPlay()
-    {
-    }
-
-    public void ISuccess()
-    {
-    }
-
-    public void IPause()
-    {
-    }
-
-    public void IUnPause()
-    {
-    }
-
-    public void IGameOver()
-    {
-    }
-
-    public void IOnRespawn()
-    {
-    }
-
-    public void IOnStopMovingOn()
-    {
-    }
-
-    public void IOnStopMovingOff()
-    {
-    }
+    public void IPlay() { }
+    public void ISuccess() { }
+    public void IPause() { }
+    public void IUnPause() { }
+    public void IGameOver() { }
+    public void IOnRespawn() { }
+    public void IOnStopMovingOn() { }
+    public void IOnStopMovingOff() { }
 }

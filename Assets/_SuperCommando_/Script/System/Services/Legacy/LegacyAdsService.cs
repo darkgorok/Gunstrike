@@ -2,7 +2,14 @@ using System;
 
 public sealed class LegacyAdsService : IAdsService
 {
-    public bool IsInitialized => AdsManager.Instance != null;
+    private readonly IConsentService consentService;
+
+    public LegacyAdsService(IConsentService consentService)
+    {
+        this.consentService = consentService;
+    }
+
+    public bool IsInitialized => consentService.HasAcceptedConsent && AdsManager.Instance != null;
     public bool CanShowRewarded => IsInitialized;
 
     public void ShowBanner(bool show)

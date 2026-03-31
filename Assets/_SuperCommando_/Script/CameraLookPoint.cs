@@ -25,25 +25,22 @@ public class CameraLookPoint : MonoBehaviour
     public AudioClip newMusic;
 
     private Vector3 mainCameraStartPoint;
-    private CameraFollow mainCamera;
     private bool isWorked = false;
     private IAudioService audioService;
     private IGameSessionService gameSession;
     private IGameplayPresentationService presentationService;
+    private ICameraRigService cameraRigService;
 
     [Inject]
-    public void Construct(IAudioService audioService, IGameSessionService gameSession, IGameplayPresentationService presentationService)
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IGameplayPresentationService presentationService, ICameraRigService cameraRigService)
     {
         this.audioService = audioService;
         this.gameSession = gameSession;
         this.presentationService = presentationService;
+        this.cameraRigService = cameraRigService;
     }
 
-    private void Start()
-    {
-        ProjectScope.Inject(this);
-        mainCamera = CameraFollow.Instance;
-    }
+    private void Start() => ProjectScope.Inject(this);
 
     private IEnumerator OnTriggerEnter2D(Collider2D other)
     {
@@ -55,16 +52,16 @@ public class CameraLookPoint : MonoBehaviour
 
         isWorked = true;
         if (setCameraLimitMin)
-            mainCamera._min.x = limitMinPos.position.x;
+            cameraRigService.MinBounds = new Vector2(limitMinPos.position.x, cameraRigService.MinBounds.y);
         if (setCameraLimitMax)
-            mainCamera._max.x = limitMaxPos.position.x;
+            cameraRigService.MaxBounds = new Vector2(limitMaxPos.position.x, cameraRigService.MaxBounds.y);
 
         gameSession.Player.Frozen(true);
         presentationService.SetControllerVisible(false);
         audioService.PlaySfx(soundShowUp);
 
-        mainCamera.isFollowing = false;
-        mainCameraStartPoint = mainCamera.transform.position;
+        cameraRigService.IsFollowing = false;
+        mainCameraStartPoint = cameraRigService.Position;
 
         audioService.PauseMusic(true);
         presentationService.ShowWarning(true);
@@ -77,19 +74,19 @@ public class CameraLookPoint : MonoBehaviour
         {
             percent += Time.deltaTime * cameraMoveToSpeed;
             percent = Mathf.Clamp01(percent);
-            mainCamera.transform.position = Vector3.Lerp(mainCameraStartPoint, targetPos, percent);
+            cameraRigService.Position = Vector3.Lerp(mainCameraStartPoint, targetPos, percent);
             yield return null;
         }
 
         percent = 0f;
         if (setCameraLimitMin)
         {
-            Vector3 targetBack = new Vector3(mainCamera._min.x + mainCamera.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
+            Vector3 targetBack = new Vector3(cameraRigService.MinBounds.x + cameraRigService.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
             while (percent < 1f)
             {
                 percent += Time.deltaTime * cameraMoveBackSpeed;
                 percent = Mathf.Clamp01(percent);
-                mainCamera.transform.position = Vector3.Lerp(targetPos, targetBack, percent);
+                cameraRigService.Position = Vector3.Lerp(targetPos, targetBack, percent);
                 yield return null;
             }
         }
@@ -99,7 +96,7 @@ public class CameraLookPoint : MonoBehaviour
             {
                 percent += Time.deltaTime * cameraMoveBackSpeed;
                 percent = Mathf.Clamp01(percent);
-                mainCamera.transform.position = Vector3.Lerp(targetPos, mainCameraStartPoint, percent);
+                cameraRigService.Position = Vector3.Lerp(targetPos, mainCameraStartPoint, percent);
                 yield return null;
             }
         }
@@ -128,7 +125,7 @@ public class CameraLookPoint : MonoBehaviour
         if (changeGameMusic)
             audioService.PlayMusic(newMusic, 1f);
 
-        mainCamera.isFollowing = true;
+        cameraRigService.IsFollowing = true;
         presentationService.ShowWarning(false);
         audioService.PauseMusic(false);
         gameSession.Player.Frozen(false);

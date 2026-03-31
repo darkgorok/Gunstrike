@@ -9,11 +9,13 @@ public class CollectGunItem : MonoBehaviour, ICanCollect
     public AudioClip soundCollect;
 
     private IAudioService audioService;
+    private IGunRuntimeService gunRuntimeService;
 
     [Inject]
-    public void Construct(IAudioService audioService)
+    public void Construct(IAudioService audioService, IGunRuntimeService gunRuntimeService)
     {
         this.audioService = audioService;
+        this.gunRuntimeService = gunRuntimeService;
     }
 
     private void Awake()
@@ -24,7 +26,7 @@ public class CollectGunItem : MonoBehaviour, ICanCollect
     public void Collect()
     {
         audioService.PlaySfx(soundCollect);
-        GunManager.Instance.SetNewGunDuringGameplay(gunTypeID);
+        gunRuntimeService.SetNewGunDuringGameplay(gunTypeID);
         Destroy(gameObject);
     }
 }

@@ -10,12 +10,15 @@ public class FlashScene : MonoBehaviour {
 	public float delay = 2;
     private IAdsService adsService;
     private ISceneLoader sceneLoader;
+    private IConsentService consentService;
+    private bool isLaunchQueued;
 
     [Inject]
-    public void Construct(IAdsService adsService, ISceneLoader sceneLoader)
+    public void Construct(IAdsService adsService, ISceneLoader sceneLoader, IConsentService consentService)
     {
         this.adsService = adsService;
         this.sceneLoader = sceneLoader;
+        this.consentService = consentService;
     }
 
     void Awake()
@@ -25,8 +28,17 @@ public class FlashScene : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine (LoadSceneCo ());
+        consentService.EnsureLaunchConsent(BeginLaunchFlow);
 	}
+
+    private void BeginLaunchFlow()
+    {
+        if (isLaunchQueued)
+            return;
+
+        isLaunchQueued = true;
+        StartCoroutine(LoadSceneCo());
+    }
 	
 	IEnumerator LoadSceneCo(){
         adsService.ShowRectBanner(true);

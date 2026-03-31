@@ -8,11 +8,13 @@ public class OpenScene : MonoBehaviour
     public string sceneName = "scene name";
 
     private IProgressService progressService;
+    private IMainMenuSceneService mainMenuSceneService;
 
     [Inject]
-    public void Construct(IProgressService progressService)
+    public void Construct(IProgressService progressService, IMainMenuSceneService mainMenuSceneService)
     {
         this.progressService = progressService;
+        this.mainMenuSceneService = mainMenuSceneService;
     }
 
     private void Awake()
@@ -23,6 +25,6 @@ public class OpenScene : MonoBehaviour
     public void Open()
     {
         progressService.LevelPlaying = -1;
-        MainMenuHomeScene.Instance.LoadScene(sceneName);
+        mainMenuSceneService.LoadScene(sceneName);
     }
 }

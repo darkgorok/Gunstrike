@@ -10,13 +10,15 @@ public class WatchAdToFinishLevel : MonoBehaviour
     private IAdsService adsService;
     private ILevelCatalogService levelCatalogService;
     private IProgressService progressService;
+    private IMenuFlowService menuFlowService;
 
     [Inject]
-    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService)
+    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService, IMenuFlowService menuFlowService)
     {
         this.adsService = adsService;
         this.levelCatalogService = levelCatalogService;
         this.progressService = progressService;
+        this.menuFlowService = menuFlowService;
     }
 
     private void Awake()
@@ -47,6 +49,6 @@ public class WatchAdToFinishLevel : MonoBehaviour
     private void AdsManager_AdResult(bool isSuccess, int rewarded)
     {
         if (isSuccess)
-            MenuManager.Instance.NextLevel();
+            menuFlowService.LoadNextLevel();
     }
 }

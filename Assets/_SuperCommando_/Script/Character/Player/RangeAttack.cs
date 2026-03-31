@@ -35,14 +35,16 @@ public class RangeAttack : MonoBehaviour
     private IGameSessionService gameSession;
     private IInventoryService inventoryService;
     private IUpgradeService upgradeService;
+    private IDefaultGameConfigService defaultGameConfigService;
 
     [Inject]
-    public void Construct(IAudioService audioService, IGameSessionService gameSession, IInventoryService inventoryService, IUpgradeService upgradeService)
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IInventoryService inventoryService, IUpgradeService upgradeService, IDefaultGameConfigService defaultGameConfigService)
     {
         this.audioService = audioService;
         this.gameSession = gameSession;
         this.inventoryService = inventoryService;
         this.upgradeService = upgradeService;
+        this.defaultGameConfigService = defaultGameConfigService;
     }
 
     private void Awake()
@@ -70,7 +72,7 @@ public class RangeAttack : MonoBehaviour
             return false;
         }
 
-        bool hasUnlimitedBullets = DefaultValue.Instance && DefaultValue.Instance.defaultBulletMax;
+        bool hasUnlimitedBullets = defaultGameConfigService.DefaultBulletMax;
         bool canFireNormal = hasUnlimitedBullets || inventoryService.Darts > 0 || gameSession.HideGui;
         if (!canFireNormal || Time.time <= nextFire)
             return false;

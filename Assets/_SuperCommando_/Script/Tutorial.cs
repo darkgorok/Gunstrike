@@ -4,8 +4,6 @@ using VContainer;
 
 public class Tutorial : MonoBehaviour
 {
-    public static Tutorial Instance;
-
     public Image ImageTut;
     public GameObject Panel;
     public AudioClip sound;
@@ -27,7 +25,6 @@ public class Tutorial : MonoBehaviour
 
     private void Start()
     {
-        Instance = this;
         Panel.SetActive(false);
     }
 

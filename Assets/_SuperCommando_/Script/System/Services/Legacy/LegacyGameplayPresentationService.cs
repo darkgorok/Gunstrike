@@ -2,16 +2,29 @@ using UnityEngine;
 
 public sealed class LegacyGameplayPresentationService : IGameplayPresentationService
 {
+    private MenuManager cachedMenuManager;
+
+    private MenuManager CurrentMenuManager
+    {
+        get
+        {
+            if (cachedMenuManager == null)
+                cachedMenuManager = Object.FindFirstObjectByType<MenuManager>();
+
+            return cachedMenuManager;
+        }
+    }
+
     public void SetControllerVisible(bool visible)
     {
-        if (MenuManager.Instance != null)
-            MenuManager.Instance.TurnController(visible);
+        if (CurrentMenuManager != null)
+            CurrentMenuManager.TurnController(visible);
     }
 
     public void SetGameplayUiVisible(bool visible)
     {
-        if (MenuManager.Instance != null)
-            MenuManager.Instance.TurnGUI(visible);
+        if (CurrentMenuManager != null)
+            CurrentMenuManager.TurnGUI(visible);
     }
 
     public void ShowWarning(bool visible)

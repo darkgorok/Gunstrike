@@ -9,23 +9,32 @@ public class MainMenu_Level : MonoBehaviour
     public GameObject imgLock, imgOpen, imgPass;
     public Text TextLevel;
 
+    [SerializeField] private Button cachedButton;
+    [SerializeField] private Animator cachedAnimator;
+
     private ILevelCatalogService levelCatalogService;
     private IAdsService adsService;
     private IProgressService progressService;
     private ILevelSelectionState levelSelectionState;
+    private IMainMenuSceneService mainMenuSceneService;
 
     [Inject]
-    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService, ILevelSelectionState levelSelectionState)
+    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService, ILevelSelectionState levelSelectionState, IMainMenuSceneService mainMenuSceneService)
     {
         this.adsService = adsService;
         this.levelCatalogService = levelCatalogService;
         this.progressService = progressService;
         this.levelSelectionState = levelSelectionState;
+        this.mainMenuSceneService = mainMenuSceneService;
     }
 
     private void Awake()
     {
         ProjectScope.Inject(this);
+        if (cachedButton == null)
+            cachedButton = GetComponent<Button>();
+        if (cachedAnimator == null)
+            TryGetComponent(out cachedAnimator);
     }
 
     private void Start()
@@ -34,10 +43,10 @@ public class MainMenu_Level : MonoBehaviour
         imgOpen.SetActive(false);
         imgPass.SetActive(false);
 
-        if (GetComponent<Animator>())
-            GetComponent<Animator>().enabled = levelNumber == progressService.LevelHighest;
+        if (cachedAnimator != null)
+            cachedAnimator.enabled = levelNumber == progressService.LevelHighest;
 
-        GetComponent<Button>().interactable = levelNumber <= progressService.LevelHighest;
+        cachedButton.interactable = levelNumber <= progressService.LevelHighest;
 
         if (levelNumber == progressService.LevelHighest)
             levelSelectionState.CurrentHighestLevelTransform = transform;
@@ -61,7 +70,16 @@ public class MainMenu_Level : MonoBehaviour
     {
         progressService.LevelPlaying = levelNumber;
         adsService.ShowBanner(false);
-
-        MainMenuHomeScene.Instance.LoadScene(levelCatalogService.GetLevelSceneName(progressService.LevelPlaying));
+        mainMenuSceneService.LoadScene(levelCatalogService.GetLevelSceneName(progressService.LevelPlaying));
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (cachedButton == null)
+            TryGetComponent(out cachedButton);
+        if (cachedAnimator == null)
+            TryGetComponent(out cachedAnimator);
+    }
+#endif
 }

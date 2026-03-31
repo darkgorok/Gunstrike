@@ -7,8 +7,6 @@ using VContainer;
 
 public class MenuManager : MonoBehaviour
 {
-    public static MenuManager Instance;
-
     public GameObject Startmenu;
     public GameObject GUI;
     public GameObject Gameover;
@@ -47,7 +45,6 @@ public class MenuManager : MonoBehaviour
     void Awake()
     {
         ProjectScope.Inject(this);
-        Instance = this;
     }
 
     // Use this for initialization

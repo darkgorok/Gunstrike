@@ -5,14 +5,12 @@ using UnityEngine.UI;
 
 public class BossHealthbar : MonoBehaviour
 {
-    public static BossHealthbar Instance;
     public Image bossIcon;
     public Transform forceGroundSprite;
     float maxHealth = 0;
     CanvasGroup canvasG;
     void Awake()
     {
-        Instance = this;
         canvasG = GetComponent<CanvasGroup>();
         canvasG.alpha = 0;
     }
@@ -27,12 +25,9 @@ public class BossHealthbar : MonoBehaviour
 
     public void UpdateHealth(int current)
     {
-        if (Instance)
-        {
-            var healthPercent = (float)current / maxHealth;
-            forceGroundSprite.localScale = new Vector3(healthPercent, 1, 1);
+        var healthPercent = (float)current / maxHealth;
+        forceGroundSprite.localScale = new Vector3(healthPercent, 1, 1);
 
-            canvasG.alpha = healthPercent > 0 ? 1 : 0;
-        }
+        canvasG.alpha = healthPercent > 0 ? 1 : 0;
     }
 }
