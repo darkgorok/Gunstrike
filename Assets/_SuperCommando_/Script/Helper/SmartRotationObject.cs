@@ -1,11 +1,12 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
 {
-    public enum StartRotate { AutoRotate, HitToRotate}
+    public enum StartRotate { AutoRotate, HitToRotate }
     public enum StartDirection { Left, Right }
+
     public AudioClip soundHit;
     [Header("ObstacleRotation")]
     public StartRotate startAction;
@@ -19,21 +20,32 @@ public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
     [Range(0, 2)]
     public float easeAmount;
 
-    float from = 0;
-    float to = 0;
-
     [Header("Draw line")]
     public bool drawLine = false;
     public List<Transform> objectLocalWaypoints;
     public float lineWidth = 0.2f;
     public Material lineMat;
     public float offsetLineZ = -1;
-    LineRenderer lineRen;
 
-    float percentBetweenWaypoints;
-    bool isWorking = false;
-    
-    void Start()
+    private float from;
+    private float to;
+    private float percentBetweenWaypoints;
+    private bool isWorking;
+    private LineRenderer lineRen;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         lineRen = GetComponent<LineRenderer>();
         if (!lineRen)
@@ -44,17 +56,12 @@ public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
         lineRen.startWidth = lineWidth;
         lineRen.material = lineMat;
         lineRen.textureMode = LineTextureMode.Tile;
-        
 
         if (startAction == StartRotate.AutoRotate)
-        {
             Work(startDirection);
-        }
-
-        Quaternion.Euler(0, 0, 0);
     }
 
-    void Work(StartDirection moveDirection)
+    private void Work(StartDirection moveDirection)
     {
         if (moveDirection == StartDirection.Left)
         {
@@ -67,25 +74,18 @@ public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
             to = angle * 2;
         }
 
-        //GetComponent<Collider2D>().enabled = false;     //disable self collider
         percentBetweenWaypoints = 0.5f;
         isWorking = true;
 
-        if (disableColliderWhenWork)
-        {
-            var cols = GetComponents<Collider2D>();
-            if(cols.Length > 0)
-            {
-                foreach(var col in cols)
-                {
-                    col.enabled = false;
-                }
-            }
-        }
+        if (!disableColliderWhenWork)
+            return;
+
+        Collider2D[] cols = GetComponents<Collider2D>();
+        foreach (Collider2D col in cols)
+            col.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (drawLine && objectLocalWaypoints.Count >= 2)
         {
@@ -93,44 +93,44 @@ public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
                 lineRen.SetPosition(i, objectLocalWaypoints[i].position + Vector3.forward * offsetLineZ);
         }
 
-        if (isWorking)
+        if (!isWorking)
+            return;
+
+        float distanceBetweenWaypoints = Mathf.Abs(from - to);
+        percentBetweenWaypoints += Time.deltaTime * speed / distanceBetweenWaypoints;
+        percentBetweenWaypoints = Mathf.Clamp01(percentBetweenWaypoints);
+        float easedPercentBetweenWaypoints = Ease(percentBetweenWaypoints);
+        float newAngle = Mathf.Lerp(from, to, easedPercentBetweenWaypoints);
+
+        if (percentBetweenWaypoints >= 1)
         {
-
-            float distanceBetweenWaypoints = Mathf.Abs(from - to);
-            percentBetweenWaypoints += Time.deltaTime * speed / distanceBetweenWaypoints;
-            percentBetweenWaypoints = Mathf.Clamp01(percentBetweenWaypoints);
-            float easedPercentBetweenWaypoints = Ease(percentBetweenWaypoints);
-
-            float newAngle = Mathf.Lerp(from, to, easedPercentBetweenWaypoints);
-
-            if (percentBetweenWaypoints >= 1)
+            percentBetweenWaypoints = 0;
+            if (from == 0)
             {
-                percentBetweenWaypoints = 0;
-                if (from == 0)
-                {
-                    from = to;
-                    to = 0;
-                }
-                else
-                {
-                    to = from;
-                    from = 0;
-                }
+                from = to;
+                to = 0;
             }
-            transform.rotation = Quaternion.Euler(0, 0, newAngle - angle);
+            else
+            {
+                to = from;
+                from = 0;
+            }
         }
+
+        transform.rotation = Quaternion.Euler(0, 0, newAngle - angle);
     }
 
-    float Ease(float x)
+    private float Ease(float x)
     {
         float a = easeAmount + 1;
         return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         if (Application.isPlaying)
             return;
+
         lineRen = GetComponent<LineRenderer>();
 
         if (drawLine && objectLocalWaypoints.Count >= 2)
@@ -146,20 +146,19 @@ public class SmartRotationObject : MonoBehaviour, ICanTakeDamage
 
             for (int i = 0; i < objectLocalWaypoints.Count; i++)
                 lineRen.SetPosition(i, objectLocalWaypoints[i].position + Vector3.forward * offsetLineZ);
-
         }
         else if (lineRen)
+        {
             DestroyImmediate(lineRen);
-
+        }
     }
 
     void ICanTakeDamage.TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
-        SoundManager.PlaySfx(soundHit);
+        audioService?.PlaySfx(soundHit);
         if (isWorking)
             return;
 
         Work(transform.position.x > instigator.transform.position.x ? StartDirection.Right : StartDirection.Left);
-        
     }
 }

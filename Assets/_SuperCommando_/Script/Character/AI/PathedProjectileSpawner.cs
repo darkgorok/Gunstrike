@@ -1,49 +1,62 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
+using VContainer;
 
-public class PathedProjectileSpawner : MonoBehaviour {
+public class PathedProjectileSpawner : MonoBehaviour
+{
+    public Transform Destination;
+    public PathedProjectile Projectile;
+    public GameObject SpawnEffect;
+    public AudioClip spawnSound;
+    [Range(0, 1)]
+    public float spawnSoundVolume = 0.5f;
+    public float speed;
+    public float fireRate;
 
-	public Transform Destination;
-	public PathedProjectile Projectile;
-	public GameObject SpawnEffect;
+    private float nextFireRate;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
 
-	public AudioClip spawnSound;
-	[Range(0,1)]
-	public float spawnSoundVolume = 0.5f;
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
 
-	public float speed;
-	public float fireRate;
-	float nextFireRate;
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
-	// Use this for initialization
-	void Start () {
-		nextFireRate = Time.time;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (GameManager.Instance.State != GameManager.GameState.Playing)
-			return;
-		
-		if (Time.time < nextFireRate + fireRate)
-			return;
+    private void Start()
+    {
+        nextFireRate = Time.time;
+    }
 
-		nextFireRate = Time.time;
+    private void Update()
+    {
+        if (gameSession == null || gameSession.State != GameManager.GameState.Playing)
+            return;
 
-		var projectile = (PathedProjectile) Instantiate (Projectile, transform.position, Quaternion.identity);
-		projectile.Initalize (Destination, speed);
+        if (Time.time < nextFireRate + fireRate)
+            return;
 
-		if (SpawnEffect != null)
-			Instantiate (SpawnEffect, transform.position, Quaternion.identity);
+        nextFireRate = Time.time;
+        PathedProjectile projectile = Instantiate(Projectile, transform.position, Quaternion.identity);
+        projectile.Initalize(Destination, speed);
 
-		SoundManager.PlaySfx (spawnSound, spawnSoundVolume);
-	}
+        if (SpawnEffect != null)
+            Instantiate(SpawnEffect, transform.position, Quaternion.identity);
 
-	public void OnDrawGizmos(){
-		if (Destination == null)
-			return;
+        audioService?.PlaySfx(spawnSound, spawnSoundVolume);
+    }
 
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine (transform.position, Destination.position);
-	}
+    public void OnDrawGizmos()
+    {
+        if (Destination == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, Destination.position);
+    }
 }

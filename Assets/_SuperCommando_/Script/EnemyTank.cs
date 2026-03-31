@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(CheckTargetHelper))]
+using VContainer;
 
+[RequireComponent(typeof(CheckTargetHelper))]
 public class EnemyTank : MonoBehaviour, ICanTakeDamage
 {
     public int health = 200;
     [ReadOnly] public bool allowMoving = false;
     public float speed = 2;
     public float moveToLocalPointX = -8f;
-    Vector2 moveToTarget;
     public GameObject explosionFX;
-    public AudioClip soundHit, soundDestroy;
+    public AudioClip soundHit;
+    public AudioClip soundDestroy;
 
     [Header("---Normal Bullet---")]
     public int normalDamage = 50;
@@ -19,43 +18,57 @@ public class EnemyTank : MonoBehaviour, ICanTakeDamage
     public Projectile normalBullet;
     public int noralBulletSpeed = 6;
     public float normalGunRate = 2;
-    [Range(1,10)]
+    [Range(1, 10)]
     public int normalNumberBulletsRound = 3;
     public float normalBulletRate2Bullets = 0.3f;
-    float lastTimeFireNormal = -999;
     public AudioClip normalSound;
 
     [Header("---Special Bullet---")]
     public Transform specialGunPoint;
     public GameObject specialBullet;
     public float specialBulletRate = 3;
-    float lastTimeFireSpecial = -999;
     public AudioClip specialSound;
-    CheckTargetHelper checkTargetHelper;
-    bool finishMoving = false;
 
-    Animator anim;
-    bool isWorking = false;
+    private Vector2 moveToTarget;
+    private CheckTargetHelper checkTargetHelper;
+    private bool finishMoving;
+    private Animator anim;
+    private bool isWorking;
+    private BurstFireController burstFireController;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
 
     private void Start()
     {
+        ProjectScope.Inject(this);
         checkTargetHelper = GetComponent<CheckTargetHelper>();
         moveToTarget = transform.position + Vector3.right * moveToLocalPointX;
         anim = GetComponent<Animator>();
+        burstFireController = new BurstFireController(normalNumberBulletsRound, normalGunRate, normalBulletRate2Bullets);
     }
 
     private void Update()
     {
+        burstFireController.Tick(Time.deltaTime, FireNormalShot);
+
         if (finishMoving)
             return;
 
         if (!allowMoving)
         {
-            if (checkTargetHelper.CheckTarget(transform.position.x > GameManager.Instance.Player.transform.position.x ? 1 : -1))
+            if (checkTargetHelper.CheckTarget(transform.position.x > gameSession.Player.transform.position.x ? 1 : -1))
             {
                 isWorking = true;
                 allowMoving = true;
-                GameManager.Instance.PauseCamera(true);
+                gameSession.PauseCamera(true);
             }
         }
 
@@ -68,40 +81,13 @@ public class EnemyTank : MonoBehaviour, ICanTakeDamage
             {
                 finishMoving = true;
                 allowMoving = false;
-                StartCoroutine(FireCo());
             }
         }
+
+        if (finishMoving && burstFireController.CanStartBurst)
+            burstFireController.StartBurst(FireNormalShot);
 
         anim.SetBool("moving", allowMoving);
-    }
-
-    IEnumerator FireCo()
-    {
-        while (true)
-        {
-            for (int i = 0; i < normalNumberBulletsRound; i++)
-            {
-                var projectile = SpawnSystemHelper.GetNextObject(normalBullet.gameObject, false).GetComponent<Projectile>();
-                projectile.transform.position = normalPoint.position;
-                projectile.transform.right = targetDirection(Vector3.up * 0.5f);
-                //projectile.transform.rotation = Quaternion.Euler (0, 0, shootAngle);
-                projectile.Initialize(gameObject, targetDirection(Vector3.up * 0.5f), Vector2.zero, false, false, normalDamage, noralBulletSpeed);
-
-                projectile.gameObject.SetActive(true);
-                SoundManager.PlaySfx(normalSound);
-                yield return new WaitForSeconds(normalBulletRate2Bullets);
-            }
-
-            yield return new WaitForSeconds(normalGunRate);
-        }
-    }
-
-    Vector2 targetDirection(Vector3 offset)
-    {
-            var lookAtPlayerDirection = (GameManager.Instance.Player.transform.position + offset) - normalPoint.position;
-
-            lookAtPlayerDirection.Normalize();
-            return lookAtPlayerDirection;
     }
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -113,11 +99,33 @@ public class EnemyTank : MonoBehaviour, ICanTakeDamage
         if (health <= 0)
         {
             Instantiate(explosionFX, transform.position, Quaternion.identity);
-            GameManager.Instance.PauseCamera(false);
-            SoundManager.PlaySfx(soundDestroy);
+            gameSession.PauseCamera(false);
+            audioService.PlaySfx(soundDestroy);
             Destroy(gameObject);
-        }else
-            SoundManager.PlaySfx(soundHit);
+            return;
+        }
+
+        audioService.PlaySfx(soundHit);
+    }
+
+    private void FireNormalShot()
+    {
+        var projectile = SpawnSystemHelper.GetNextObject(normalBullet.gameObject, false).GetComponent<Projectile>();
+        Vector2 direction = TargetDirection(Vector3.up * 0.5f);
+
+        projectile.transform.position = normalPoint.position;
+        projectile.transform.right = direction;
+        projectile.Initialize(gameObject, direction, Vector2.zero, false, false, normalDamage, noralBulletSpeed);
+        projectile.gameObject.SetActive(true);
+
+        audioService.PlaySfx(normalSound);
+    }
+
+    private Vector2 TargetDirection(Vector3 offset)
+    {
+        var lookAtPlayerDirection = (gameSession.Player.transform.position + offset) - normalPoint.position;
+        lookAtPlayerDirection.Normalize();
+        return lookAtPlayerDirection;
     }
 
     private void OnDrawGizmos()

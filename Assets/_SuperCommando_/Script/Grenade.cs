@@ -1,49 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class Grenade : MonoBehaviour {
+public class Grenade : MonoBehaviour
+{
     public bool onlyBlowWhenContactCollision;
-
     public float delayBlowUp = 0.7f;
+
     [Header("Explosion Damage")]
-	public AudioClip soundDestroy;
-	public GameObject[] DestroyFX;
+    public AudioClip soundDestroy;
+    public GameObject[] DestroyFX;
+    public LayerMask collisionLayer;
+    public int makeDamage = 100;
+    public float radius = 3;
 
-	public LayerMask collisionLayer;
-	public int makeDamage = 100;
-	public float radius = 3;
-    // Use this for initialization
-    bool isBlowingUp = false;
-
-	Rigidbody2D rig;
-    Animator anim;
-
-    Collider2D _collider;
     [ReadOnly] public float collideWithTheGroundUnderPosY = 1000;
 
-    public void Init(int _damage, float _radius, bool blowImmediately = false, bool blowOnContactCollision = false, float _collideWithTheGroundUnderPosY = -1)
+    private bool isBlowingUp;
+    private float blowUpDelayRemaining = -1f;
+    private Rigidbody2D rig;
+    private Animator anim;
+    private Collider2D cachedCollider;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
     {
-        makeDamage = _damage;
-        radius = _radius;
-        onlyBlowWhenContactCollision = blowOnContactCollision;
-
-        GetComponent<Collider2D>().enabled = false;
-        if (_collideWithTheGroundUnderPosY != -1)
-            collideWithTheGroundUnderPosY = _collideWithTheGroundUnderPosY;
-        else
-            collideWithTheGroundUnderPosY = 1000;
-
-        if (blowImmediately)
-        {
-            DoExplosion();
-        }
+        this.gameSession = gameSession;
+        this.audioService = audioService;
     }
 
-    void Awake(){
-		rig = GetComponent<Rigidbody2D> ();
-        _collider = GetComponent<Collider2D>();
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        rig = GetComponent<Rigidbody2D>();
+        cachedCollider = GetComponent<Collider2D>();
+    }
 
+    public void Init(int damage, float radius, bool blowImmediately = false, bool blowOnContactCollision = false, float collideWithTheGroundUnderPosY = -1)
+    {
+        makeDamage = damage;
+        this.radius = radius;
+        onlyBlowWhenContactCollision = blowOnContactCollision;
+        GetComponent<Collider2D>().enabled = false;
+        this.collideWithTheGroundUnderPosY = collideWithTheGroundUnderPosY != -1 ? collideWithTheGroundUnderPosY : 1000;
+
+        if (blowImmediately)
+            DoExplosion();
     }
 
     private void Start()
@@ -53,68 +56,62 @@ public class Grenade : MonoBehaviour {
 
     private void Update()
     {
-        if (!_collider.enabled)
+        if (!cachedCollider.enabled && transform.position.y < collideWithTheGroundUnderPosY)
+            cachedCollider.enabled = true;
+
+        if (blowUpDelayRemaining < 0f)
+            return;
+
+        blowUpDelayRemaining -= Time.deltaTime;
+        if (blowUpDelayRemaining <= 0f)
         {
-            if (transform.position.y < collideWithTheGroundUnderPosY)
-                _collider.enabled = true;
+            blowUpDelayRemaining = -1f;
+            DoExplosion();
         }
     }
 
-    IEnumerator OnCollisionEnter2D(Collision2D other){
+    private void OnCollisionEnter2D(Collision2D other)
+    {
         if (isBlowingUp)
-            yield break;
+            return;
 
-        //only blow when contact the ground
-        var hits = Physics2D.CircleCastAll(transform.position, 0.2f, Vector2.zero, 0, GameManager.Instance.groundLayer);
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 0.2f, Vector2.zero, 0, gameSession.GroundLayer);
         if (hits == null)
-            yield break;
+            return;
 
         isBlowingUp = true;
-        float delayCounter = 0;
-
-        if (!onlyBlowWhenContactCollision)
-        {
-            while (delayCounter < delayBlowUp)
-            {
-                //anim.speed = Mathf.Lerp(anim.speed, 3, 2 * Time.deltaTime);
-                delayCounter += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        DoExplosion();
+        blowUpDelayRemaining = onlyBlowWhenContactCollision ? 0f : delayBlowUp;
     }
 
-	public void DoExplosion(){
+    public void DoExplosion()
+    {
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, radius, Vector2.zero, 0, collisionLayer);
+        if (hits == null)
+            return;
 
-		var hits = Physics2D.CircleCastAll (transform.position, radius, Vector2.zero,0, collisionLayer);
-		if (hits == null)
-			return;
-
-		foreach (var hit in hits) {
-			var damage = (ICanTakeDamage) hit.collider.gameObject.GetComponent (typeof(ICanTakeDamage));
-			if (damage == null)
-				continue;
-
-			damage.TakeDamage (makeDamage,Vector2.zero, gameObject, Vector2.zero);
-		}
-
-        foreach(var fx in DestroyFX)
+        foreach (RaycastHit2D hit in hits)
         {
-            if (fx)
-            {
-                var hitGround = Physics2D.Raycast(transform.position, Vector2.down, 100, GameManager.Instance.groundLayer);
-                SpawnSystemHelper.GetNextObject(fx, true).transform.position = (hitGround ? (Vector3)hitGround.point : transform.position);
-            }
+            ICanTakeDamage damage = hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage)) as ICanTakeDamage;
+            if (damage != null)
+                damage.TakeDamage(makeDamage, Vector2.zero, gameObject, Vector2.zero);
         }
-        
 
-		SoundManager.PlaySfx (soundDestroy);
+        foreach (GameObject fx in DestroyFX)
+        {
+            if (!fx)
+                continue;
+
+            RaycastHit2D hitGround = Physics2D.Raycast(transform.position, Vector2.down, 100, gameSession.GroundLayer);
+            SpawnSystemHelper.GetNextObject(fx, true).transform.position = hitGround ? (Vector3)hitGround.point : transform.position;
+        }
+
+        audioService?.PlaySfx(soundDestroy);
         Destroy(gameObject);
     }
 
-	void OnDrawGizmos(){
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawWireSphere (transform.position, radius);
-	}
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, radius);
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public enum ATTACKTYPE {
 	RANGE,
@@ -207,6 +208,31 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 	protected ShakingHelper shakingHelper;
 	
 	protected float moveSpeed;
+    protected IAudioService AudioService => audioService;
+    protected IGameSessionService GameSession => gameSession;
+    protected bool HasPendingDestroy => destroyAfterTimer >= 0f;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+    private float spawnFinishTimer = -1f;
+    private float detectDelayTimer = -1f;
+    private bool pendingDetectRush;
+    private float destroyAfterTimer = -1f;
+    private float freezeTimer = -1f;
+    private float burnTimer = -1f;
+    private float shockTimer = -1f;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
+    protected virtual void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
 	public bool isFacingRight(){
 		return transform.rotation.y == 0 ? true : false;
@@ -219,9 +245,6 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
     
 
 	public virtual void Start(){
-        //if (isMustKillToGo)
-        //	GameManager.Instance.RigisterEnemy (gameObject);
-
         controller = GetComponent<Controller2D>();
         currentHealth = health;
 		moveSpeed = walkSpeed;
@@ -267,11 +290,11 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
         switch (startBehavior)
         {
             case STARTBEHAVIOR.BURROWUP:
-                SoundManager.PlaySfx(soundSpawn);
+                AudioService.PlaySfx(soundSpawn);
 
                 SetEnemyState(ENEMYSTATE.SPAWNING);
                 AnimSetTrigger("spawn");
-                Invoke("FinishSpawning", spawnDelay);
+                spawnFinishTimer = spawnDelay;
                 break;
             case STARTBEHAVIOR.EATING:
                 EatingPlayer();
@@ -332,7 +355,7 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 
 	public void SetEnemyState(ENEMYSTATE state){
         //Debug.LogError(gameObject.name);
-		if (enemyState == ENEMYSTATE.EATING && GameManager.Instance.State != GameManager.GameState.Playing)
+		if (enemyState == ENEMYSTATE.EATING && GameSession.State != GameManager.GameState.Playing)
 			return;
 		
 		enemyState = state;
@@ -343,6 +366,8 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 	}
 
 	public virtual void Update(){
+        TickStateTimers();
+
 		if (enemyEffect == ENEMYEFFECT.BURNING)
 			CheckDamagePerFrame (damageBurningPerFrame);
 
@@ -359,46 +384,24 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 			return;
 		
 		isPlayerDetected = true;
-        SoundManager.PlaySfx(soundDetectPlayer);
-		StartCoroutine (DelayBeforeChasePlayer (delayChase));
-	}
-
-
-	protected IEnumerator DelayBeforeChasePlayer(float delay){
+        AudioService.PlaySfx(soundDetectPlayer);
 		SetEnemyState (ENEMYSTATE.IDLE);
         if(warningIconDetectPlayer)
-		warningIconDetectPlayer.SetActive (true);
-		yield return new WaitForSeconds (delay);
-        if(warningIconDetectPlayer)
-        warningIconDetectPlayer.SetActive(false);
-        if (enemyState == ENEMYSTATE.ATTACK)
-        {
-            yield break;
-        }
+		    warningIconDetectPlayer.SetActive (true);
 
-		SetEnemyState (ENEMYSTATE.WALK);
-		
-
-        if (detectPlayerAct == DETECTPLAYER.RushIntoPlayer)
-        {
-            AnimSetTrigger("rushIntoPlayer");
-            rushIntoPlayerPoint = GameManager.Instance.Player.transform.position + Vector3.up * 0.5f;
-            rushIntoPlayerDirection = (rushIntoPlayerPoint - (Vector2)transform.position).normalized;
-            SetEnemyState(ENEMYSTATE.RUSHINTOPLAYER);
-            SoundManager.PlaySfx(soundRushToPlayerAttack);
-
-            if ((isFacingRight() && transform.position.x > GameManager.Instance.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameManager.Instance.Player.transform.position.x))
-                transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
-           
-            Destroy(gameObject, 2);
-        }
-    }
+        detectDelayTimer = delayChase;
+        pendingDetectRush = detectPlayerAct == DETECTPLAYER.RushIntoPlayer;
+	}
 
 	public virtual void DismissDetectPlayer(){
 		if (!isPlayerDetected)
 			return;
 		
 		isPlayerDetected = false;
+        pendingDetectRush = false;
+        detectDelayTimer = -1f;
+        if (warningIconDetectPlayer)
+            warningIconDetectPlayer.SetActive(false);
 	}
 
 	public virtual void Parachute(bool openParachute){
@@ -410,7 +413,7 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 	}
 
 	public virtual void Hit(){
-		SoundManager.PlaySfx (soundHit);
+		AudioService.PlaySfx (soundHit);
 		switch (hitBehavior) {
 		case HITBEHAVIOR.ChasePlayer:
 			DetectPlayer ();
@@ -434,14 +437,14 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
         isPlaying = false;
         isDead = true;
 		isPlayerDetected = false;
+        pendingDetectRush = false;
+        detectDelayTimer = -1f;
+        spawnFinishTimer = -1f;
 		SetEnemyState (ENEMYSTATE.DEATH);
 
 		Parachute (false);
         if(warningIconDetectPlayer)
         warningIconDetectPlayer.SetActive(false);
-
-        //if (isMustKillToGo)
-        //	GameManager.Instance.RemoveEnemy (gameObject);
 
         if (dieFX)
 			Instantiate (dieFX, transform.position, dieFX.transform.rotation);
@@ -474,9 +477,9 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 				}
 			}
 
-			SoundManager.PlaySfx (soundDieBlow);
+			AudioService.PlaySfx (soundDieBlow);
 		} else
-			SoundManager.PlaySfx (soundDie);
+			AudioService.PlaySfx (soundDie);
 	}
 
     public virtual void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -651,29 +654,8 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 //			}
 
 			anim.enabled = false;
-			//			Invoke ("UnFreeze", timeFreeze);
-			StartCoroutine (UnFreezeCo ());
+            freezeTimer = Mathf.Max(0f, timeFreeze);
 		}
-	}
-
-	IEnumerator UnFreezeCo(){
-		if (enemyEffect != ENEMYEFFECT.FREEZE)
-			yield break;
-
-		float wait = timeFreeze - 1;
-		yield return new WaitForSeconds(wait);
-
-		float time = 1;
-//		while (time > 0) {
-//			foreach (var obj in iceFX) {
-//				obj._Value2 = time / 1;
-//				//				characterSprite.material.SetFloat ("_Progress", time / delaySF);
-//				time -= Time.deltaTime;
-//			}
-//			yield return new WaitForEndOfFrame ();
-//		}
-
-		UnFreeze ();
 	}
 
 	void UnFreeze(){
@@ -681,10 +663,12 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 			return;
 		
 		enemyEffect = ENEMYEFFECT.NONE;
+        freezeTimer = -1f;
 //		foreach (var obj in iceFX) {
 //			obj.enabled = false;
 //			anim.enabled = true;
 //		}
+        anim.enabled = true;
 	}
 
 	#endregion
@@ -715,23 +699,8 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 //				obj.enabled = true;
 //			}
 
-			StartCoroutine (BurnOutCo ());
+            burnTimer = Mathf.Max(0f, timeBurn);
 		}
-	}
-
-	IEnumerator BurnOutCo(){
-		if (enemyEffect != ENEMYEFFECT.BURNING)
-			yield break;
-		
-		float wait = timeBurn - 1;
-		yield return new WaitForSeconds(wait);
-
-		if (enemyState == ENEMYSTATE.DEATH) {
-			BurnOut ();
-            Destroy(gameObject);
-        }
-
-		BurnOut ();
 	}
 
 	void BurnOut(){
@@ -739,6 +708,7 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 			return;
 		
 		enemyEffect = ENEMYEFFECT.NONE;
+        burnTimer = -1f;
 //		foreach (var obj in burnFX) {
 //			obj.enabled = false;
 //		}
@@ -760,9 +730,6 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
             //    yield break;
 
             //if (Player.gameObject.layer == LayerMask.NameToLayer("HidingZone"))
-            //    yield break;
-
-            //if (GetComponent<CanBeJumpOn>() && transform.position.y + 1f < GameManager.Instance.Player.transform.position.y)
             //    yield break;
 
             //if (Time.time < nextDamage + rateDamage)
@@ -820,17 +787,8 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 
 
 //			anim.enabled = false;
-			StartCoroutine (UnShockCo ());
+            shockTimer = Mathf.Max(0f, timeShocking);
 		}
-	}
-
-	IEnumerator UnShockCo(){
-		if (enemyEffect != ENEMYEFFECT.SHOKING)
-			yield break;
-
-		yield return new WaitForSeconds (timeShocking);
-
-		UnShock ();
 	}
 
 	void UnShock(){
@@ -838,6 +796,7 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 			return;
 		
 		enemyEffect = ENEMYEFFECT.NONE;
+        shockTimer = -1f;
 //		foreach (var obj in shockFX) {
 //			obj.enabled = false;
 //		}
@@ -851,5 +810,98 @@ public class Enemy : MonoBehaviour,ICanTakeDamage, IListener, ICanFreeze, ICanBu
 
 //		anim.enabled = true;
 	}
+
+    private void TickStateTimers()
+    {
+        if (spawnFinishTimer >= 0f)
+        {
+            spawnFinishTimer -= Time.deltaTime;
+            if (spawnFinishTimer <= 0f)
+            {
+                spawnFinishTimer = -1f;
+                FinishSpawning();
+            }
+        }
+
+        if (detectDelayTimer >= 0f)
+        {
+            detectDelayTimer -= Time.deltaTime;
+            if (detectDelayTimer <= 0f)
+            {
+                detectDelayTimer = -1f;
+                CompleteDetectPlayer();
+            }
+        }
+
+        if (destroyAfterTimer >= 0f)
+        {
+            destroyAfterTimer -= Time.deltaTime;
+            if (destroyAfterTimer <= 0f)
+            {
+                destroyAfterTimer = -1f;
+                if (this != null)
+                    Destroy(gameObject);
+            }
+        }
+
+        if (freezeTimer >= 0f)
+        {
+            freezeTimer -= Time.deltaTime;
+            if (freezeTimer <= 0f)
+                UnFreeze();
+        }
+
+        if (burnTimer >= 0f)
+        {
+            burnTimer -= Time.deltaTime;
+            if (burnTimer <= 0f)
+            {
+                if (enemyState == ENEMYSTATE.DEATH)
+                {
+                    BurnOut();
+                    Destroy(gameObject);
+                    return;
+                }
+
+                BurnOut();
+            }
+        }
+
+        if (shockTimer >= 0f)
+        {
+            shockTimer -= Time.deltaTime;
+            if (shockTimer <= 0f)
+                UnShock();
+        }
+    }
+
+    private void CompleteDetectPlayer()
+    {
+        if (warningIconDetectPlayer)
+            warningIconDetectPlayer.SetActive(false);
+
+        if (!isPlaying || enemyState == ENEMYSTATE.ATTACK)
+            return;
+
+        SetEnemyState(ENEMYSTATE.WALK);
+
+        if (!pendingDetectRush)
+            return;
+
+        pendingDetectRush = false;
+        AnimSetTrigger("rushIntoPlayer");
+        rushIntoPlayerPoint = GameSession.Player.transform.position + Vector3.up * 0.5f;
+        rushIntoPlayerDirection = (rushIntoPlayerPoint - (Vector2)transform.position).normalized;
+        SetEnemyState(ENEMYSTATE.RUSHINTOPLAYER);
+        AudioService.PlaySfx(soundRushToPlayerAttack);
+
+        if ((isFacingRight() && transform.position.x > GameSession.Player.transform.position.x) ||
+            (!isFacingRight() && transform.position.x < GameSession.Player.transform.position.x))
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
+        }
+
+        destroyAfterTimer = 2f;
+    }
 	#endregion
 }

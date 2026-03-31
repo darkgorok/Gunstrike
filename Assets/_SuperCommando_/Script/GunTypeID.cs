@@ -5,6 +5,19 @@ public enum GUNTYPE { typeA, typeB}
 
 public class GunTypeID : MonoBehaviour
 {
+    private static readonly IKeyValueStore FallbackStore = new UnityPrefsKeyValueStore();
+    private IKeyValueStore Store => ProjectScope.IsInitialized ? ProjectScope.Resolve<IKeyValueStore>() : FallbackStore;
+
+    private int GetInt(string key, int defaultValue = 0)
+    {
+        return Store.GetInt(key, defaultValue);
+    }
+
+    private void SetInt(string key, int value)
+    {
+        Store.SetInt(key, value);
+    }
+
     public Projectile bulletPrefab;
     public int bulletSpeed = 10;
     public bool unlockDefault = false;
@@ -42,14 +55,14 @@ public class GunTypeID : MonoBehaviour
 
     public int bullet
     {
-        get { return PlayerPrefs.GetInt("gunID" + gunID, maxBullet); }
-        set { PlayerPrefs.SetInt("gunID" + gunID, Mathf.Min(value, maxBullet)); }
+        get { return GetInt("gunID" + gunID, maxBullet); }
+        set { SetInt("gunID" + gunID, Mathf.Min(value, maxBullet)); }
     }
 
     public bool isUnlocked
     {
-        get { return (PlayerPrefs.GetInt("isUnlocked" + gunID, 0) == 1) || unlockDefault; }
-        set { PlayerPrefs.SetInt("isUnlocked" + gunID, value ? 1 : 0); }
+        get { return (GetInt("isUnlocked" + gunID, 0) == 1) || unlockDefault; }
+        set { SetInt("isUnlocked" + gunID, value ? 1 : 0); }
     }
 
     [Space]
@@ -59,14 +72,14 @@ public class GunTypeID : MonoBehaviour
     {
         get
         {
-            int current = PlayerPrefs.GetInt(gunID + "upgrade" + "Current", 0);
+            int current = GetInt(gunID + "upgrade" + "Current", 0);
             if (current >= UpgradeSteps.Length)
                 current = -1;   //-1 mean overload
             return current;
         }
         set
         {
-            PlayerPrefs.SetInt(gunID + "upgrade" + "Current", value);
+            SetInt(gunID + "upgrade" + "Current", value);
         }
     }
 
@@ -78,8 +91,8 @@ public class GunTypeID : MonoBehaviour
 
     public int UpgradeRangeDamage
     {
-        get { return PlayerPrefs.GetInt(gunID + "UpgradeRangeDamage", UpgradeSteps[0].damage); }
-        set { PlayerPrefs.SetInt(gunID + "UpgradeRangeDamage", value); }
+        get { return GetInt(gunID + "UpgradeRangeDamage", UpgradeSteps[0].damage); }
+        set { SetInt(gunID + "UpgradeRangeDamage", value); }
     }
 }
 

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 public class MainMenu_Level : MonoBehaviour
 {
@@ -9,40 +9,59 @@ public class MainMenu_Level : MonoBehaviour
     public GameObject imgLock, imgOpen, imgPass;
     public Text TextLevel;
 
-    void Start()
+    private ILevelCatalogService levelCatalogService;
+    private IAdsService adsService;
+    private IProgressService progressService;
+    private ILevelSelectionState levelSelectionState;
+
+    [Inject]
+    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService, ILevelSelectionState levelSelectionState)
+    {
+        this.adsService = adsService;
+        this.levelCatalogService = levelCatalogService;
+        this.progressService = progressService;
+        this.levelSelectionState = levelSelectionState;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         imgLock.SetActive(false);
         imgOpen.SetActive(false);
         imgPass.SetActive(false);
 
         if (GetComponent<Animator>())
-            GetComponent<Animator>().enabled = levelNumber == GlobalValue.LevelHighest;
-        GetComponent<Button>().interactable = levelNumber <= GlobalValue.LevelHighest;
+            GetComponent<Animator>().enabled = levelNumber == progressService.LevelHighest;
 
-        if (levelNumber == GlobalValue.LevelHighest)
-            GlobalValue.currentHighestLevelObj = transform;
+        GetComponent<Button>().interactable = levelNumber <= progressService.LevelHighest;
 
-        if (levelNumber <= GlobalValue.LevelHighest)
+        if (levelNumber == progressService.LevelHighest)
+            levelSelectionState.CurrentHighestLevelTransform = transform;
+
+        if (levelNumber <= progressService.LevelHighest)
         {
             TextLevel.gameObject.SetActive(true);
             TextLevel.text = levelNumber.ToString();
 
-            imgOpen.SetActive(levelNumber == GlobalValue.LevelHighest);
-            imgPass.SetActive(levelNumber < GlobalValue.LevelHighest);
+            imgOpen.SetActive(levelNumber == progressService.LevelHighest);
+            imgPass.SetActive(levelNumber < progressService.LevelHighest);
         }
         else
         {
             TextLevel.gameObject.SetActive(false);
             imgLock.SetActive(true);
         }
-
     }
 
     public void LoadScene()
     {
-        GlobalValue.levelPlaying = levelNumber;
-        if (AdsManager.Instance)
-            AdsManager.Instance.ShowBanner(false);
-        MainMenuHomeScene.Instance.LoadScene("Level " + GlobalValue.levelPlaying);
+        progressService.LevelPlaying = levelNumber;
+        adsService.ShowBanner(false);
+
+        MainMenuHomeScene.Instance.LoadScene(levelCatalogService.GetLevelSceneName(progressService.LevelPlaying));
     }
 }

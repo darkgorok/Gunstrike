@@ -1,52 +1,60 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using VContainer;
 
 public class WorldChooseUI : MonoBehaviour
 {
     public Scrollbar scrollbar;
     public float smooth = 1000;
 
-    void Awake()
+    private IProgressService progressService;
+    private ILevelSelectionState levelSelectionState;
+
+    [Inject]
+    public void Construct(IProgressService progressService, ILevelSelectionState levelSelectionState)
     {
+        this.progressService = progressService;
+        this.levelSelectionState = levelSelectionState;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
     }
 
     private IEnumerator Start()
     {
         yield return null;
 
-        // If no target - nothing to do (original logic preserved)
-        if (GlobalValue.currentHighestLevelObj == null)
+        Transform target = levelSelectionState.CurrentHighestLevelTransform;
+        if (target == null)
             yield break;
 
-        // Guard: scrollbar must be assigned in Inspector
         if (scrollbar == null)
         {
             Debug.LogError("WorldChooseUI: Scrollbar is not assigned.", this);
             yield break;
         }
 
-        // Guard: Camera.main can be null if no MainCamera tag / camera disabled
-        var cam = Camera.main;
+        Camera cam = Camera.main;
         if (cam == null)
         {
             Debug.LogError("WorldChooseUI: MainCamera not found (Camera.main is null).", this);
             yield break;
         }
 
-        // Compute initial positions
-        var playerPosX = GlobalValue.currentHighestLevelObj.position.x;
-        var limitPosX = cam.ScreenToWorldPoint(new Vector3(Screen.width / 2f, 0, 0)).x;
+        float playerPosX = target.position.x;
+        float limitPosX = cam.ScreenToWorldPoint(new Vector3(Screen.width / 2f, 0f, 0f)).x;
 
-        // Safety: avoid infinite tight loop; also handle target disappearing mid-loop
-        while (GlobalValue.currentHighestLevelObj != null && playerPosX > limitPosX)
+        while (levelSelectionState.CurrentHighestLevelTransform != null && playerPosX > limitPosX)
         {
             scrollbar.value = Mathf.Clamp01(scrollbar.value + Time.deltaTime);
 
-            playerPosX = GlobalValue.currentHighestLevelObj.position.x;
-            limitPosX = cam.ScreenToWorldPoint(new Vector3(Screen.width / 2f, 0, 0)).x;
+            playerPosX = levelSelectionState.CurrentHighestLevelTransform.position.x;
+            limitPosX = cam.ScreenToWorldPoint(new Vector3(Screen.width / 2f, 0f, 0f)).x;
 
             yield return null;
         }
@@ -60,7 +68,7 @@ public class WorldChooseUI : MonoBehaviour
     private void OnEnable()
     {
         int numberOfLevels = FindObjectsOfType<MainMenu_Level>().Length;
-        GlobalValue.totalLevel = numberOfLevels;
+        progressService.TotalLevel = numberOfLevels;
         Debug.Log("TOTAL LEVELS = " + numberOfLevels);
     }
 }

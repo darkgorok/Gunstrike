@@ -1,39 +1,67 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class SetActiveObjInRange : MonoBehaviour, IListener{
+public class SetActiveObjInRange : MonoBehaviour, IListener
+{
     [Header("Should delay for all object can set up correctly first")]
-    //public float delayCheckObject = 3;
     public float distanceActiveContainer = 20;
     [Range(0.1f, 1f)]
     public float checkingRate = 0.3f;
-   public List<Transform> listGameObjects;
-    void Start()
+    public List<Transform> listGameObjects;
+
+    private bool isActiveChecking;
+    private float checkTimer;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
     {
-        if(listGameObjects.Count  == 0)
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        if (listGameObjects.Count == 0)
         {
             listGameObjects = new List<Transform>(transform.GetComponentsInChildren<Transform>());
-            listGameObjects.Remove(transform);      //remove this parent out of the list, because it's added in the list
+            listGameObjects.Remove(transform);
         }
     }
 
-    void CheckDistance()
+    private void Update()
     {
-        if (GameManager.Instance.State != GameManager.GameState.Playing)
+        if (!isActiveChecking || gameSession == null || gameSession.State != GameManager.GameState.Playing)
             return;
 
-        foreach (var child in listGameObjects)
+        checkTimer -= Time.deltaTime;
+        if (checkTimer > 0f)
+            return;
+
+        checkTimer = Mathf.Max(0.1f, checkingRate);
+        CheckDistance();
+    }
+
+    private void CheckDistance()
+    {
+        if (gameSession?.Player == null)
+            return;
+
+        foreach (Transform child in listGameObjects)
         {
             if (child != null)
-                child.gameObject.SetActive(Vector2.Distance(child.transform.position, GameManager.Instance.Player.transform.position) < distanceActiveContainer);
+                child.gameObject.SetActive(Vector2.Distance(child.transform.position, gameSession.Player.transform.position) < distanceActiveContainer);
         }
-        
     }
 
     private void OnDrawGizmosSelected()
     {
-        foreach (var child in listGameObjects)
+        foreach (Transform child in listGameObjects)
         {
             if (child != null)
                 Gizmos.DrawWireSphere(child.position, distanceActiveContainer);
@@ -42,41 +70,20 @@ public class SetActiveObjInRange : MonoBehaviour, IListener{
 
     public void IPlay()
     {
-        InvokeRepeating("CheckDistance", 0, 0.3f);
+        isActiveChecking = true;
+        checkTimer = 0f;
     }
 
-    public void ISuccess()
-    {
-       
-    }
-
-    public void IPause()
-    {
-        
-    }
-
-    public void IUnPause()
-    {
-       
-    }
+    public void ISuccess() { }
+    public void IPause() { }
+    public void IUnPause() { }
 
     public void IGameOver()
     {
-        CancelInvoke();
+        isActiveChecking = false;
     }
 
-    public void IOnRespawn()
-    {
-       
-    }
-
-    public void IOnStopMovingOn()
-    {
-      
-    }
-
-    public void IOnStopMovingOff()
-    {
-     
-    }
+    public void IOnRespawn() { }
+    public void IOnStopMovingOn() { }
+    public void IOnStopMovingOff() { }
 }

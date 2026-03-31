@@ -1,316 +1,434 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
+using VContainer;
 
-[RequireComponent (typeof (Controller2D))]
-public class EnemyAI : MonoBehaviour, ICanTakeDamage {
-	[Header("Behavior")]
+[RequireComponent(typeof(Controller2D))]
+public class EnemyAI : MonoBehaviour, ICanTakeDamage
+{
+    [Header("Behavior")]
     public DIEBEHAVIOR dieBehavior;
     public float gravity = 35f;
-	[Tooltip("allow push the enemy back when hit by player")]
-	public bool pushEnemyBack = true;
-	Vector2 pushForce;
-	//public GameObject spawnItemWhenDead;
+    [Tooltip("allow push the enemy back when hit by player")]
+    public bool pushEnemyBack = true;
 
-	[Header("Moving")]
-	public float moveSpeed = 3;
-	public bool ignoreCheckGroundAhead = false;
-	public GameObject DestroyEffect;
+    [Header("Moving")]
+    public float moveSpeed = 3f;
+    public bool ignoreCheckGroundAhead = false;
+    public GameObject DestroyEffect;
     public bool moveFastWhenDetectPlayer = false;
-    public float movingDetectPlayerDistance = 5;
-    public float moveFastMultiple = 2;
-    Vector2 originalPos;
+    public float movingDetectPlayerDistance = 5f;
+    public float moveFastMultiple = 2f;
 
-    public enum HealthType{HitToKill, HealthAmount, Immortal}
-	[Header("Health")]
+    public enum HealthType { HitToKill, HealthAmount, Immortal }
 
-	public HealthType healthType;
-	public int maxHitToKill = 1;
-	[HideInInspector]
-	public int currentHitLeft;
+    [Header("Health")]
+    public HealthType healthType;
+    public int maxHitToKill = 1;
+    [HideInInspector] public int currentHitLeft;
+    public float health;
+    public int pointToGivePlayer;
+    public GameObject HurtEffect;
 
-	public float health;
-	float currentHealth;
-	public int pointToGivePlayer;
-	public GameObject HurtEffect;
+    [Header("Sound")]
+    public AudioClip hurtSound;
+    [Range(0, 1)] public float hurtSoundVolume = 0.5f;
+    public AudioClip deadSound;
+    [Range(0, 1)] public float deadSoundVolume = 0.5f;
 
-	[Header("Sound")]
-	public AudioClip hurtSound;
-	[Range(0,1)]
-	public float hurtSoundVolume = 0.5f;
-	public AudioClip deadSound;
-	[Range(0,1)]
-	public float deadSoundVolume = 0.5f;
-
-	[Header("Projectile")]
-	public bool isUseProjectile;
-	public LayerMask shootableLayer;
-	public Transform PointSpawn;
-	public Projectile projectile;
+    [Header("Projectile")]
+    public bool isUseProjectile;
+    public LayerMask shootableLayer;
+    public Transform PointSpawn;
+    public Projectile projectile;
     public AudioClip fireSound;
-	public float fireRate = 1f;
-	public float detectDistance = 10f;
-	float _fireIn;
+    public float fireRate = 1f;
+    public float detectDistance = 10f;
 
-	public bool isPlaying{ get; set; }
-	public bool isSocking{ get; set; }
-	public bool isDead{ get; set; }
+    public bool isPlaying { get; set; }
+    public bool isSocking { get; set; }
+    public bool isDead { get; set; }
 
-	private Vector3 velocity;
-	private Vector2 _direction;
-	private Vector2 _startPosition;	//set this enemy back to the first position when Player spawn to check point
-	private Vector2 _startScale;	//set this enemy back to the first position when Player spawn to check point
-	[HideInInspector]
-	public Controller2D controller;
-    protected float velocityXSmoothing = 0;
+    [HideInInspector] public Controller2D controller;
+    protected float velocityXSmoothing = 0f;
+    protected Vector3 velocity;
+    protected IAudioService AudioService => audioService;
+    protected IGameSessionService GameSession => gameSession;
 
-    // Use this for initialization
-    public virtual void Start () {
-		controller = GetComponent<Controller2D> ();
-		_direction = Vector2.left;
-		_startPosition = transform.position;
-		_startScale = transform.localScale;
-		_fireIn = fireRate;
-		currentHealth = health;
-		currentHitLeft = maxHitToKill;
+    private readonly EnemyStateMachine stateMachine = new EnemyStateMachine();
+    private ActiveState activeState;
+    private KnockbackState knockbackState;
+    private DeathState deathState;
+
+    private Vector2 pushForce;
+    private Vector2 direction;
+    private float currentHealth;
+    private float fireCooldown;
+    private float knockbackDuration;
+    private float destroyDelayRemaining = -1f;
+    private Vector2 originalPos;
+    private bool deathHandled;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        activeState = new ActiveState(this);
+        knockbackState = new KnockbackState(this);
+        deathState = new DeathState(this);
+    }
+
+    public virtual void Start()
+    {
+        controller = GetComponent<Controller2D>();
+        direction = Vector2.left;
+        fireCooldown = fireRate;
+        currentHealth = health;
+        currentHitLeft = maxHitToKill;
         originalPos = transform.position;
 
         isPlaying = true;
-		isSocking = false;
-	}
-	
-	// Update is called once per frame
-	public virtual void Update () {
-		if (GameManager.Instance.State == GameManager.GameState.Finish)
-			enabled = false;
-		
-		if (!isPlaying || isSocking)
-			return;
+        isSocking = false;
+        isDead = false;
+        deathHandled = false;
+        stateMachine.ChangeState(activeState);
+    }
 
-		_fireIn -= Time.deltaTime;
-
-        if ((_direction.x > 0 && controller.collisions.right) || (_direction.x < 0 && controller.collisions.left)
-            || (!ignoreCheckGroundAhead && !controller.isGrounedAhead(_direction.x > 0) && controller.collisions.below))
+    public virtual void Update()
+    {
+        if (gameSession.State == GameManager.GameState.Finish)
         {
+            enabled = false;
+            return;
+        }
 
-            _direction = -_direction;
-            velocity.x = 0;
+        stateMachine.Tick(Time.deltaTime);
+        if (!ReferenceEquals(stateMachine.CurrentState, activeState))
+            return;
+
+        fireCooldown -= Time.deltaTime;
+
+        if ((direction.x > 0f && controller.collisions.right) ||
+            (direction.x < 0f && controller.collisions.left) ||
+            (!ignoreCheckGroundAhead && !controller.isGrounedAhead(direction.x > 0f) && controller.collisions.below))
+        {
+            direction = -direction;
+            velocity.x = 0f;
             transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         }
 
-
-
-		if (isUseProjectile) {
-			var position = PointSpawn != null ? PointSpawn.position : transform.position;
-			var hit = Physics2D.Raycast (position, _direction, detectDistance, shootableLayer);
-			if (hit) {
-				if (hit.collider.gameObject.GetComponent<Player> () != null)
-					FireProjectile ();
-			}
-		}
-	}
-
-	public virtual void LateUpdate(){
-        if (GameManager.Instance.State != GameManager.GameState.Playing)
+        if (!isUseProjectile)
             return;
-         
-        if (!isPlaying)
+
+        var position = PointSpawn != null ? PointSpawn.position : transform.position;
+        var hit = Physics2D.Raycast(position, direction, detectDistance, shootableLayer);
+        if (hit && hit.collider.gameObject.GetComponent<Player>() != null)
+            FireProjectile();
+    }
+
+    public virtual void LateUpdate()
+    {
+        if (gameSession.State != GameManager.GameState.Playing)
+            return;
+
+        if (ReferenceEquals(stateMachine.CurrentState, deathState))
         {
             if (isDead && dieBehavior == DIEBEHAVIOR.FALLOUT)
             {
-                velocity.y += -35 * Time.deltaTime;
+                velocity.y += -35f * Time.deltaTime;
                 controller.Move(velocity * Time.deltaTime, false);
             }
+
             return;
         }
 
-        float targetVelocityX = _direction.x * moveSpeed;
-        if (!isPlaying || isSocking)
+        if (!ReferenceEquals(stateMachine.CurrentState, activeState))
+            return;
+
+        float targetVelocityX = direction.x * moveSpeed;
+        if (moveFastWhenDetectPlayer)
         {
-            targetVelocityX = 0;
-        }else if (moveFastWhenDetectPlayer)
-        {
-            //Gizmos.DrawWireCube(transform.position + Vector3.up * detectPlayerSize.y * 0.5f, detectPlayerSize);
-            if (Physics2D.Linecast(transform.position + Vector3.left * movingDetectPlayerDistance + Vector3.up * 0.5f, transform.position + Vector3.right * movingDetectPlayerDistance + Vector3.up * 0.5f, GameManager.Instance.playerLayer))
+            if (Physics2D.Linecast(
+                    transform.position + Vector3.left * movingDetectPlayerDistance + Vector3.up * 0.5f,
+                    transform.position + Vector3.right * movingDetectPlayerDistance + Vector3.up * 0.5f,
+                    gameSession.PlayerLayer))
             {
                 targetVelocityX *= moveFastMultiple;
             }
         }
 
-        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.1f : 0.2f);
-        
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, controller.collisions.below ? 0.1f : 0.2f);
         velocity.y += -gravity * Time.deltaTime;
-		controller.Move (velocity * Time.deltaTime, false);
+        controller.Move(velocity * Time.deltaTime, false);
 
-		if (controller.collisions.above || controller.collisions.below)
-			velocity.y = 0;
-	}
+        if (controller.collisions.above || controller.collisions.below)
+            velocity.y = 0f;
+    }
 
-	public void SetForce(float x, float y){
-		velocity = new Vector3 (x, y, 0);
-	}
+    public void SetForce(float x, float y)
+    {
+        velocity = new Vector3(x, y, 0f);
+    }
 
-	private void FireProjectile(){
-		if (_fireIn > 0)
-			return;
-
-		_fireIn = fireRate;
-		var _projectile = (Projectile) Instantiate (projectile, PointSpawn.position, Quaternion.identity);
-		_projectile.Initialize (gameObject, _direction, Vector2.zero,false);
-        SoundManager.PlaySfx(fireSound);
-	}
-
-
-	/// <summary>
-	/// Takes the damage.
-	/// </summary>
-	/// <param name="damage">Damage.</param>
-	/// <param name="instigator">Instigator.</param>
-	public void TakeDamage (int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
-	{
-        if (healthType == HealthType.Immortal)
+    public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
+    {
+        if (healthType == HealthType.Immortal || isDead)
             return;
 
-        //Debug.LogError(damage);
-		if (isDead)
-			return;
-
-		if (instigator.GetComponent<Grenade> ()) {
-            //if (HurtEffect != null)
-            //	Instantiate (HurtEffect, instigator.transform.position, Quaternion.identity);
+        if (instigator.GetComponent<Grenade>())
+        {
             if (HurtEffect)
                 SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = instigator.transform.position;
 
             isDead = true;
-			HitEvent ();
-			return;
-		}
-		
-		pushForce = force;
+            HitEvent();
+            return;
+        }
 
-        //if (HurtEffect != null)
-        //	Instantiate (HurtEffect, instigator.transform.position, Quaternion.identity);
+        pushForce = force;
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = instigator.transform.position;
 
-        if (healthType == HealthType.HitToKill) {
-			currentHitLeft--;
-			if (currentHitLeft <= 0) {
-				isDead = true;
-			}
-		} else if (healthType == HealthType.HealthAmount) {
-			currentHealth -= damage;
-			if (currentHealth <= 0) {
-				isDead = true;
-			}
-		}
+        if (healthType == HealthType.HitToKill)
+        {
+            currentHitLeft--;
+            if (currentHitLeft <= 0)
+                isDead = true;
+        }
+        else if (healthType == HealthType.HealthAmount)
+        {
+            currentHealth -= damage;
+            if (currentHealth <= 0)
+                isDead = true;
+        }
 
-		if (instigator.GetComponent<Block> () != null)
-			isDead = true;
+        if (instigator.GetComponent<Block>() != null)
+            isDead = true;
 
-		HitEvent ();
+        HitEvent();
+    }
 
-	}
-
-	protected virtual void HitEvent(){
-		
-		SoundManager.PlaySfx (hurtSound, hurtSoundVolume);
-        //if (HurtEffect != null)
-        //	Instantiate (HurtEffect, transform.position, transform.rotation);
+    protected virtual void HitEvent()
+    {
+        audioService.PlaySfx(hurtSound, hurtSoundVolume);
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = transform.position;
 
-        StopAllCoroutines ();
-		StartCoroutine(PushBack (0.35f));
-	}
+        BeginPushBack(0.35f);
+    }
 
+    protected virtual void Dead()
+    {
+        if (deathHandled)
+            return;
 
-	protected virtual void Dead(){
-		
-		isPlaying = false;
+        stateMachine.ChangeState(deathState);
+    }
 
-		StopAllCoroutines ();
-		SoundManager.PlaySfx (deadSound, deadSoundVolume);
-		//if (pointToGivePlayer != 0) {
-		//	GameManager.Instance.AddPoint (pointToGivePlayer);
-		//	GameManager.Instance.ShowFloatingText ("+" + pointToGivePlayer, transform.position, Color.yellow);
-		//}
+    protected virtual void OnRespawn()
+    {
+    }
 
-		
-        //try spawn random item
+    protected void BeginPushBack(float duration)
+    {
+        knockbackDuration = duration;
+        stateMachine.ChangeState(knockbackState);
+    }
+
+    protected bool IsActiveState()
+    {
+        return ReferenceEquals(stateMachine.CurrentState, activeState);
+    }
+
+    protected virtual void OnEnterActiveState()
+    {
+        isPlaying = true;
+        isSocking = false;
+    }
+
+    protected virtual void OnEnterKnockbackState(float duration)
+    {
+        isPlaying = false;
+        isSocking = true;
+        SetForce(gameSession.Player.transform.localScale.x * pushForce.x, pushForce.y);
+    }
+
+    protected virtual void OnExitKnockbackState()
+    {
+        SetForce(0f, 0f);
+        isSocking = false;
+        isPlaying = true;
+    }
+
+    protected virtual void OnDeathStateTick(float deltaTime)
+    {
+        if (destroyDelayRemaining < 0f)
+            return;
+
+        destroyDelayRemaining -= deltaTime;
+        if (destroyDelayRemaining <= 0f)
+            DestroyObject();
+    }
+
+    private void FireProjectile()
+    {
+        if (fireCooldown > 0f)
+            return;
+
+        fireCooldown = fireRate;
+        var spawnedProjectile = Instantiate(projectile, PointSpawn.position, Quaternion.identity);
+        spawnedProjectile.Initialize(gameObject, direction, Vector2.zero, false);
+        audioService.PlaySfx(fireSound);
+    }
+
+    private void EnterDeathState()
+    {
+        if (deathHandled)
+            return;
+
+        deathHandled = true;
+        isPlaying = false;
+        audioService.PlaySfx(deadSound, deadSoundVolume);
+
         var spawnItem = GetComponent<EnemySpawnItem>();
         if (spawnItem != null)
-        {
             spawnItem.SpawnItem();
-        }
 
-        //turn off all colliders if the enemy have
-        var boxCo = GetComponents<BoxCollider2D> ();
-		foreach (var box in boxCo) {
-			box.enabled = false;
-		}
-		var CirCo = GetComponents<CircleCollider2D> ();
-		foreach (var cir in CirCo) {
-			cir.enabled = false;
-		}
+        foreach (var box in GetComponents<BoxCollider2D>())
+            box.enabled = false;
+
+        foreach (var circle in GetComponents<CircleCollider2D>())
+            circle.enabled = false;
 
         if (dieBehavior == DIEBEHAVIOR.BLOWUP)
         {
             if (DestroyEffect != null)
                 SpawnSystemHelper.GetNextObject(DestroyEffect, true).transform.position = transform.position;
-            DestroyObject();
+
+            destroyDelayRemaining = 0f;
+            return;
         }
-        else if (dieBehavior == DIEBEHAVIOR.FALLOUT)
+
+        if (dieBehavior == DIEBEHAVIOR.FALLOUT)
         {
             controller.HandlePhysic = false;
-            velocity = new Vector2(0, 8);
-            Invoke("DestroyObject", 1);
+            velocity = new Vector2(0f, 8f);
+            destroyDelayRemaining = 1f;
+            return;
         }
-        else
-        {
-            Invoke("DestroyObject", 1);
-        }
+
+        destroyDelayRemaining = 1f;
     }
 
-    void DestroyObject()
+    private void DestroyObject()
     {
-        
         Destroy(gameObject);
     }
-
-    protected virtual void OnRespawn(){
-
-	}
-
-	
-
-	public IEnumerator PushBack(float delay){
-		
-		isPlaying = false;
-		SetForce (GameManager.Instance.Player.transform.localScale.x * pushForce.x, pushForce.y);
-
-		yield return new WaitForSeconds (delay);
-		SetForce (0, 0);
-
-		if (isDead)
-			Dead ();
-		else
-			isPlaying = true;
-	}
 
     public void OnDrawGizmosSelected()
     {
         if (isUseProjectile)
         {
             Gizmos.color = Color.blue;
-            if (_direction.magnitude != 0)
-                Gizmos.DrawRay(PointSpawn.position, _direction * detectDistance);
+            if (direction.magnitude != 0f)
+                Gizmos.DrawRay(PointSpawn.position, direction * detectDistance);
             else
                 Gizmos.DrawRay(PointSpawn.position, Vector2.left * detectDistance);
         }
+
         if (moveFastWhenDetectPlayer)
         {
-            Gizmos.DrawLine(transform.position + Vector3.left * movingDetectPlayerDistance + Vector3.up * 0.5f, transform.position + Vector3.right * movingDetectPlayerDistance + Vector3.up * 0.5f);
+            Gizmos.DrawLine(
+                transform.position + Vector3.left * movingDetectPlayerDistance + Vector3.up * 0.5f,
+                transform.position + Vector3.right * movingDetectPlayerDistance + Vector3.up * 0.5f);
+        }
+    }
+
+    private sealed class ActiveState : IEnemyState
+    {
+        private readonly EnemyAI owner;
+
+        public ActiveState(EnemyAI owner)
+        {
+            this.owner = owner;
         }
 
+        public void Enter()
+        {
+            owner.OnEnterActiveState();
+        }
+
+        public void Tick(float deltaTime)
+        {
+        }
+
+        public void Exit()
+        {
+        }
+    }
+
+    private sealed class KnockbackState : IEnemyState
+    {
+        private readonly EnemyAI owner;
+        private float remaining;
+
+        public KnockbackState(EnemyAI owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            remaining = owner.knockbackDuration;
+            owner.OnEnterKnockbackState(remaining);
+        }
+
+        public void Tick(float deltaTime)
+        {
+            remaining -= deltaTime;
+            if (remaining > 0f)
+                return;
+
+            owner.OnExitKnockbackState();
+            if (owner.isDead)
+                owner.Dead();
+            else
+                owner.stateMachine.ChangeState(owner.activeState);
+        }
+
+        public void Exit()
+        {
+        }
+    }
+
+    private sealed class DeathState : IEnemyState
+    {
+        private readonly EnemyAI owner;
+
+        public DeathState(EnemyAI owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            owner.EnterDeathState();
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.OnDeathStateTick(deltaTime);
+        }
+
+        public void Exit()
+        {
+        }
     }
 }

@@ -21,6 +21,9 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 	[Header("New")]
 
 	bool allowCheckAttack = true;
+    float allowCheckAttackTimer = -1f;
+    float disableTimer = -1f;
+    float pushBackEndTime = -1f;
     
     // Use this for initialization
     public override void Start()
@@ -55,9 +58,10 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
     public override void Update ()
 	{
 		base.Update ();
+        TickTimers();
 		HandleAnimation ();
         
-		if (!isPlaying || isSocking || !GameManager.Instance.Player.isPlaying || enemyEffect== ENEMYEFFECT.SHOKING) {
+		if (!isPlaying || isSocking || !GameSession.Player.isPlaying || enemyEffect== ENEMYEFFECT.SHOKING) {
 			velocity.x = 0;
 			return;
 		}
@@ -115,8 +119,6 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
                     anim.SetInteger("lookAngle", aim_angle);
                 }
             }
-			//if (Vector2.Distance (transform.position, GameManager.Instance.Player.transform.position) > dismissPlayerDistance)
-			//	DismissDetectPlayer ();
 		}
 		
 		if ((isPlayerDetected && (enemyState == ENEMYSTATE.WALK)) || allowLookAtPlayer || isParachute) {
@@ -146,7 +148,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 
     void CheckTargetAndFlip()
     {
-        if (Mathf.Abs(transform.position.x - GameManager.Instance.Player.transform.position.x) > 0.1f && ((isFacingRight() && transform.position.x > GameManager.Instance.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameManager.Instance.Player.transform.position.x)))
+        if (Mathf.Abs(transform.position.x - GameSession.Player.transform.position.x) > 0.1f && ((isFacingRight() && transform.position.x > GameSession.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameSession.Player.transform.position.x)))
         {
             //if (enemyState == ENEMYSTATE.WALK)
             Flip();
@@ -167,7 +169,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
         }
     }
     public virtual void LateUpdate() {
-        if (GameManager.Instance.State != GameManager.GameState.Playing)
+        if (GameSession.State != GameManager.GameState.Playing)
             return;
 
         if (!isPlaying || isSocking || enemyEffect == ENEMYEFFECT.SHOKING) {
@@ -183,7 +185,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
             return;
         }
 
-        if (!GameManager.Instance.Player.isPlaying)
+        if (!GameSession.Player.isPlaying)
             return;
 
         float targetVelocityX = _direction.x * moveSpeed;
@@ -201,7 +203,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
         {
             if (enemyState == ENEMYSTATE.WALK)
             {
-                Vector2 targetPoint = (Vector2)GameManager.Instance.Player.transform.position + Vector2.right * (Mathf.Abs(chasingOffset.x)) * (isFacingRight() ? -1f : 1f) + Vector2.up * chasingOffset.y;
+                Vector2 targetPoint = (Vector2)GameSession.Player.transform.position + Vector2.right * (Mathf.Abs(chasingOffset.x)) * (isFacingRight() ? -1f : 1f) + Vector2.up * chasingOffset.y;
                 
                 velocity = (targetPoint - (Vector2)transform.position).normalized * moveSpeed;
                 allowCheckAttack = Mathf.Abs(transform.position.x - targetPoint.x) < 0.3f;
@@ -275,7 +277,6 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 
     public override void DetectPlayer(float delayChase = 0)
     {
-        //GameManager.Instance.AddChasingEnemy(gameObject);
         isWaiting = false;
         base.DetectPlayer(delayChase);
         switch (detectPlayerAct)
@@ -299,7 +300,6 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
     }
 	public override void DismissDetectPlayer ()
 	{
-		//GameManager.Instance.RemoveChasingEnemy (gameObject);
 		base.DismissDetectPlayer ();
 		switch (dismissDetectPlayerAct) {
 		case DISMISSDETECTPLAYER.WalkAndPatrol:
@@ -426,7 +426,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 
 	public void AnimCallMinion(){
 		callMinion.CallMinion (isFacingRight ());
-		Invoke ("AllowCheckAttack", 2);
+		allowCheckAttackTimer = 2f;
 	}
 
 	public override void Die ()
@@ -436,8 +436,6 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 
 		base.Die ();
 
-
-		CancelInvoke ();
 
 		var cols= GetComponents<BoxCollider2D>();
 		foreach (var col in cols)
@@ -454,9 +452,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
         if (enemyEffect == ENEMYEFFECT.BURNING)
 			return;
 
-		StopAllCoroutines ();
-
-		StartCoroutine (DisableEnemy (2));
+        disableTimer = 2f;
 
 		//disable all collider
 	}
@@ -481,7 +477,7 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
         }
 
         if (!isParachute)
-            StartCoroutine(PushBack(sockingTime));
+            BeginPushBack(sockingTime);
     }
 
 	public override void KnockBack (Vector2 force)
@@ -489,31 +485,46 @@ public class SmartEnemyGrounded : Enemy, ICanTakeDamage {
 		//		Debug.LogError ("KNOCKBACK");
 		base.KnockBack (force);
 
-		StartCoroutine (PushBack (timeShocking));
+		BeginPushBack(timeShocking);
 	}
 
-	public IEnumerator PushBack(float delay){
-		isSocking = true;
-		SetForce (GameManager.Instance.Player.transform.localScale.x * pushForce.x, pushForce.y);
+    void BeginPushBack(float delay)
+    {
+        isSocking = true;
+        SetForce(0, 0);
+        pushBackEndTime = Time.time + delay;
+    }
 
-		if (isDead) {
-			Die ();
-			yield break;
-		}
+    void TickTimers()
+    {
+        if (allowCheckAttackTimer >= 0f)
+        {
+            allowCheckAttackTimer -= Time.deltaTime;
+            if (allowCheckAttackTimer <= 0f)
+            {
+                allowCheckAttackTimer = -1f;
+                allowCheckAttack = true;
+            }
+        }
 
-		yield return new WaitForSeconds (delay);
+        if (disableTimer >= 0f)
+        {
+            disableTimer -= Time.deltaTime;
+            if (disableTimer <= 0f)
+            {
+                disableTimer = -1f;
+                Destroy(gameObject);
+            }
+        }
 
-		SetForce (0, 0);
-		isSocking = false;
-		isPlaying = true;
-	}
+        if (pushBackEndTime < 0f || Time.time < pushBackEndTime)
+            return;
 
-//	_2dxFX_BurnFX[] deadFX; 
-	IEnumerator DisableEnemy(float delay){
-		yield return new WaitForSeconds (delay);
-        //gameObject.SetActive (false);
-        Destroy(gameObject);
-	}
+        pushBackEndTime = -1f;
+        SetForce(0, 0);
+        isSocking = false;
+        isPlaying = true;
+    }
 
     void OnDrawGizmosSelected()
     {

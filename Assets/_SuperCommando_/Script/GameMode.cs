@@ -58,6 +58,5 @@ public class GameMode : MonoBehaviour {
 #else
         openPage(facebookLink);
 #endif
-        //SoundManager.PlaySfx(soundManager.soundClick);
     }
 }

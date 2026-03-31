@@ -1,282 +1,220 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public enum Attacks {None, Disappear, ThrowStone, SpeedAttack, SuperAttack, FallingObjAttack, FlyingAttack, FlyingThrow, FlyingSpreadBullet, TornadoAttack, Boomerang }
+public enum Attacks { None, Disappear, ThrowStone, SpeedAttack, SuperAttack, FallingObjAttack, FlyingAttack, FlyingThrow, FlyingSpreadBullet, TornadoAttack, Boomerang }
 
 [System.Serializable]
 public class AttackOrder
 {
-    public float delayMin = 1;
-    public float delayMax = 2;
+    public float delayMin = 1f;
+    public float delayMax = 2f;
     public Attacks[] attackRandomList;
 }
 
-public class Boss1AttackOrder : MonoBehaviour {
-	public BOSS_1 BossTarget;
-    
-	public AttackOrder[] attackOrders;
-    
-    IEnumerator AttackCoWork;
+public class Boss1AttackOrder : MonoBehaviour
+{
+    private enum AttackLoopState
+    {
+        Idle,
+        Delay,
+        WaitForWindow,
+        WaitForAttackCompletion
+    }
+
+    public BOSS_1 BossTarget;
+    public AttackOrder[] attackOrders;
+
+    private int current;
+    private AttackLoopState state = AttackLoopState.Idle;
+    private float delayTimer = -1f;
+    private Attacks activeAttack = Attacks.None;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     private void OnDrawGizmos()
     {
-        if (BossTarget == null && GetComponent<BOSS_1>() != null)
-            BossTarget = GetComponent<BOSS_1>();
+        if (BossTarget == null && TryGetComponent(out BOSS_1 boss))
+            BossTarget = boss;
     }
 
     private void OnEnable()
     {
-        if (BossTarget == null && GetComponent<BOSS_1>() != null)
-            BossTarget = GetComponent<BOSS_1>();
+        if (BossTarget == null && TryGetComponent(out BOSS_1 boss))
+            BossTarget = boss;
     }
 
-    // Use this for initialization
-    public void Play () {
-        if (AttackCoWork != null)
-            StopCoroutine(AttackCoWork);
-        AttackCoWork = AttackCo();
-        StartCoroutine(AttackCoWork);
-
-        //firstEnable = false;
-    }
-
-	int current = 0;
-    IEnumerator AttackCo()
+    private void Update()
     {
-        while (true)
+        if (BossTarget == null || attackOrders == null || attackOrders.Length == 0)
+            return;
+
+        if (state == AttackLoopState.Idle)
+            return;
+
+        if (BossTarget.isDead)
         {
-            yield return new WaitForSeconds(Random.Range(attackOrders[current].delayMin, attackOrders[current].delayMax));
-           
-            while (!BossTarget.isPlayerInRange || BossTarget.isMeleeAttacking)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-           
-            while (BossTarget.isDead || GameManager.Instance.State != GameManager.GameState.Playing)
-            {
-                yield return new WaitForEndOfFrame();
-            }
+            state = AttackLoopState.Idle;
+            activeAttack = Attacks.None;
+            return;
+        }
 
-            Attacks attackType = attackOrders[current].attackRandomList[Random.Range(0, attackOrders[current].attackRandomList.Length)];
-            switch (attackType)
-            {
-                case Attacks.Disappear:
-                    BossTarget.DisappearShowAction();
-                    yield return null;
-                    while (BossTarget.disapearing)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.ThrowStone:
-                    BossTarget.ThrowStoneCoAction();
-                    yield return new WaitForSeconds(1f);
-                    break;
-                case Attacks.SpeedAttack:
-                    BossTarget.SpeedAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isAttackSpeed)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.SuperAttack:
-                    BossTarget.SuperAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isSuperAttacking)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-
-                case Attacks.FallingObjAttack:
-                    BossTarget.FallingObjectAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isFallingObjectAttack)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.FlyingAttack:
-                    BossTarget.FlyingAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isFlyingAttack)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.FlyingThrow:
-                    BossTarget.FlyingAttackCoAction(true);
-                    yield return null;
-                    while (BossTarget.isFlyingAttack)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.FlyingSpreadBullet:
-                    BossTarget.FlyingAttackCoAction(false, true);
-                    yield return null;
-                    while (BossTarget.isFlyingAttack)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.TornadoAttack:
-                    BossTarget.TORNADOAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isTornadoAttacking)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                case Attacks.Boomerang:
-                    BossTarget.BoomerangAttackCoAction();
-                    yield return null;
-                    while (BossTarget.isBoomerangeAttacking)
-                    {
-                        yield return new WaitForEndOfFrame();
-                    }
-                    break;
-                default:
-                    ;
-                    break;
-            }
-
-            current++;
-            if (current >= attackOrders.Length)
-                current = 0;
+        switch (state)
+        {
+            case AttackLoopState.Delay:
+                TickDelay();
+                break;
+            case AttackLoopState.WaitForWindow:
+                TickWaitForWindow();
+                break;
+            case AttackLoopState.WaitForAttackCompletion:
+                TickWaitForAttackCompletion();
+                break;
         }
     }
-	//public void IPlay ()
-	//{
-		
-	//}
 
-	//public void ISuccess ()
-	//{
-	//}
+    public void Play()
+    {
+        if (attackOrders == null || attackOrders.Length == 0)
+        {
+            state = AttackLoopState.Idle;
+            return;
+        }
 
-	//public void IPause ()
-	//{
-	//}
+        current = Mathf.Clamp(current, 0, attackOrders.Length - 1);
+        activeAttack = Attacks.None;
+        ScheduleCurrentDelay();
+    }
 
-	//public void IUnPause ()
-	//{
-	//}
+    private void TickDelay()
+    {
+        if (gameSession.State != GameManager.GameState.Playing)
+            return;
 
- //   public void IGameOver()
- //   {
- //       if (this)
- //       {
- //           StopAllCoroutines();
+        delayTimer -= Time.deltaTime;
+        if (delayTimer <= 0f)
+            state = AttackLoopState.WaitForWindow;
+    }
 
- //           if (isUsingMirrorAction)
- //           {
- //               BossTarget.ghostSprite.allowGhost = false;
- //               mirrorObj.FinishUse();
- //               BossTarget.isMirrorAttacking = false;
- //               BossTarget.rangeAttack.allowDartGoBack = _tempAllowDartGoBack;      //return original option
+    private void TickWaitForWindow()
+    {
+        if (gameSession.State != GameManager.GameState.Playing)
+            return;
 
- //           }
+        if (!BossTarget.isPlayerInRange || BossTarget.isMeleeAttacking)
+            return;
 
- //           if (BossTarget.isJumpCombox3)
- //           {
- //               BossTarget.meleeAttack.ComboEnd();
- //           }
+        ExecuteCurrentAttack();
+    }
 
- //           if (BossTarget.isSmartJumpOverPlayerHead)
- //           {
- //               BossTarget.isSmartJumpOverPlayerHead = false;
+    private void TickWaitForAttackCompletion()
+    {
+        if (IsAttackRunning(activeAttack))
+            return;
 
- //               BossTarget.mulSpeed = 1;
- //           }
- //           //if (BossTarget.meleeAttack.isFastAttacking)
- //           //{
- //           //    BossTarget.meleeAttack.isFastAttacking = false;
- //               GetComponent<CameraPlayZone>().Trigger(false);
- //           //}
- //       }
- //   }
+        AdvanceAttackOrder();
+    }
 
-	//public void IOnRespawn ()
-	//{
-	//	if (this && gameObject.activeInHierarchy) {
-	//		current++;
-	//		if (current >= attackOrder.Length)
-	//			current = 0;
+    private void ExecuteCurrentAttack()
+    {
+        AttackOrder order = attackOrders[current];
+        if (order.attackRandomList == null || order.attackRandomList.Length == 0)
+        {
+            AdvanceAttackOrder();
+            return;
+        }
 
- //           if (AttackCoWork != null)
- //               StopCoroutine(AttackCoWork);
- //           AttackCoWork = AttackCo();
- //           StartCoroutine(AttackCoWork);
+        activeAttack = order.attackRandomList[Random.Range(0, order.attackRandomList.Length)];
+        switch (activeAttack)
+        {
+            case Attacks.Disappear:
+                BossTarget.DisappearShowAction();
+                break;
+            case Attacks.ThrowStone:
+                BossTarget.ThrowStoneCoAction();
+                break;
+            case Attacks.SpeedAttack:
+                BossTarget.SpeedAttackCoAction();
+                break;
+            case Attacks.SuperAttack:
+                BossTarget.SuperAttackCoAction();
+                break;
+            case Attacks.FallingObjAttack:
+                BossTarget.FallingObjectAttackCoAction();
+                break;
+            case Attacks.FlyingAttack:
+                BossTarget.FlyingAttackCoAction();
+                break;
+            case Attacks.FlyingThrow:
+                BossTarget.FlyingAttackCoAction(true);
+                break;
+            case Attacks.FlyingSpreadBullet:
+                BossTarget.FlyingAttackCoAction(false, true);
+                break;
+            case Attacks.TornadoAttack:
+                BossTarget.TORNADOAttackCoAction();
+                break;
+            case Attacks.Boomerang:
+                BossTarget.BoomerangAttackCoAction();
+                break;
+            default:
+                AdvanceAttackOrder();
+                return;
+        }
 
- //           waitLoop = false;
-	//		BossTarget.isStop = false;
+        state = AttackLoopState.WaitForAttackCompletion;
+    }
 
- //           //if (isUsingMirrorAction)
- //           //{
- //           //    BossTarget.ghostSprite.allowGhost = false;
- //           //    mirrorObj.FinishUse();
- //           //    BossTarget.isMirrorAttacking = false;
- //           //    BossTarget.rangeAttack.allowDartGoBack = _tempAllowDartGoBack;      //return original option
- //           //}
+    private bool IsAttackRunning(Attacks attack)
+    {
+        switch (attack)
+        {
+            case Attacks.Disappear:
+                return BossTarget.disapearing;
+            case Attacks.ThrowStone:
+                return BossTarget.IsIdleDelayActive;
+            case Attacks.SpeedAttack:
+                return BossTarget.isAttackSpeed;
+            case Attacks.SuperAttack:
+                return BossTarget.isSuperAttacking;
+            case Attacks.FallingObjAttack:
+                return BossTarget.isFallingObjectAttack;
+            case Attacks.FlyingAttack:
+            case Attacks.FlyingThrow:
+            case Attacks.FlyingSpreadBullet:
+                return BossTarget.isFlyingAttack;
+            case Attacks.TornadoAttack:
+                return BossTarget.isTornadoAttacking;
+            case Attacks.Boomerang:
+                return BossTarget.isBoomerangeAttacking;
+            default:
+                return false;
+        }
+    }
 
- //           if (isUsingSPT)
- //           {
- //               SPTAudioSource.volume = 0;
- //               GameManager.Instance.Player.Forzen(false);
- //               MenuManager.Instance.ShowController();
- //               if (SPTchangeColor)
- //                   SPTchangeColor.TurnOff();
- //               isUsingSPT = false;
- //           }
- //       }
-	//}
-		
-	//public void IOnStopMovingOn ()
-	//{
-	//	if(this)
-	//	timeIsStop = true;
-	//}
+    private void AdvanceAttackOrder()
+    {
+        activeAttack = Attacks.None;
+        current++;
+        if (current >= attackOrders.Length)
+            current = 0;
 
-	//public void IOnStopMovingOff ()
-	//{
-	//	if(this)
-	//	timeIsStop = false;
-	//}
+        ScheduleCurrentDelay();
+    }
 
- //   #endregion
-
-    //private void OnDisable()
-    //{
-    //    StopAllCoroutines();
-
-    //    if (isUsingMirrorAction)
-    //    {
-    //        BossTarget.ghostSprite.allowGhost = false;
-    //        mirrorObj.FinishUse();
-    //        BossTarget.isMirrorAttacking = false;
-    //        BossTarget.rangeAttack.allowDartGoBack = _tempAllowDartGoBack;      //return original option
-
-    //    }
-
-    //    if (BossTarget.isJumpCombox3)
-    //    {
-    //        BossTarget.meleeAttack.ComboEnd();
-    //    }
-    //}
-
-    //bool resetAttackOrderOfMoveBossTrigger = false;
-    ////called by MoveBossTrigger script
-    //public void ResetAttackOrder()
-    //{
-    //    IGameOver();
-
-    //    resetAttackOrderOfMoveBossTrigger = true;
-
-    //    IOnRespawn();
-    //    //current = 0;
-    //    //IOnRespawn();
-    //}
+    private void ScheduleCurrentDelay()
+    {
+        AttackOrder order = attackOrders[current];
+        delayTimer = Random.Range(order.delayMin, order.delayMax);
+        state = AttackLoopState.Delay;
+    }
 }

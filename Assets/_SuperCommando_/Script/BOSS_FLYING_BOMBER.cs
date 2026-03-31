@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
 {
@@ -10,7 +9,6 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
     [ReadOnly] public int currentHealth;
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     protected HealthBarEnemyNew healthBar;
-    public float gravity = 35f;
 
     [Header("EARTH QUAKE")]
     public float _eqTime = 0.3f;
@@ -25,72 +23,59 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
     [HideInInspector]
     public bool isDead = false;
 
-    Animator anim;
+    private Animator anim;
     [ReadOnly] public bool moving = false;
     [ReadOnly] public bool isPlaying = false;
 
-    public bool isFacingRight()
-    {
-        return transform.rotation.y == 0 ? true : false;
-    }
-
-    // ACTION
     [Header("*** FLYING BOMBER ***")]
     public float localLeftPosX = -5f;
     public float localRightPosX = 5f;
-
     public GameObject bombObj;
     public int totalBombInARow = 8;
     public Transform throwPoint;
 
+    [Header("EFFECT WHEN DIE")]
+    public GameObject dieExplosionFX;
+    public Vector2 dieExplosionSize = new Vector2(2, 3);
+    public AudioClip dieExplosionSound;
 
-    Vector2 leftPos, rightPos;
+    private Vector2 leftPos;
+    private Vector2 rightPos;
     [ReadOnly] public float distance2bombs;
-    float lastThrowPosX;
-    bool isThrowing = false;
-    int bombCounter = 0;
-    int misspoint = 0;  //set the point that the boss no throw the bomb
-
     [ReadOnly] public Vector2 _direction;
 
-    void Flip()
+    private float lastThrowPosX;
+    private bool isBombRunActive;
+    private int bombCounter;
+    private int misspoint;
+
+    private readonly EnemyStateMachine stateMachine = new EnemyStateMachine();
+    private PatrolState patrolState;
+    private DeathState deathState;
+    private BossDeathSequence deathSequence;
+
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private IGameplayPresentationService presentationService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameplayPresentationService presentationService, IGameSessionService gameSession)
     {
-        _direction = -_direction;
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.presentationService = presentationService;
+        this.gameSession = gameSession;
     }
 
-    IEnumerator BOSS_ACTION_CO()
+    private void Awake()
     {
-        if (isThrowing)
-            yield break;
-
-        ResetThrowBomb();
-
-        isThrowing = true;
-        distance2bombs = Vector2.Distance(leftPos, rightPos)/ (totalBombInARow - 1);
-
-        while (true)
-        {
-            if (bombCounter != misspoint)
-            {
-                SoundManager.PlaySfx(attackSound);
-                Instantiate(bombObj, throwPoint.position, Quaternion.identity).transform.right = transform.right + Vector3.down * 0.3f;
-            }
-
-            bombCounter++;
-            lastThrowPosX = transform.position.x;
-
-            while(Mathf.Abs(lastThrowPosX - transform.position.x)< distance2bombs) { yield return null; }
-        }
+        ProjectScope.Inject(this);
+        patrolState = new PatrolState(this);
+        deathState = new DeathState(this);
     }
 
-    void ResetThrowBomb()
-    {
-        bombCounter = 0;
-        misspoint = Random.Range(0, totalBombInARow);
-    }
-
-    void Start()
+    private void Start()
     {
         anim = GetComponent<Animator>();
         var healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
@@ -98,11 +83,30 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
         currentHealth = health;
-
         leftPos = transform.position + Vector3.right * localLeftPosX;
         rightPos = transform.position + Vector3.right * localRightPosX;
-
         _direction = isFacingRight() ? Vector2.right : Vector2.left;
+
+        deathSequence = new BossDeathSequence(
+            audioService,
+            controllerInputService,
+            presentationService,
+            gameSession,
+            transform,
+            () => gameObject.SetActive(false));
+    }
+
+    private void Update()
+    {
+        if (!isPlaying && !isDead)
+            return;
+
+        stateMachine.Tick(Time.deltaTime);
+    }
+
+    public bool isFacingRight()
+    {
+        return transform.rotation.y == 0;
     }
 
     public override void Play()
@@ -111,155 +115,217 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
             return;
 
         isPlaying = true;
+        stateMachine.ChangeState(patrolState);
     }
-
-    void Update()
-    {
-        if (!isPlaying || isDead || GameManager.Instance.State != GameManager.GameState.Playing || GameManager.Instance.Player.isFinish)
-        {
-            return;
-        }
-
-        transform.Translate(flyingSpeed * Time.deltaTime * _direction.x, 0, 0, Space.World);
-
-        if (isFacingRight())
-        {
-            if (transform.position.x >= rightPos.x)
-            {
-                Flip();
-                ResetThrowBomb();
-                StartCoroutine(BOSS_ACTION_CO());
-            }
-        }
-        else
-        {
-            if (transform.position.x <= leftPos.x)
-            {
-                Flip();
-                ResetThrowBomb();
-                StartCoroutine(BOSS_ACTION_CO());
-            }
-        }
-    }
-
-    
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
         if (!isPlaying || isDead)
             return;
 
-        currentHealth -= (int)damage;
-        isDead = currentHealth <= 0 ? true : false;
+        currentHealth -= damage;
+        isDead = currentHealth <= 0;
 
         if (healthBar)
             healthBar.UpdateValue(currentHealth / (float)health);
 
-        if (isDead)
-        {
-            StopAllCoroutines();
-            CancelInvoke();
-
-            anim.SetBool("isDead", true);
-            var boxCo = GetComponents<BoxCollider2D>();
-            foreach (var box in boxCo)
-            {
-                box.enabled = false;
-            }
-            var CirCo = GetComponents<CircleCollider2D>();
-            foreach (var cir in CirCo)
-            {
-                cir.enabled = false;
-            }
-
-            StartCoroutine(BossDieBehavior());
-
-        }
-        else
+        if (!isDead)
         {
             anim.SetTrigger("hurt");
-            SoundManager.PlaySfx(hurtSound, 0.7f);
+            audioService.PlaySfx(hurtSound, 0.7f);
+            return;
         }
-    }
 
-    [Header("EFFECT WHEN DIE")]
-    public GameObject dieExplosionFX;
-    public Vector2 dieExplosionSize = new Vector2(2, 3);
-    public AudioClip dieExplosionSound;
-
-    IEnumerator BossDieBehavior()
-    {
-        SoundManager.Instance.PauseMusic(true);
+        anim.SetBool("isDead", true);
         anim.enabled = false;
-        GameManager.Instance.MissionStarCollected = 3;
-        ControllerInput.Instance.StopMove();
-        MenuManager.Instance.TurnController(false);
-        MenuManager.Instance.TurnGUI(false);
-        SoundManager.PlaySfx(deadSound);
-        yield return new WaitForSeconds(1f);
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (dieExplosionFX)
-                Instantiate(dieExplosionFX, transform.position + new Vector3(Random.Range(-dieExplosionSize.x, dieExplosionSize.x), Random.Range(0, dieExplosionSize.y), 0), Quaternion.identity);
-            SoundManager.PlaySfx(dieExplosionSound);
-            CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        BlackScreenUI.instance.Show(2, Color.white);
-        for (int i = 0; i < 4; i++)
-        {
-            if (dieExplosionFX)
-                Instantiate(dieExplosionFX, transform.position + new Vector3(Random.Range(-dieExplosionSize.x, dieExplosionSize.x), Random.Range(0, dieExplosionSize.y), 0), Quaternion.identity);
-            SoundManager.PlaySfx(dieExplosionSound);
-            CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        BlackScreenUI.instance.Hide(1);
-        GameManager.Instance.GameFinish(1);
-        gameObject.SetActive(false);
+        isPlaying = false;
+        DisableCombatColliders();
+        deathSequence.Begin(CreateDeathSettings());
+        stateMachine.ChangeState(deathState);
     }
 
     public void IPlay()
     {
-
     }
 
     public void ISuccess()
     {
-
     }
 
     public void IPause()
     {
-
     }
 
     public void IUnPause()
     {
-
     }
 
     public void IGameOver()
     {
-        StopAllCoroutines();
+        isPlaying = false;
     }
 
     public void IOnRespawn()
     {
-
     }
 
     public void IOnStopMovingOn()
     {
-
     }
 
     public void IOnStopMovingOff()
     {
+    }
 
+    private bool CanRunCombat()
+    {
+        return isPlaying && !isDead && gameSession.State == GameManager.GameState.Playing && !gameSession.Player.isFinish;
+    }
+
+    private void TickPatrol(float deltaTime)
+    {
+        if (!CanRunCombat())
+            return;
+
+        transform.Translate(flyingSpeed * deltaTime * _direction.x, 0f, 0f, Space.World);
+        TickBombRun();
+
+        if (isFacingRight() && transform.position.x >= rightPos.x)
+        {
+            Flip();
+            BeginBombRun();
+        }
+        else if (!isFacingRight() && transform.position.x <= leftPos.x)
+        {
+            Flip();
+            BeginBombRun();
+        }
+    }
+
+    private void TickDeath(float deltaTime)
+    {
+        deathSequence.Tick(deltaTime);
+    }
+
+    private void BeginBombRun()
+    {
+        ResetThrowBomb();
+        distance2bombs = Vector2.Distance(leftPos, rightPos) / Mathf.Max(1, totalBombInARow - 1);
+        lastThrowPosX = transform.position.x - (_direction.x * distance2bombs);
+        isBombRunActive = true;
+    }
+
+    private void TickBombRun()
+    {
+        if (!isBombRunActive)
+            return;
+
+        if (bombCounter >= totalBombInARow)
+        {
+            isBombRunActive = false;
+            return;
+        }
+
+        if (Mathf.Abs(lastThrowPosX - transform.position.x) < distance2bombs)
+            return;
+
+        if (bombCounter != misspoint)
+        {
+            audioService.PlaySfx(attackSound);
+            Instantiate(bombObj, throwPoint.position, Quaternion.identity).transform.right = transform.right + Vector3.down * 0.3f;
+        }
+
+        bombCounter++;
+        lastThrowPosX = transform.position.x;
+    }
+
+    private void ResetThrowBomb()
+    {
+        bombCounter = 0;
+        misspoint = Random.Range(0, Mathf.Max(1, totalBombInARow));
+    }
+
+    private void Flip()
+    {
+        _direction = -_direction;
+        transform.rotation = Quaternion.Euler(transform.rotation.x, isFacingRight() ? 180f : 0f, transform.rotation.z);
+    }
+
+    private void DisableCombatColliders()
+    {
+        foreach (var box in GetComponents<BoxCollider2D>())
+            box.enabled = false;
+
+        foreach (var circle in GetComponents<CircleCollider2D>())
+            circle.enabled = false;
+    }
+
+    private BossDeathSequenceSettings CreateDeathSettings()
+    {
+        return new BossDeathSequenceSettings
+        {
+            IntroDelay = 1f,
+            FirstWaveExplosions = 3,
+            SecondWaveExplosions = 4,
+            ExplosionInterval = 0.5f,
+            BlackScreenShowDuration = 2f,
+            BlackScreenHideDuration = 1f,
+            EarthQuakeTime = _eqTime,
+            EarthQuakeSpeed = _eqSpeed,
+            EarthQuakeSize = _eqSize,
+            ExplosionPrefab = dieExplosionFX,
+            ExplosionArea = dieExplosionSize,
+            DeathSound = deadSound,
+            ExplosionSound = dieExplosionSound
+        };
+    }
+
+    private sealed class PatrolState : IEnemyState
+    {
+        private readonly BOSS_FLYING_BOMBER owner;
+
+        public PatrolState(BOSS_FLYING_BOMBER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            owner.moving = true;
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickPatrol(deltaTime);
+        }
+
+        public void Exit()
+        {
+            owner.moving = false;
+        }
+    }
+
+    private sealed class DeathState : IEnemyState
+    {
+        private readonly BOSS_FLYING_BOMBER owner;
+
+        public DeathState(BOSS_FLYING_BOMBER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickDeath(deltaTime);
+        }
+
+        public void Exit()
+        {
+        }
     }
 
     private void OnDrawGizmos()
@@ -270,7 +336,7 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
             Gizmos.DrawWireSphere(rightPos, 0.3f);
             Gizmos.DrawLine(leftPos, rightPos);
 
-            var distance = Vector2.Distance(leftPos, rightPos) / (totalBombInARow - 1);
+            var distance = Vector2.Distance(leftPos, rightPos) / Mathf.Max(1, totalBombInARow - 1);
             for (int i = 0; i < totalBombInARow; i++)
             {
                 Gizmos.DrawSphere(transform.position + Vector3.right * localLeftPosX + Vector3.right * i * distance, 0.2f);
@@ -283,9 +349,8 @@ public class BOSS_FLYING_BOMBER : BossManager, ICanTakeDamage, IListener
             Gizmos.DrawLine(transform.position, transform.position + Vector3.right * localRightPosX);
             Gizmos.DrawLine(transform.position, transform.position + Vector3.right * localLeftPosX);
 
-            var distance = Vector2.Distance(transform.position + Vector3.right * localLeftPosX, transform.position + Vector3.right * localRightPosX) / (totalBombInARow - 1);
-
-            for(int i = 0; i < totalBombInARow; i++)
+            var distance = Vector2.Distance(transform.position + Vector3.right * localLeftPosX, transform.position + Vector3.right * localRightPosX) / Mathf.Max(1, totalBombInARow - 1);
+            for (int i = 0; i < totalBombInARow; i++)
             {
                 Gizmos.DrawSphere(transform.position + Vector3.right * localLeftPosX + Vector3.right * i * distance, 0.2f);
             }

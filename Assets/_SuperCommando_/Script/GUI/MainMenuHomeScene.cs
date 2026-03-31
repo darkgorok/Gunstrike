@@ -3,21 +3,36 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
+using VContainer;
 
 public class MainMenuHomeScene : MonoBehaviour {
 	public static MainMenuHomeScene Instance;
 
 	public GameObject StartMenu;
 	public GameObject WorldsChoose;
-	public GameObject LoadingScreen;
+    public GameObject LoadingScreen;
     public GameObject Settings;
 	SoundManager soundManager;
+    private IAdsService adsService;
+    private ISceneLoader sceneLoader;
+    private IAudioService audioService;
+    private IProgressService progressService;
     [Header("Sound and Music")]
     public Image soundImage;
     public Image musicImage;
     public Sprite soundImageOn, soundImageOff, musicImageOn, musicImageOff;
 
+    [Inject]
+    public void Construct(IAdsService adsService, ISceneLoader sceneLoader, IAudioService audioService, IProgressService progressService)
+    {
+        this.adsService = adsService;
+        this.sceneLoader = sceneLoader;
+        this.audioService = audioService;
+        this.progressService = progressService;
+    }
+
     void Awake(){
+        ProjectScope.Inject(this);
 		Instance = this;
 		soundManager = FindObjectOfType<SoundManager> ();
     }
@@ -26,19 +41,16 @@ public class MainMenuHomeScene : MonoBehaviour {
         // if (AdmobController.Instance)
         {
             //  AdmobController.Instance.LoadAllAds();
-            if (AdsManager.Instance)
-                //  AdsManager.Instance.ShowBanner(true);
-                if (AdsManager.Instance)
-                AdsManager.Instance.ShowRectBanner(false);
+            adsService.ShowRectBanner(false);
         }
 
-        if (!GlobalValue.isSetDefaultValue)
+        if (!progressService.IsSetDefaultValue)
         {
-            GlobalValue.isSetDefaultValue = true;
+            progressService.IsSetDefaultValue = true;
             if (DefaultValue.Instance)
             {
-                GlobalValue.Bullets = DefaultValue.Instance.defaultBulletMax ? int.MaxValue : DefaultValue.Instance.defaultBullet;
-               GlobalValue.SaveLives = DefaultValue.Instance.defaultLives;
+                progressService.Bullets = DefaultValue.Instance.defaultBulletMax ? int.MaxValue : DefaultValue.Instance.defaultBullet;
+                progressService.SaveLives = DefaultValue.Instance.defaultLives;
             }
         }
 
@@ -46,49 +58,47 @@ public class MainMenuHomeScene : MonoBehaviour {
         WorldsChoose.SetActive (false);
 		LoadingScreen.SetActive (false);
         Settings.SetActive(false);
-        SoundManager.PlayMusic(SoundManager.Instance.musicsMenu);
-        if (GlobalValue.isFirstOpenMainMenu)
+        audioService.PlayMenuMusic();
+        if (progressService.IsFirstOpenMainMenu)
         {
-            GlobalValue.isFirstOpenMainMenu = false;
-            SoundManager.ResetMusic();
+            progressService.IsFirstOpenMainMenu = false;
+            audioService.ResetMusic();
         }
 
-        SoundManager.PlayMusic(soundManager.musicsMenu);
+        audioService.PlayMusic(audioService.MenuMusic);
         StartMenu.SetActive(true);
 
         soundManager = FindObjectOfType<SoundManager>();
 
-        soundImage.sprite = GlobalValue.isSound ? soundImageOn : soundImageOff;
-        musicImage.sprite = GlobalValue.isMusic ? musicImageOn : musicImageOff;
-        if (!GlobalValue.isSound)
-            SoundManager.SoundVolume = 0;
-        if (!GlobalValue.isMusic)
-            SoundManager.MusicVolume = 0;
+        soundImage.sprite = progressService.IsSoundEnabled ? soundImageOn : soundImageOff;
+        musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
+        if (!progressService.IsSoundEnabled)
+            audioService.SoundVolume = 0;
+        if (!progressService.IsMusicEnabled)
+            audioService.MusicVolume = 0;
 
-        SoundManager.PlayGameMusic();
+        audioService.PlayGameMusic();
     }
 
     #region Music and Sound
     public void TurnSound()
     {
-        GlobalValue.isSound = !GlobalValue.isSound;
-        soundImage.sprite = GlobalValue.isSound ? soundImageOn : soundImageOff;
-
-        SoundManager.SoundVolume = GlobalValue.isSound ? 1 : 0;
+        progressService.IsSoundEnabled = !progressService.IsSoundEnabled;
+        soundImage.sprite = progressService.IsSoundEnabled ? soundImageOn : soundImageOff;
+        audioService.SoundVolume = progressService.IsSoundEnabled ? 1f : 0f;
     }
 
     public void TurnMusic()
     {
-        GlobalValue.isMusic = !GlobalValue.isMusic;
-        musicImage.sprite = GlobalValue.isMusic ? musicImageOn : musicImageOff;
-
-        SoundManager.MusicVolume = GlobalValue.isMusic ? SoundManager.Instance.musicsGameVolume : 0;
+        progressService.IsMusicEnabled = !progressService.IsMusicEnabled;
+        musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
+        audioService.MusicVolume = progressService.IsMusicEnabled ? audioService.GameplayMusicVolume : 0f;
     }
     #endregion
 
     public void TurnExitPanel(bool open)
     {
-        SoundManager.Click();
+        audioService.PlayClick();
     }
 
     public void ExitGame()
@@ -103,7 +113,7 @@ public class MainMenuHomeScene : MonoBehaviour {
 #else
         openPage(facebookLink);
 #endif
-        SoundManager.PlaySfx(soundManager.soundClick);
+        audioService.PlaySfx(audioService.ClickClip);
     }
 
     public void RemoveAds()
@@ -118,7 +128,7 @@ public class MainMenuHomeScene : MonoBehaviour {
 
     public void OpenSettings(bool open)
     {
-        SoundManager.Click();
+        audioService.PlayClick();
         Settings.SetActive(open);
         StartMenu.SetActive(!open);
     }
@@ -127,40 +137,26 @@ public class MainMenuHomeScene : MonoBehaviour {
         StartMenu.SetActive(false);
         WorldsChoose.SetActive (true);
 
-		SoundManager.PlaySfx (soundManager.soundClick);
+        audioService.PlaySfx(audioService.ClickClip);
     }
 
 	public void OpenStartMenu(){
         StartMenu.SetActive(true);
         WorldsChoose.SetActive (false);
 
-		SoundManager.PlaySfx (soundManager.soundClick);
+        audioService.PlaySfx(audioService.ClickClip);
     }
 
     public void LoadScene(string name)
     {
         WorldsChoose.SetActive(false);
         //SceneManager.LoadSceneAsync(name);
-        LoadingScreen.SetActive(true);
-        StartCoroutine(LoadAsynchronously(name));
+        sceneLoader.BeginLoad(this, name, LoadingScreenViewResolver.Resolve(LoadingScreen, slider, progressText));
     }
 
     [Header("LOADING PROGRESS")]
     public Slider slider;
     public Text progressText;
-    IEnumerator LoadAsynchronously(string name)
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(name);
-        while (!operation.isDone)
-        {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            if (slider != null)
-                slider.value = progress;
-            if (progressText != null)
-                progressText.text = (int) progress * 100f + "%";
-            yield return null;
-        }
-    }
 
     public void Exit(){
 		Application.Quit ();

@@ -1,117 +1,175 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+
 [RequireComponent(typeof(Controller2D))]
 public class EnemyHitAndHide : MonoBehaviour, ICanTakeDamage
 {
+    private enum AttackPhase
+    {
+        Idle,
+        Showing,
+        Hiding,
+        Cooldown
+    }
+
     public DIEBEHAVIOR dieBehavior;
     public float showRandomMin = 1;
     public float showRandomMax = 2;
     public Projectile projectile;
     public Transform throwPoint;
-
-    public GameObject DestroyEffect;        //spawn object when dead
+    public GameObject DestroyEffect;
     public float destroyTime = 1.5f;
+
     [Header("Health")]
     [Range(0, 100)]
     public float health = 50;
-    float currentHealth;
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     [ReadOnly] public HealthBarEnemyNew healthBar;
 
     public AudioClip soundHit, soundDead, soundThrow;
 
-    CheckTargetHelper checkTargetHelper;
-    Animator anim;
-    Collider2D col;
-    bool isAttacking = false;
-    [HideInInspector]
-    protected Vector3 velocity;
-    [HideInInspector]
-    public Controller2D controller;
+    [HideInInspector] public Controller2D controller;
+    [HideInInspector] protected Vector3 velocity;
+
+    private CheckTargetHelper checkTargetHelper;
+    private Animator anim;
+    private Collider2D hitCollider;
+    private bool isDead;
+    private float currentHealth;
+    private float phaseTimer;
+    private float destroyTimer = -1f;
+    private AttackPhase attackPhase = AttackPhase.Idle;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     public bool isFacingRight()
     {
-        return transform.rotation.y == 0 ? true : false;
+        return transform.rotation.y == 0;
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        isAttacking = false;
+        attackPhase = AttackPhase.Idle;
+        phaseTimer = 0f;
     }
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<Controller2D>();
         currentHealth = health;
         checkTargetHelper = GetComponent<CheckTargetHelper>();
         anim = GetComponent<Animator>();
-        col = GetComponent<Collider2D>(); 
-        col.enabled = false;
+        hitCollider = GetComponent<Collider2D>();
+        hitCollider.enabled = false;
 
-        var healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
-        healthBar = (HealthBarEnemyNew)Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
-
+        HealthBarEnemyNew healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
+        healthBar = Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
         healthBar.Init(transform, (Vector3)healthBarOffset);
     }
 
-    bool isDetectPlayer = false;
-    void Update()
+    private void Update()
     {
-        isDetectPlayer = checkTargetHelper.CheckTarget();
-        //Debug.LogError(isDetectPlayer + "x" + isAttacking);
-        if (isDetectPlayer && !isAttacking)
+        if (destroyTimer >= 0f)
         {
-            StartCoroutine(AttacktingCo());
+            destroyTimer -= Time.deltaTime;
+            if (destroyTimer <= 0f)
+                DestroyObject();
+        }
+
+        if (isDead)
+            return;
+
+        bool isDetectPlayer = checkTargetHelper.CheckTarget();
+        switch (attackPhase)
+        {
+            case AttackPhase.Idle:
+                if (isDetectPlayer)
+                {
+                    attackPhase = AttackPhase.Showing;
+                    phaseTimer = 0.5f;
+                    anim.SetBool("showUp", true);
+                    hitCollider.enabled = true;
+                }
+                break;
+            case AttackPhase.Showing:
+                phaseTimer -= Time.deltaTime;
+                if (phaseTimer > 0f)
+                    break;
+
+                AlignToPlayer();
+                if (isDead)
+                    return;
+
+                anim.SetTrigger("throw");
+                attackPhase = AttackPhase.Hiding;
+                phaseTimer = 1.5f;
+                break;
+            case AttackPhase.Hiding:
+                phaseTimer -= Time.deltaTime;
+                if (phaseTimer > 0f)
+                    break;
+
+                anim.SetBool("showUp", false);
+                hitCollider.enabled = false;
+                attackPhase = AttackPhase.Cooldown;
+                phaseTimer = Random.Range(showRandomMin, showRandomMax);
+                break;
+            case AttackPhase.Cooldown:
+                phaseTimer -= Time.deltaTime;
+                if (phaseTimer <= 0f)
+                    attackPhase = AttackPhase.Idle;
+                break;
         }
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-                velocity.y += -35 * Time.deltaTime;
-                controller.Move(velocity * Time.deltaTime, false);
-    }
-
-    IEnumerator AttacktingCo()
-    {
-        isAttacking = true;
-
-        while (!isDetectPlayer) { yield return new WaitForSeconds(0.1f); }
-
-        anim.SetBool("showUp", true);
-        col.enabled = true;
-        yield return new WaitForSeconds(0.5f);
-
-        if ((isFacingRight() && transform.position.x > GameManager.Instance.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameManager.Instance.Player.transform.position.x))
-            Flip();
-        if (isDead)
-            yield break;
-        anim.SetTrigger("throw");
-        
-        yield return new WaitForSeconds(1.5f);
-        anim.SetBool("showUp", false);
-        col.enabled = false;
-        yield return new WaitForSeconds(Random.Range(showRandomMin, showRandomMax));
-        isAttacking = false;
+        velocity.y += -35 * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime, false);
     }
 
     public void AnimThrow()
     {
-        if (isDead)
+        if (isDead || gameSession?.Player == null)
             return;
-        SoundManager.PlaySfx(soundThrow);
-        //Instantiate(throwObj, throwPoint.position, Quaternion.identity);
-        var _projectile = (Projectile)Instantiate(projectile, throwPoint.position, Quaternion.identity);
-        Vector2 _dir = GameManager.Instance.Player.transform.position + Vector3.up - throwPoint.position;
-        _projectile.Initialize(gameObject, _dir, Vector2.zero, false);
+
+        audioService?.PlaySfx(soundThrow);
+        Projectile spawnedProjectile = Instantiate(projectile, throwPoint.position, Quaternion.identity);
+        Vector2 direction = gameSession.Player.transform.position + Vector3.up - throwPoint.position;
+        spawnedProjectile.Initialize(gameObject, direction, Vector2.zero, false);
     }
 
-    void Flip()
+    private void AlignToPlayer()
+    {
+        Player player = gameSession?.Player;
+        if (player == null)
+            return;
+
+        bool shouldFlip =
+            (isFacingRight() && transform.position.x > player.transform.position.x) ||
+            (!isFacingRight() && transform.position.x < player.transform.position.x);
+
+        if (shouldFlip)
+            Flip();
+    }
+
+    private void Flip()
     {
         transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
     }
 
-    bool isDead;
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
         if (isDead)
@@ -120,49 +178,45 @@ public class EnemyHitAndHide : MonoBehaviour, ICanTakeDamage
         currentHealth -= damage;
 
         if (healthBar)
-            healthBar.UpdateValue(currentHealth / (float)health);
+            healthBar.UpdateValue(currentHealth / health);
 
-        if (currentHealth <= 0)
+        if (currentHealth > 0)
         {
-            isDead = true;
+            audioService?.PlaySfx(soundHit);
+            return;
         }
 
-        if (isDead)
+        isDead = true;
+        audioService?.PlaySfx(soundDead);
+
+        Rigidbody2D rig = gameObject.AddComponent<Rigidbody2D>();
+        rig.isKinematic = false;
+        rig.gravityScale = 2;
+        rig.linearVelocity = new Vector2(0, 5);
+
+        Collider2D currentCollider = GetComponent<Collider2D>();
+        if (currentCollider != null)
+            currentCollider.enabled = false;
+
+        if (dieBehavior == DIEBEHAVIOR.BLOWUP)
         {
-            SoundManager.PlaySfx(soundDead);
-            StopAllCoroutines();
-            var rig = gameObject.AddComponent<Rigidbody2D>();
-            rig.isKinematic = false;
-            rig.gravityScale = 2;
-           
-            rig.linearVelocity = new Vector2(0, 5);
-            //Destroy(gameObject, 1.5f);
+            if (DestroyEffect != null)
+                SpawnSystemHelper.GetNextObject(DestroyEffect, true).transform.position = transform.position;
 
-            var col = gameObject.GetComponent<Collider2D>();
-            if (col) col.enabled = false;
+            DestroyObject();
+            return;
+        }
 
-            //enabled = false;
-            if (dieBehavior == DIEBEHAVIOR.BLOWUP)
-            {
-                if (DestroyEffect != null)
-                    SpawnSystemHelper.GetNextObject(DestroyEffect, true).transform.position = transform.position;
-                DestroyObject();
-            }
-            else if (dieBehavior == DIEBEHAVIOR.FALLOUT)
-            {
-                controller.HandlePhysic = false;
-                velocity = new Vector2(0, 8);
-                Invoke("DestroyObject", 1);
-            }
-            else
-            {
-                Invoke("DestroyObject", 1);
-            }
-        }else
-            SoundManager.PlaySfx(soundHit);
+        if (dieBehavior == DIEBEHAVIOR.FALLOUT)
+        {
+            controller.HandlePhysic = false;
+            velocity = new Vector2(0, 8);
+        }
+
+        destroyTimer = 1f;
     }
 
-    void DestroyObject()
+    private void DestroyObject()
     {
         Destroy(gameObject);
     }

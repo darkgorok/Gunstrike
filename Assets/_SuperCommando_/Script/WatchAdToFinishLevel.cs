@@ -1,43 +1,52 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class WatchAdToFinishLevel : MonoBehaviour
 {
     public GameObject buttonVideo;
 
+    private IAdsService adsService;
+    private ILevelCatalogService levelCatalogService;
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, IProgressService progressService)
+    {
+        this.adsService = adsService;
+        this.levelCatalogService = levelCatalogService;
+        this.progressService = progressService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
     private void OnEnable()
     {
-        var _go = Resources.Load("LevelMap/Final Level/Level Map " + (GlobalValue.levelPlaying + 1)) as GameObject;
-        if(_go==null)
+        GameObject nextLevelMap = levelCatalogService.LoadLevelMap(progressService.LevelPlaying + 1);
+        if (nextLevelMap == null)
         {
             buttonVideo.SetActive(false);
             enabled = false;
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        buttonVideo.SetActive(AdsManager.Instance );
+        buttonVideo.SetActive(adsService.IsInitialized);
     }
 
     public void WatchAd()
     {
-        if (AdsManager.Instance)
-        {
-            AdsManager.OnRewardedResult += AdsManager_AdResult;
-            AdsManager.Instance.ShowRewardedVideo();
-        }
+        adsService.ShowRewardedVideo(AdsManager_AdResult);
     }
 
     private void AdsManager_AdResult(bool isSuccess, int rewarded)
     {
-        if (AdsManager.Instance)
-            AdsManager.OnRewardedResult -= AdsManager_AdResult;
         if (isSuccess)
-        {
             MenuManager.Instance.NextLevel();
-        }
     }
 }

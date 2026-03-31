@@ -1,107 +1,147 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class Boss_SuperAttackFlame : MonoBehaviour {
-	public LayerMask layerGround;
-	public float timeOn = 1f;
-	public float timeOff = 1.5f;
+public class Boss_SuperAttackFlame : MonoBehaviour
+{
+    public LayerMask layerGround;
+    public float timeOn = 1f;
+    public float timeOff = 1.5f;
+    public int damage = 20;
+    public ParticleSystem beginParticSys;
+    public EffectType effectChoose;
+    public ParticleSystem[] FX1;
+    public ParticleSystem[] FX2;
+    public ParticleSystem[] FX3;
+    public AudioClip sound;
 
-	public int damage = 20;
+    private ParticleSystem[] particleSystems;
+    private bool hitPlayer;
+    private BoxCollider2D box2D;
+    private float turnOnTimer = -1f;
+    private float turnOffTimer = -1f;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
 
-	public ParticleSystem beginParticSys;
-	public EffectType effectChoose;
-	public ParticleSystem[] FX1;
-	public ParticleSystem[] FX2;
-	public ParticleSystem[] FX3;
-    ParticleSystem[] ParticlsSys;
-	bool hitPlayer = false;
-	BoxCollider2D box2D;
-	public AudioClip sound;
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
+    private void Start()
+    {
         switch (effectChoose)
         {
             case EffectType.Effect1:
-                ParticlsSys = FX1;
+                particleSystems = FX1;
                 break;
             case EffectType.Effect2:
-                ParticlsSys = FX2;
+                particleSystems = FX2;
                 break;
             case EffectType.Effect3:
-                ParticlsSys = FX3;
-                break;
-            default:
+                particleSystems = FX3;
                 break;
         }
 
-		foreach(var child in FX1){
-			child.gameObject.SetActive (false);
-		}
+        SetParticleArrayActive(FX1, false);
+        SetParticleArrayActive(FX2, false);
+        SetParticleArrayActive(FX3, false);
+        SetParticleArrayActive(particleSystems, false);
 
-		foreach(var child in FX2){
-			child.gameObject.SetActive (false);
-		}
+        box2D = GetComponent<BoxCollider2D>();
+        box2D.enabled = false;
 
-		foreach(var child in FX3){
-			child.gameObject.SetActive (false);
-		}
+        if (gameSession?.Player == null)
+            return;
 
-        foreach (var child in ParticlsSys){
-			child.gameObject.SetActive (false);
-		}
+        RaycastHit2D hit = Physics2D.Raycast(gameSession.Player.transform.position + Vector3.up, Vector2.down, 10, layerGround);
+        if (hit)
+        {
+            transform.position = hit.point;
+            turnOnTimer = timeOn;
+        }
+    }
 
-		box2D = GetComponent<BoxCollider2D> ();
-		box2D.enabled = false;
+    private void Update()
+    {
+        if (turnOnTimer >= 0f)
+        {
+            turnOnTimer -= Time.deltaTime;
+            if (turnOnTimer <= 0f)
+            {
+                turnOnTimer = -1f;
+                TurnOn();
+            }
+        }
 
-		RaycastHit2D hit = Physics2D.Raycast (GameManager.Instance.Player.transform.position + Vector3.up, /*GameManager.Instance.Player.inverseGravity ? Vector2.up : */Vector2.down, 10, layerGround);
-		if (hit) {
-			transform.position = hit.point;
+        if (turnOffTimer >= 0f)
+        {
+            turnOffTimer -= Time.deltaTime;
+            if (turnOffTimer <= 0f)
+            {
+                turnOffTimer = -1f;
+                TurnOff();
+            }
+        }
+    }
 
-			Invoke ("TurnOn", timeOn);
-		}
-	}
+    public void TurnOn()
+    {
+        box2D.enabled = true;
+        foreach (ParticleSystem child in particleSystems)
+        {
+            child.gameObject.SetActive(true);
+            var emission = child.emission;
+            emission.enabled = true;
+        }
 
-	public void TurnOn(){
-		box2D.enabled = true;
-		foreach(var child in ParticlsSys){
-			child.gameObject.SetActive (true);
-			var em = child.emission;
-			em.enabled = true;
-		}
+        audioService?.PlaySfx(sound);
+        turnOffTimer = timeOn;
+    }
 
-		SoundManager.PlaySfx (sound);
+    public void TurnOff()
+    {
+        foreach (ParticleSystem child in particleSystems)
+        {
+            var emission = child.emission;
+            emission.enabled = false;
+        }
 
-		Invoke ("TurnOff", timeOn);
-	}
+        var beginEmission = beginParticSys.emission;
+        beginEmission.enabled = false;
+        box2D.enabled = false;
+        beginParticSys.gameObject.SetActive(false);
+    }
 
-	public void TurnOff(){
-//		foreach(var child in ParticlsSys){
-		foreach(var child in ParticlsSys){
-			var em = child.emission;
-			em.enabled = false;
-		}
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (hitPlayer || gameSession?.Player == null)
+            return;
 
-		var em2 = beginParticSys.emission;
-		em2.enabled = false;
-		box2D.enabled = false;
-		beginParticSys.gameObject.SetActive (false);
-//		Invoke ("TurnOn", timeOff);
-	}
-	
-	void OnTriggerEnter2D(Collider2D other){
-		if (hitPlayer)
-			return;
+        if (gameSession.Player.gameObject.layer == LayerMask.NameToLayer("HidingZone"))
+            return;
 
-		if (GameManager.Instance.Player.gameObject.layer == LayerMask.NameToLayer ("HidingZone"))
-			return;
-		
-		if (other.GetComponent<Player> ()) {
-			other.GetComponent<Player> ().TakeDamage (damage, Vector2.zero, gameObject, Vector2.zero);
-			hitPlayer = true;
-			box2D.enabled = false;
-		}
-	}
+        Player player = other.GetComponent<Player>();
+        if (player == null)
+            return;
+
+        player.TakeDamage(damage, Vector2.zero, gameObject, Vector2.zero);
+        hitPlayer = true;
+        box2D.enabled = false;
+    }
+
+    private static void SetParticleArrayActive(ParticleSystem[] systems, bool active)
+    {
+        if (systems == null)
+            return;
+
+        foreach (ParticleSystem child in systems)
+            child.gameObject.SetActive(active);
+    }
 }

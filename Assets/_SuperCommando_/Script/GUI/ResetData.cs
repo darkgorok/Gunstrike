@@ -1,39 +1,53 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 public class ResetData : MonoBehaviour
 {
     SoundManager soundManager;
+    private ISceneLoader sceneLoader;
+    private IProgressService progressService;
+    private ICharacterSelectionService characterSelectionService;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(
+        ISceneLoader sceneLoader,
+        IProgressService progressService,
+        ICharacterSelectionService characterSelectionService,
+        IAudioService audioService)
+    {
+        this.sceneLoader = sceneLoader;
+        this.progressService = progressService;
+        this.characterSelectionService = characterSelectionService;
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     void Start()
     {
         soundManager = FindObjectOfType<SoundManager>();
-        CharacterHolder.Instance.GetPickedCharacter();
+        characterSelectionService.RefreshSelectedCharacter();
     }
 
     public void Reset()
     {
-        bool _removeAd = GlobalValue.RemoveAds;
-        PlayerPrefs.DeleteAll();
-        GlobalValue.RemoveAds = _removeAd;
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        progressService.ResetAllPreservingRemoveAds();
+        sceneLoader.LoadImmediateAsync(SceneManager.GetActiveScene().buildIndex);
 
-        SoundManager.PlaySfx(soundManager.soundClick);
+        audioService.PlaySfx(audioService.ClickClip);
     }
 
     public void UnlockAll()
     {
-        PlayerPrefs.SetInt(GlobalValue.WorldReached, int.MaxValue);
-        for (int i = 1; i < 100; i++)
-        {
-            PlayerPrefs.SetInt(i.ToString(), 10000);        //world i, unlock 10000 levels
-        }
+        progressService.UnlockAllLevels();
+        sceneLoader.LoadImmediateAsync(SceneManager.GetActiveScene().buildIndex);
 
-        GlobalValue.LevelHighest = 9999;
-
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-
-        SoundManager.PlaySfx(soundManager.soundClick);
+        audioService.PlaySfx(audioService.ClickClip);
     }
 }

@@ -1,17 +1,27 @@
-﻿using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-public class MainMenuUpdateCoins : MonoBehaviour {
-	public Text coins;
+public class MainMenuUpdateCoins : MonoBehaviour
+{
+    public Text coins;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		coins.text = GlobalValue.SavedCoins.ToString();
-	}
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IProgressService progressService)
+    {
+        this.progressService = progressService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Update()
+    {
+        coins.text = progressService.SavedCoins.ToString();
+    }
 }

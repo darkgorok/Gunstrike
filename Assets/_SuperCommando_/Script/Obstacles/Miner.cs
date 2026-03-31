@@ -1,13 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class Miner : MonoBehaviour, ICanTakeDamage
 {
     public bool blowUpOnStart = false;
     public SpriteRenderer sprite;
     public bool blinking = true;
-    public Sprite imageOn, imageOff;
+    public Sprite imageOn;
+    public Sprite imageOff;
     public float delayOn = 0.8f;
     public float delayOff = 0.2f;
     public GameObject[] ExplosionFX;
@@ -23,58 +25,87 @@ public class Miner : MonoBehaviour, ICanTakeDamage
     public float radius = 5;
     public LayerMask targetLayer;
 
-    bool isImageOn;
-
     [Header("HIT EFFECT")]
     public bool playEarthQuake = true;
     public float _eqTime = 0.1f;
     public float _eqSpeed = 60;
     public float _eqSize = 1;
 
-    //call by the other object that spawn the bomb
+    bool isImageOn;
+    float autoCheckTimer;
+    float blinkTimer;
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
     public void Init(bool blowUpImmediately, int damageMax, float damageRadius)
     {
         blowUpOnStart = blowUpImmediately;
         damageFromCenter = damageMax;
         radius = damageRadius;
         if (blowUpOnStart)
-        {
-            //Debug.LogError(blowUpOnStart);
             TakeDamage(int.MaxValue, Vector2.zero, null, transform.position);
-        }
     }
 
     private void OnEnable()
     {
+        ProjectScope.Inject(this);
+
         if (blowUpOnStart)
         {
             TakeDamage(int.MaxValue, Vector2.zero, gameObject, transform.position);
+            return;
         }
-        else if(autoCheckPlayer)
-            InvokeRepeating("CheckingTargetInvoke", 0, 0.1f);
-    }
-    // Use this for initialization
-    void Start()
-    {
-        if (blinking)
-            Invoke("UpdateImage", isImageOn ? delayOff : delayOn);
+
+        autoCheckTimer = 0f;
     }
 
-    void CheckingTargetInvoke()
+    void Start()
+    {
+        ResetBlinkTimer();
+    }
+
+    private void Update()
+    {
+        if (!blowUpOnStart && autoCheckPlayer)
+        {
+            autoCheckTimer -= Time.deltaTime;
+            if (autoCheckTimer <= 0f)
+            {
+                autoCheckTimer = 0.1f;
+                CheckForTarget();
+            }
+        }
+
+        if (!blinking)
+            return;
+
+        blinkTimer -= Time.deltaTime;
+        if (blinkTimer <= 0f)
+            UpdateImage();
+    }
+
+    void CheckForTarget()
     {
         var hit = Physics2D.CircleCast(transform.position, checkRadius, Vector2.zero, 0, targetLayer);
         if (hit)
-        {
             TakeDamage(int.MaxValue, Vector2.zero, gameObject, transform.position);
-
-        }
     }
 
     void UpdateImage()
     {
         isImageOn = !isImageOn;
         sprite.sprite = isImageOn ? imageOn : imageOff;
-        Invoke("UpdateImage", isImageOn ? delayOff : delayOn);
+        ResetBlinkTimer();
+    }
+
+    void ResetBlinkTimer()
+    {
+        blinkTimer = isImageOn ? delayOff : delayOn;
     }
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -82,10 +113,12 @@ public class Miner : MonoBehaviour, ICanTakeDamage
         if (instigator == gameObject)
             return;
 
-        CancelInvoke();
+        autoCheckPlayer = false;
+        blinking = false;
+
         if (ExplosionFX.Length > 0)
         {
-            foreach(var fx in ExplosionFX)
+            foreach (var fx in ExplosionFX)
             {
                 if (fx != null)
                     SpawnSystemHelper.GetNextObject(fx, true).transform.position = transform.position;
@@ -98,51 +131,47 @@ public class Miner : MonoBehaviour, ICanTakeDamage
         if (canMakeDamage)
             CheckDamage();
 
-        SoundManager.PlaySfx(soundDestroy);
+        audioService?.PlaySfx(soundDestroy);
         Destroy(gameObject);
     }
 
     private void CheckDamage()
     {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, radius, Vector2.zero, 0, targetLayer);
-        if (hits.Length > 0)
+        if (hits.Length <= 0)
+            return;
+
+        foreach (var hit in hits)
         {
-            foreach (var hit in hits)
+            if (canFreezeEnemy)
             {
-                //check can freeze
-                if (canFreezeEnemy)
-                {
-                    var canFreeze = (ICanFreeze)hit.collider.gameObject.GetComponent(typeof(ICanFreeze));
-                    if (canFreeze != null)
-                        canFreeze.Freeze(gameObject);
-                }
+                var canFreeze = (ICanFreeze)hit.collider.gameObject.GetComponent(typeof(ICanFreeze));
+                if (canFreeze != null)
+                    canFreeze.Freeze(gameObject);
+            }
 
-                //check can hit damage
-                var canHit = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
-                if (canHit != null)
-                {
-                    float hitDamageAffect = (radius - Vector2.Distance(transform.position, hit.point)) / (float)radius;
-                    hitDamageAffect = Mathf.Max(hitDamageAffect, 0.2f);
-                    canHit.TakeDamage(damageFromCenter, Vector2.zero, gameObject, hit.point);
-
-                    //canHit.TakeDamage (damageFromCenter * hitDamageAffect, Vector2.zero, gameObject, hit.point,BulletFeature.Explosion);
-                }
+            var canHit = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
+            if (canHit != null)
+            {
+                float hitDamageAffect = (radius - Vector2.Distance(transform.position, hit.point)) / radius;
+                hitDamageAffect = Mathf.Max(hitDamageAffect, 0.2f);
+                canHit.TakeDamage(damageFromCenter, Vector2.zero, gameObject, hit.point);
             }
         }
     }
 
     void OnDrawGizmosSelected()
     {
-        if (canMakeDamage)
-        {
-            if (autoCheckPlayer)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(transform.position, checkRadius);
-            }
+        if (!canMakeDamage)
+            return;
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, radius);
+        if (autoCheckPlayer)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, checkRadius);
         }
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }

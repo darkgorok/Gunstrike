@@ -1,9 +1,9 @@
-using System.Collections;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// High-level ad manager controlling when and what to show.
-/// Adds explicit preload, backoff, and readiness guards.
+/// Uses explicit polling/backoff timers instead of coroutine/invoke scheduling.
 /// </summary>
 public class AdsManager : MonoBehaviour
 {
@@ -25,21 +25,31 @@ public class AdsManager : MonoBehaviour
     public int showInterstitialEveryVictories = 1;
 
     [Header("Loading & Retry")]
-    [Tooltip("Initial retry delay after a failure.")]
     public float initialRetryDelay = 2f;
-    [Tooltip("Maximum seconds between retries after failures.")]
     public float maxRetryDelay = 30f;
+    public float preloadPollInterval = 2f;
 
-    private int deathCounter = 0;
-    private int victoryCounter = 0;
+    private int deathCounter;
+    private int victoryCounter;
+    private float preloadTimer;
 
-    // Backoff state per format
-    private float _bnRetryDelay = 0f;   // banner (incl. rect)
-    private float _isRetryDelay = 0f;   // interstitial
-    private float _rsRetryDelay = 0f;   // rewarded
-    private float _riRetryDelay = 0f;   // rewarded interstitial
+    private float bannerRetryDelay;
+    private float interstitialRetryDelay;
+    private float rewardedRetryDelay;
+    private float rewardedInterstitialRetryDelay;
 
-    private Coroutine _preloadLoop;
+    private float bannerRetryTimer = -1f;
+    private float interstitialRetryTimer = -1f;
+    private float rewardedRetryTimer = -1f;
+    private float rewardedInterstitialRetryTimer = -1f;
+
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IProgressService progressService)
+    {
+        this.progressService = progressService;
+    }
 
     private void Awake()
     {
@@ -49,162 +59,50 @@ public class AdsManager : MonoBehaviour
             return;
         }
 
+        ProjectScope.Inject(this);
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        // if (AdmobController.Instance == null)
-        {
-            var go = new GameObject("[AdmobController]");
-            go.hideFlags = HideFlags.DontSave;
-            //  go.AddComponent<AdmobController>();
-        }
     }
 
     private void OnEnable()
     {
-        /*        // Interstitial
-                AdmobController.OnInterstitialLoaded += OnInterstitialLoaded;
-                AdmobController.OnInterstitialFailedToLoad += OnInterstitialFailedToLoad;
-                AdmobController.OnInterstitialClosed += OnInterstitialClosed;
-
-                // Rewarded
-                AdmobController.OnRewardedLoaded += OnRewardedLoaded;
-                AdmobController.OnRewardedFailedToLoad += OnRewardedFailedToLoad;
-                AdmobController.OnRewardedClosed += OnRewardedClosed;
-
-                // Rewarded Interstitial
-                AdmobController.OnRewardedInterstitialLoaded += OnRewardedInterstitialLoaded;
-                AdmobController.OnRewardedInterstitialFailedToLoad += OnRewardedInterstitialFailedToLoad;
-                AdmobController.OnRewardedInterstitialClosed += OnRewardedInterstitialClosed;
-
-                // Banner
-                AdmobController.OnBannerLoaded += OnBannerLoaded;
-                AdmobController.OnBannerFailedToLoad += OnBannerFailedToLoad;
-
-                // Rewarded result passthrough
-                AdmobController.AdResult += HandleRewardedResult;*/
-
-        SafeInitAndPreload();
+        preloadTimer = 0f;
     }
 
-    private void OnDisable()
+    private void Update()
     {
-        /*    AdmobController.OnInterstitialLoaded -= OnInterstitialLoaded;
-            AdmobController.OnInterstitialFailedToLoad -= OnInterstitialFailedToLoad;
-            AdmobController.OnInterstitialClosed -= OnInterstitialClosed;
+        if (TryRemoveAds())
+            return;
 
-            AdmobController.OnRewardedLoaded -= OnRewardedLoaded;
-            AdmobController.OnRewardedFailedToLoad -= OnRewardedFailedToLoad;
-            AdmobController.OnRewardedClosed -= OnRewardedClosed;
-
-            AdmobController.OnRewardedInterstitialLoaded -= OnRewardedInterstitialLoaded;
-            AdmobController.OnRewardedInterstitialFailedToLoad -= OnRewardedInterstitialFailedToLoad;
-            AdmobController.OnRewardedInterstitialClosed -= OnRewardedInterstitialClosed;
-
-            AdmobController.OnBannerLoaded -= OnBannerLoaded;
-            AdmobController.OnBannerFailedToLoad -= OnBannerFailedToLoad;
-
-            AdmobController.AdResult -= HandleRewardedResult;*/
-
-        if (_preloadLoop != null) StopCoroutine(_preloadLoop);
-        _preloadLoop = null;
+        TickPreloadPoll();
+        TickRetry(ref bannerRetryTimer, RetryLoadBanner);
+        TickRetry(ref interstitialRetryTimer, LoadInterstitialIfNeeded);
+        TickRetry(ref rewardedRetryTimer, LoadRewardedIfNeeded);
+        TickRetry(ref rewardedInterstitialRetryTimer, LoadRewardedInterstitialIfNeeded);
     }
 
-    private void SafeInitAndPreload()
-    {
-#if UNITY_ANDROID || UNITY_IOS
-        if (_preloadLoop == null)
-            _preloadLoop = StartCoroutine(PreloadLoop());
-#endif
-    }
-
-    private IEnumerator PreloadLoop()
-    {
-        // If you gate by consent (UMP), wait here.
-        // yield return UMPConsent.WaitForConsent(); // optional
-
-        LoadBannerIfNeeded();
-        LoadInterstitialIfNeeded();
-        LoadRewardedIfNeeded();
-        LoadRewardedInterstitialIfNeeded();
-
-        var wait = new WaitForSeconds(2f);
-        while (true)
-        {
-            if (TryRemoveAds())
-                yield break;
-
-            LoadBannerIfNeeded();
-            LoadInterstitialIfNeeded();
-            LoadRewardedIfNeeded();
-            LoadRewardedInterstitialIfNeeded();
-            yield return wait;
-        }
-    }
-
-    // ------------------------ Banner ------------------------
     public void ShowBanner(bool show)
     {
-        if (TryRemoveAds()) return;
+        if (TryRemoveAds())
+            return;
 
         if (show)
-        {
             LoadBannerIfNeeded();
-            // AdmobController.Instance?.ShowBanner(true); // Instantiates at selected bool position
-        }
-        else
-        {
-            // AdmobController.Instance?.ShowBanner(false);
-        }
     }
 
     public void ShowRectBanner(bool show)
     {
-        if (TryRemoveAds()) return;
+        if (TryRemoveAds())
+            return;
 
         if (show)
-        {
-            LoadBannerIfNeeded(isRect: true);
-            // AdmobController.Instance?.ShowRectBanner(true); // Instantiates at selected bool corner
-        }
-        else
-        {
-            //  AdmobController.Instance?.ShowRectBanner(false);
-        }
+            LoadBannerIfNeeded(true);
     }
 
-    private void LoadBannerIfNeeded(bool isRect = false)
-    {
-        if (TryRemoveAds()) return;
-        // if (AdmobController.Instance == null) return;
-
-        //  bool isLoaded = isRect
-        //      ? AdmobController.Instance.IsRectBannerLoaded
-        // : AdmobController.Instance.IsBannerLoaded;
-
-        // if (!isLoaded)
-        {
-            //   if (isRect) AdmobController.Instance.LoadRectBannerAd();
-            //   else AdmobController.Instance.LoadBannerAd();
-
-            if (_bnRetryDelay <= 0f) _bnRetryDelay = initialRetryDelay;
-        }
-    }
-
-    private void RetryLoadBanner() => LoadBannerIfNeeded();
-
-    private void OnBannerLoaded() => _bnRetryDelay = 0f;
-
-    private void OnBannerFailedToLoad(string error)
-    {
-        Backoff(ref _bnRetryDelay);
-        Invoke(nameof(RetryLoadBanner), _bnRetryDelay);
-    }
-
-    // ------------------------ Interstitial ------------------------
     public void TryShowInterstitial(GameManager.GameState state)
     {
-        if (TryRemoveAds()) return;
+        if (TryRemoveAds())
+            return;
 
         if (state == GameManager.GameState.Dead)
         {
@@ -230,154 +128,29 @@ public class AdsManager : MonoBehaviour
         }
     }
 
-    private bool ShowInterstitialIfReady()
-    {
-        /* if (AdmobController.Instance != null && AdmobController.Instance.IsInterstitialReady())
-         {
-             AdmobController.Instance.ShowInterstitialAd();
-             return true;
-         }*/
-        return false;
-    }
-
-    private void LoadInterstitialIfNeeded()
-    {
-        if (TryRemoveAds()) return;
-        // if (AdmobController.Instance == null) return;
-
-        // if (!AdmobController.Instance.IsInterstitialReady())
-        {
-            //  AdmobController.Instance.LoadInterstitialAd();
-            if (_isRetryDelay <= 0f) _isRetryDelay = initialRetryDelay;
-        }
-    }
-
-    private void OnInterstitialLoaded() => _isRetryDelay = 0f;
-
-    private void OnInterstitialFailedToLoad(string error)
-    {
-        Backoff(ref _isRetryDelay);
-        Invoke(nameof(LoadInterstitialIfNeeded), _isRetryDelay);
-    }
-
-    private void OnInterstitialClosed() => LoadInterstitialIfNeeded();
-
-    // ------------------------ Rewarded ------------------------
-    // public bool IsRewardedReady() =>{}
-    //  AdmobController.Instance?.isRewardedVideoAdReady() ?? false;
-
     public void ShowRewardedVideo()
     {
-        if (TryRemoveAds()) return;
-
-        // if (!IsRewardedReady())
-        {
-            Debug.Log("[Ads] Rewarded not ready, loading now.");
-            LoadRewardedIfNeeded();
-            OnRewardedResult?.Invoke(false, 0);
+        if (TryRemoveAds())
             return;
-        }
 
-        lastWatchTime = Time.realtimeSinceStartup;
-      //  AdmobController.Instance?.WatchRewardedVideoAd();
-    }
-
-    private void LoadRewardedIfNeeded()
-    {
-        if (TryRemoveAds()) return;
-      //  if (AdmobController.Instance == null) return;
-
-       // if (!AdmobController.Instance.isRewardedVideoAdReady())
-        {
-          //  AdmobController.Instance.LoadRewardedAd();
-            if (_rsRetryDelay <= 0f) _rsRetryDelay = initialRetryDelay;
-        }
-    }
-
-    private void OnRewardedLoaded() => _rsRetryDelay = 0f;
-
-    private void OnRewardedFailedToLoad(string error)
-    {
-        Backoff(ref _rsRetryDelay);
-        Invoke(nameof(LoadRewardedIfNeeded), _rsRetryDelay);
-    }
-
-    private void OnRewardedClosed(bool earnedReward)
-    {
-        if (earnedReward)
-            OnRewardedResult?.Invoke(true, rewardAmount);
-        else
-            OnRewardedResult?.Invoke(false, 0);
-
+        Debug.Log("[Ads] Rewarded not ready, loading now.");
         LoadRewardedIfNeeded();
+        OnRewardedResult?.Invoke(false, 0);
+        lastWatchTime = Time.realtimeSinceStartup;
     }
 
-    private void HandleRewardedResult(bool success)
-    {
-        if (success)
-        {
-            OnRewardedResult?.Invoke(true, rewardAmount);
-            Debug.Log($"Reward granted: {rewardAmount}");
-        }
-        else
-        {
-            OnRewardedResult?.Invoke(false, 0);
-            Debug.Log("Rewarded ad failed or not watched.");
-        }
-    }
-
-    // ------------------------ Rewarded Interstitial ------------------------
     public void ShowRewardedInterstitial()
     {
-        if (TryRemoveAds()) return;
+        if (TryRemoveAds())
+            return;
 
-      //  if (AdmobController.Instance != null && AdmobController.Instance.IsRewardedInterstitialReady())
-      //  {
-          //  AdmobController.Instance.ShowRewardedInterstitial();
-       // }
-        else
-        {
-            Debug.Log("[Ads] Rewarded-Interstitial not ready, loading now.");
-            LoadRewardedInterstitialIfNeeded();
-        }
+        Debug.Log("[Ads] Rewarded-Interstitial not ready, loading now.");
+        LoadRewardedInterstitialIfNeeded();
     }
 
-    private void LoadRewardedInterstitialIfNeeded()
-    {
-        if (TryRemoveAds()) return;
-       // if (AdmobController.Instance == null) return;
-
-       // if (!AdmobController.Instance.IsRewardedInterstitialReady())
-        {
-            //  AdmobController.Instance.LoadRewardedInterstitial();
-            if (_riRetryDelay <= 0f) _riRetryDelay = initialRetryDelay;
-        }
-    }
-
-    private void OnRewardedInterstitialLoaded() => _riRetryDelay = 0f;
-
-    private void OnRewardedInterstitialFailedToLoad(string error)
-    {
-        Backoff(ref _riRetryDelay);
-        Invoke(nameof(LoadRewardedInterstitialIfNeeded), _riRetryDelay);
-    }
-
-    private void OnRewardedInterstitialClosed() => LoadRewardedInterstitialIfNeeded();
-
-    // ------------------------ Utility ------------------------
     public float TimeUntilNextReward()
     {
         return minTimeBetweenWatches - (Time.realtimeSinceStartup - lastWatchTime);
-    }
-
-    private bool TryRemoveAds()
-    {
-        if (GlobalValue.RemoveAds)
-        {
-            Debug.Log("Ads removed (IAP detected).");
-            return true;
-        }
-        return false;
     }
 
     public void ResetCounters()
@@ -386,10 +159,166 @@ public class AdsManager : MonoBehaviour
         victoryCounter = 0;
     }
 
+    private void TickPreloadPoll()
+    {
+        preloadTimer -= Time.deltaTime;
+        if (preloadTimer > 0f)
+            return;
+
+        preloadTimer = preloadPollInterval;
+        LoadBannerIfNeeded();
+        LoadInterstitialIfNeeded();
+        LoadRewardedIfNeeded();
+        LoadRewardedInterstitialIfNeeded();
+    }
+
+    private void TickRetry(ref float timer, System.Action retryAction)
+    {
+        if (timer < 0f)
+            return;
+
+        timer -= Time.deltaTime;
+        if (timer > 0f)
+            return;
+
+        timer = -1f;
+        retryAction();
+    }
+
+    private void LoadBannerIfNeeded(bool isRect = false)
+    {
+        if (TryRemoveAds())
+            return;
+
+        if (bannerRetryDelay <= 0f)
+            bannerRetryDelay = initialRetryDelay;
+    }
+
+    private void RetryLoadBanner()
+    {
+        LoadBannerIfNeeded();
+    }
+
+    private bool ShowInterstitialIfReady()
+    {
+        return false;
+    }
+
+    private void LoadInterstitialIfNeeded()
+    {
+        if (TryRemoveAds())
+            return;
+
+        if (interstitialRetryDelay <= 0f)
+            interstitialRetryDelay = initialRetryDelay;
+    }
+
+    private void LoadRewardedIfNeeded()
+    {
+        if (TryRemoveAds())
+            return;
+
+        if (rewardedRetryDelay <= 0f)
+            rewardedRetryDelay = initialRetryDelay;
+    }
+
+    private void LoadRewardedInterstitialIfNeeded()
+    {
+        if (TryRemoveAds())
+            return;
+
+        if (rewardedInterstitialRetryDelay <= 0f)
+            rewardedInterstitialRetryDelay = initialRetryDelay;
+    }
+
+    private void OnBannerLoaded()
+    {
+        bannerRetryDelay = 0f;
+        bannerRetryTimer = -1f;
+    }
+
+    private void OnBannerFailedToLoad(string error)
+    {
+        Backoff(ref bannerRetryDelay);
+        bannerRetryTimer = bannerRetryDelay;
+    }
+
+    private void OnInterstitialLoaded()
+    {
+        interstitialRetryDelay = 0f;
+        interstitialRetryTimer = -1f;
+    }
+
+    private void OnInterstitialFailedToLoad(string error)
+    {
+        Backoff(ref interstitialRetryDelay);
+        interstitialRetryTimer = interstitialRetryDelay;
+    }
+
+    private void OnInterstitialClosed()
+    {
+        LoadInterstitialIfNeeded();
+    }
+
+    private void OnRewardedLoaded()
+    {
+        rewardedRetryDelay = 0f;
+        rewardedRetryTimer = -1f;
+    }
+
+    private void OnRewardedFailedToLoad(string error)
+    {
+        Backoff(ref rewardedRetryDelay);
+        rewardedRetryTimer = rewardedRetryDelay;
+    }
+
+    private void OnRewardedClosed(bool earnedReward)
+    {
+        OnRewardedResult?.Invoke(earnedReward, earnedReward ? rewardAmount : 0);
+        LoadRewardedIfNeeded();
+    }
+
+    private void HandleRewardedResult(bool success)
+    {
+        OnRewardedResult?.Invoke(success, success ? rewardAmount : 0);
+        Debug.Log(success ? $"Reward granted: {rewardAmount}" : "Rewarded ad failed or not watched.");
+    }
+
+    private void OnRewardedInterstitialLoaded()
+    {
+        rewardedInterstitialRetryDelay = 0f;
+        rewardedInterstitialRetryTimer = -1f;
+    }
+
+    private void OnRewardedInterstitialFailedToLoad(string error)
+    {
+        Backoff(ref rewardedInterstitialRetryDelay);
+        rewardedInterstitialRetryTimer = rewardedInterstitialRetryDelay;
+    }
+
+    private void OnRewardedInterstitialClosed()
+    {
+        LoadRewardedInterstitialIfNeeded();
+    }
+
+    private bool TryRemoveAds()
+    {
+        if (progressService.RemoveAds)
+        {
+            Debug.Log("Ads removed (IAP detected).");
+            return true;
+        }
+
+        return false;
+    }
+
     private void Backoff(ref float delayVar)
     {
-        if (delayVar <= 0f) delayVar = initialRetryDelay;
-        else delayVar = Mathf.Min(delayVar * 2f, maxRetryDelay);
+        if (delayVar <= 0f)
+            delayVar = initialRetryDelay;
+        else
+            delayVar = Mathf.Min(delayVar * 2f, maxRetryDelay);
+
         Debug.Log($"[Ads] Retry in {delayVar:0.#}s");
     }
 }

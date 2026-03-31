@@ -1,22 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class KeyUI : MonoBehaviour
 {
     public static KeyUI Instance;
-    Animator anim;
-    // Start is called before the first frame update
+
+    private Animator anim;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
     private void Awake()
     {
+        ProjectScope.Inject(this);
         Instance = this;
         anim = GetComponent<Animator>();
     }
 
     private void OnEnable()
     {
-        if(GameManager.Instance)
-            anim.SetBool("got", GameManager.Instance.isHasKey);
+        if (gameSession != null)
+            anim.SetBool("got", gameSession.HasKey);
     }
 
     public void Get()

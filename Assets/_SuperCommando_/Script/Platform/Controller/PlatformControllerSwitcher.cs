@@ -1,17 +1,26 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class PlatformControllerSwitcher : MonoBehaviour, ICanTakeDamage
 {
     public AudioClip sound;
     public PlatformControllerNEW targetControl;
-    bool isStop = true;
-
     public Animator anim;
+
+    bool isStop = true;
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
 
     void Awake()
     {
+        ProjectScope.Inject(this);
         targetControl.isManualControl = true;
         targetControl.isStop = isStop;
     }
@@ -21,6 +30,6 @@ public class PlatformControllerSwitcher : MonoBehaviour, ICanTakeDamage
         isStop = !isStop;
         targetControl.isStop = isStop;
         anim.SetBool("open", !isStop);
-        SoundManager.PlaySfx(sound);
+        audioService?.PlaySfx(sound);
     }
 }

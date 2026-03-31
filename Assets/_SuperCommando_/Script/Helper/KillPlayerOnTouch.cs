@@ -5,6 +5,18 @@ public class KillPlayerOnTouch : MonoBehaviour
 {
     public bool killEnemies = false;
     public bool killAnything = false;
+    private IGameSessionService gameSession;
+
+    [VContainer.Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -19,7 +31,7 @@ public class KillPlayerOnTouch : MonoBehaviour
             //    return;
 
             if (player.isPlaying)
-                GameManager.Instance.GameOver();
+                gameSession.GameOver();
         }
         else if (killEnemies && other.gameObject.GetComponent(typeof(ICanTakeDamage)))
             other.gameObject.SetActive(false);

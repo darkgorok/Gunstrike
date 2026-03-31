@@ -1,19 +1,17 @@
-﻿/*
+/*
  * BOSS ROOT GAMEOBJET DON'T CHILD ANY OTHER OBJECTS
  */
 
 using UnityEngine;
-using System.Collections;
+using VContainer;
 
 public class BOSS_2 : MonoBehaviour, ICanTakeDamage
 {
     public bool isBoss = false;
-    Animator anim;
 
-    [Range(10, 500)]
-    public int health = 500;
+    [Range(10, 500)] public int health = 500;
     [ReadOnly] public int currentHealth;
-    
+
     public AudioClip deadSound;
     public AudioClip throwSound;
     public AudioClip hurtSound;
@@ -29,15 +27,39 @@ public class BOSS_2 : MonoBehaviour, ICanTakeDamage
     public float MinAttackTime = 2f;
     public float MaxAttackTime = 4f;
 
+    [Header("BLINKING")]
+    public float blinking = 1.5f;
+    public SpriteRenderer characterImage;
+    public Material whiteMaterial;
 
-    bool isDead = false;
-    Rigidbody2D rig;
+    [HideInInspector] public GameObject saveOwner;
 
-    [HideInInspector]
-    public GameObject saveOwner;
-    Material objMat;
-    // Use this for initialization
-    void Start()
+    private Animator anim;
+    private Rigidbody2D rig;
+    private Material objMat;
+    private bool isDead;
+    private float attackTimer = -1f;
+    private float disableTimer = -1f;
+    private float blinkTimer = -1f;
+    private float nextBlinkToggle;
+    private bool blinkUsingWhite;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -47,7 +69,7 @@ public class BOSS_2 : MonoBehaviour, ICanTakeDamage
         healthBar = (HealthBarEnemyNew)Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
-        saveOwner = Instantiate(transform.root.gameObject, transform.root.position, Quaternion.identity) as GameObject;
+        saveOwner = Instantiate(transform.root.gameObject, transform.root.position, Quaternion.identity);
         saveOwner.SetActive(false);
 
         objMat = characterImage.material;
@@ -55,33 +77,25 @@ public class BOSS_2 : MonoBehaviour, ICanTakeDamage
 
     private void Update()
     {
-        if (isDead)
+        TickTimers();
+
+        if (isDead || gameSession.Player == null)
             return;
-        transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * (transform.position.x > GameManager.Instance.Player.transform.position.x ? 1 : -1), transform.localScale.y, transform.localScale.z);
+
+        transform.localScale = new Vector3(
+            Mathf.Abs(transform.localScale.x) * (transform.position.x > gameSession.Player.transform.position.x ? 1 : -1),
+            transform.localScale.y,
+            transform.localScale.z);
     }
 
-    //send by Detect Player trigger object 
-    void Play()
+    private void Play()
     {
-        StartCoroutine(Attack(Random.Range(MinAttackTime, MaxAttackTime)));
+        ScheduleNextAttack();
     }
 
-    IEnumerator Attack(float delay)
-    {
-        anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(delay);
-
-        while (GameManager.Instance.State != GameManager.GameState.Playing)
-        {
-            yield return null;
-        }
-        StartCoroutine(Attack(Random.Range(MinAttackTime, MaxAttackTime)));
-    }
-
-    //Called by animation event trigger
     public void ThrowStone()
     {
-        SoundManager.PlaySfx(throwSound);
+        audioService.PlaySfx(throwSound);
         Instantiate(Stone, attackPoint.position, Quaternion.identity);
     }
 
@@ -91,76 +105,109 @@ public class BOSS_2 : MonoBehaviour, ICanTakeDamage
             return;
 
         currentHealth -= damage;
-
-        isDead = health <= 0 ? true : false;
+        isDead = currentHealth <= 0;
         if (healthBar)
             healthBar.UpdateValue(currentHealth / (float)health);
+
         if (isDead)
         {
-            SoundManager.PlaySfx(deadSound);
+            audioService.PlaySfx(deadSound);
             anim.SetTrigger("Dead");
-          
-            var boxCo = GetComponents<BoxCollider2D>();
-            foreach (var box in boxCo)
-            {
-                box.enabled = false;
-            }
-            var CirCo = GetComponents<CircleCollider2D>();
-            foreach (var cir in CirCo)
-            {
-                cir.enabled = false;
-            }
+            DisableAllColliders();
             rig.isKinematic = true;
+            attackTimer = -1f;
+            blinkTimer = -1f;
+            characterImage.material = objMat;
 
             if (isBoss)
             {
-                GameManager.Instance.MissionStarCollected = 3;
-                GameManager.Instance.GameFinish();
+                gameSession.MissionStarCollected = 3;
+                gameSession.GameFinish();
             }
             else
             {
-                Invoke("DisableBoss", 2);
-                //try spawn random item
+                disableTimer = 2f;
                 var spawnItem = GetComponent<EnemySpawnItem>();
-
-               
-
                 if (spawnItem != null)
-                {
                     spawnItem.SpawnItem();
-                }
             }
         }
         else
         {
-            StartCoroutine(BlinkEffecrCo());		//begin the blink effect
-            SoundManager.PlaySfx(hurtSound);
+            StartBlink();
+            audioService.PlaySfx(hurtSound);
         }
     }
 
-    [Header("BLINKING")]
-
-    public float blinking = 1.5f;       //blinking time allowed
-    bool isBlinking = false;
-    public SpriteRenderer characterImage;
-    public Material whiteMaterial;
-    IEnumerator BlinkEffecrCo()
+    private void TickTimers()
     {
-        isBlinking = true;
-        int blink = (int)(blinking * 0.5f / 0.2f);
-
-        for (int i = 0; i < blink; i++)
+        if (attackTimer >= 0f)
         {
-            characterImage.material = whiteMaterial;
-            yield return new WaitForSeconds(0.2f);
-            characterImage.material = objMat;
-            yield return new WaitForSeconds(0.2f);
+            attackTimer -= Time.deltaTime;
+            if (attackTimer <= 0f)
+            {
+                attackTimer = -1f;
+                if (!isDead && gameSession.State == GameManager.GameState.Playing)
+                {
+                    anim.SetTrigger("Attack");
+                    ScheduleNextAttack();
+                }
+            }
         }
-        characterImage.material = objMat;
-        isBlinking = false;
+
+        if (disableTimer >= 0f)
+        {
+            disableTimer -= Time.deltaTime;
+            if (disableTimer <= 0f)
+            {
+                disableTimer = -1f;
+                DisableBoss();
+            }
+        }
+
+        if (blinkTimer >= 0f)
+        {
+            blinkTimer -= Time.deltaTime;
+            nextBlinkToggle -= Time.deltaTime;
+
+            if (nextBlinkToggle <= 0f)
+            {
+                blinkUsingWhite = !blinkUsingWhite;
+                characterImage.material = blinkUsingWhite ? whiteMaterial : objMat;
+                nextBlinkToggle = 0.2f;
+            }
+
+            if (blinkTimer <= 0f)
+            {
+                blinkTimer = -1f;
+                blinkUsingWhite = false;
+                characterImage.material = objMat;
+            }
+        }
     }
 
-    void DisableBoss()
+    private void ScheduleNextAttack()
+    {
+        attackTimer = Random.Range(MinAttackTime, MaxAttackTime);
+    }
+
+    private void StartBlink()
+    {
+        blinkTimer = blinking;
+        nextBlinkToggle = 0f;
+        blinkUsingWhite = false;
+    }
+
+    private void DisableAllColliders()
+    {
+        foreach (var box in GetComponents<BoxCollider2D>())
+            box.enabled = false;
+
+        foreach (var cir in GetComponents<CircleCollider2D>())
+            cir.enabled = false;
+    }
+
+    private void DisableBoss()
     {
         if (deadFX)
             Instantiate(deadFX, transform.position, Quaternion.identity);

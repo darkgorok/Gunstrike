@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class PressureSwitchEvent : MonoBehaviour, IStandOnEvent
 {
@@ -9,20 +8,37 @@ public class PressureSwitchEvent : MonoBehaviour, IStandOnEvent
     public Transform target;
     public Vector2 localActive;
     public Vector2 localDisactive = Vector2.one;
-    Vector3 targetA, targetD;
     public float moveSpeedA = 1;
     public float moveSpeedD = 3;
-    bool movingTarget = false;
-    float movePercent = 0;
 
     [Header("SEND MESSSAGE")]
     public GameObject targetObject;
     public string eventOnMessage = "On";
     public string eventOffMessage = "Off";
     public AudioClip soundOn, soundOff;
-    Animator anim;
-    
+
     [ReadOnly] public bool state = false;
+
+    private Vector3 targetA;
+    private Vector3 targetD;
+    private float movePercent;
+    private bool waitForPlayerLeave;
+    private Animator anim;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -33,23 +49,22 @@ public class PressureSwitchEvent : MonoBehaviour, IStandOnEvent
 
     private void Update()
     {
-        if (state)
+        if (moveTarget)
         {
-            if (moveTarget)
-            {
-                movePercent += moveSpeedA * Time.deltaTime;
-                movePercent = Mathf.Clamp01(movePercent);
-                target.position = Vector3.Lerp(targetD, targetA, movePercent);
-            }
+            movePercent += (state ? moveSpeedA : -moveSpeedD) * Time.deltaTime;
+            movePercent = Mathf.Clamp01(movePercent);
+            target.position = Vector3.Lerp(targetD, targetA, movePercent);
         }
-        else
+
+        if (!waitForPlayerLeave || gameSession?.Player == null)
+            return;
+
+        if (!gameSession.Player.isGrounded)
         {
-            if (moveTarget)
-            {
-                movePercent -= moveSpeedD * Time.deltaTime;
-                movePercent = Mathf.Clamp01(movePercent);
-                target.position = Vector3.Lerp(targetD, targetA, movePercent);
-            }
+            waitForPlayerLeave = false;
+            SetState(false);
+            NotifyTarget(eventOffMessage);
+            audioService?.PlaySfx(soundOff);
         }
     }
 
@@ -58,34 +73,27 @@ public class PressureSwitchEvent : MonoBehaviour, IStandOnEvent
         if (state)
             return;
 
-        StartCoroutine(StandOnCo(instigator.GetComponent<Player>() != null));
+        SetState(true);
+        NotifyTarget(eventOnMessage);
+        audioService?.PlaySfx(soundOn);
+        waitForPlayerLeave = instigator.GetComponent<Player>() != null;
     }
 
-    IEnumerator StandOnCo(bool isPlayer)
+    private void SetState(bool value)
     {
-        state = true;
+        state = value;
         anim.SetBool("state", state);
+    }
+
+    private void NotifyTarget(string message)
+    {
         if (targetObject)
-            targetObject.SendMessage(eventOnMessage, SendMessageOptions.DontRequireReceiver);
+            targetObject.SendMessage(message, SendMessageOptions.DontRequireReceiver);
         else
             Debug.LogWarning("NEED SET TARGET TO THIS: " + gameObject.name);
+    }
 
-        SoundManager.PlaySfx(soundOn);
-        if (!isPlayer)
-            yield break;
-
-        while (GameManager.Instance.Player.isGrounded) { yield return null; }
-        state = false;
-        anim.SetBool("state", state);
-        if (targetObject)
-            targetObject.SendMessage(eventOffMessage, SendMessageOptions.DontRequireReceiver);
-        else
-            Debug.LogWarning("NEED SET TARGET TO THIS: " + gameObject.name);
-        SoundManager.PlaySfx(soundOff);
-
-    } 
-
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         if (Application.isPlaying || !enabled)
             return;

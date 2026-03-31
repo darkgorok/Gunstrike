@@ -1,30 +1,41 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 public class GameManager : MonoBehaviour
 {
+    private enum SessionTransition
+    {
+        None,
+        Finish,
+        Continue
+    }
+
     public static GameManager Instance { get; private set; }
 
-    public enum GameState { Menu, Playing, Dead, Finish, Waiting };
-    public GameState State { get; set; }
+    public enum GameState { Menu, Playing, Dead, Finish, Waiting }
+    public GameState State
+    {
+        get => runtimeState.State;
+        set => runtimeState.State = value;
+    }
 
     public LayerMask playerLayer;
     public LayerMask enemyLayer;
     public LayerMask groundLayer;
 
-    // Left for compatibility: some scripts/UI may still read/write this flag.
-    public bool isWatchingAd { get; set; }
+    public bool isWatchingAd
+    {
+        get => runtimeState.IsWatchingAd;
+        set => runtimeState.IsWatchingAd = value;
+    }
 
     [Header("CONTINUE GAME OPTION")]
     public int continueCoinCost = 100;
 
-    // Ads removed: continue only via coins.
     public bool canBeSave()
     {
-        return (GlobalValue.SavedCoins >= continueCoinCost);
+        return progressService.SavedCoins >= continueCoinCost;
     }
 
     public GameObject FadeInEffect;
@@ -32,15 +43,21 @@ public class GameManager : MonoBehaviour
     [Header("Floating Text")]
     public GameObject FloatingText;
 
-    private MenuManager menuManager;
+    public Vector2 currentCheckpoint
+    {
+        get => runtimeState.CurrentCheckpoint;
+        private set => runtimeState.CurrentCheckpoint = value;
+    }
 
-    [ReadOnly] public Vector2 currentCheckpoint = Vector2.zero;
-
-    public bool isSpecialBullet { get; set; }
+    public bool isSpecialBullet
+    {
+        get => runtimeState.IsSpecialBullet;
+        set => runtimeState.IsSpecialBullet = value;
+    }
 
     public bool isHasKey
     {
-        get { return hasKey; }
+        get => runtimeState.HasKey;
         set
         {
             if (value)
@@ -48,47 +65,106 @@ public class GameManager : MonoBehaviour
             else
                 KeyUI.Instance.Used();
 
-            hasKey = value;
+            runtimeState.HasKey = value;
         }
     }
-    bool hasKey = false;
 
     public Player Player { get; private set; }
-    SoundManager soundManager;
 
-    [HideInInspector]
-    public bool isNoLives = false;
-
-    public int MissionStarCollected { get; set; }
-    public bool hideGUI = false;
-
-    void Awake()
+    public bool isNoLives
     {
+        get => runtimeState.IsNoLives;
+        set => runtimeState.IsNoLives = value;
+    }
+    public int MissionStarCollected
+    {
+        get => runtimeState.MissionStarCollected;
+        set => runtimeState.MissionStarCollected = value;
+    }
+    public bool hideGUI
+    {
+        get => runtimeState.HideGui;
+        set => runtimeState.HideGui = value;
+    }
+    public int Point
+    {
+        get => runtimeState.Point;
+        set => runtimeState.Point = value;
+    }
+    public int Coin
+    {
+        get => runtimeState.Coin;
+        set => runtimeState.Coin = value;
+    }
+
+    private MenuManager menuManager;
+    private SessionTransition pendingTransition = SessionTransition.None;
+    private float pendingTransitionTimer = -1f;
+
+    private ISceneLoader sceneLoader;
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private ICharacterSelectionService characterSelectionService;
+    private IProgressService progressService;
+    private IInventoryService inventoryService;
+    private IGameSessionRuntimeState runtimeState;
+    private IListenerBroadcastService listenerBroadcastService;
+
+    [Inject]
+    public void Construct(
+        ISceneLoader sceneLoader,
+        IAudioService audioService,
+        IControllerInputService controllerInputService,
+        ICharacterSelectionService characterSelectionService,
+        IProgressService progressService,
+        IInventoryService inventoryService,
+        IGameSessionRuntimeState runtimeState,
+        IListenerBroadcastService listenerBroadcastService)
+    {
+        this.sceneLoader = sceneLoader;
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.characterSelectionService = characterSelectionService;
+        this.progressService = progressService;
+        this.inventoryService = inventoryService;
+        this.runtimeState = runtimeState;
+        this.listenerBroadcastService = listenerBroadcastService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
         Application.targetFrameRate = 60;
         isSpecialBullet = false;
         Instance = this;
         State = GameState.Menu;
         Player = FindObjectOfType<Player>();
 
-        if (CharacterHolder.Instance != null && CharacterHolder.Instance.CharacterPicked != null)
+        var selectedCharacter = characterSelectionService.CurrentCharacterPrefab;
+        if (selectedCharacter != null)
         {
-            Instantiate(CharacterHolder.Instance.CharacterPicked, Player.transform.position, Player.transform.rotation);
+            Instantiate(selectedCharacter, Player.transform.position, Player.transform.rotation);
             Destroy(Player.gameObject);
-
             Player = FindObjectOfType<Player>();
         }
 
-        var startPoint = GameObject.FindGameObjectWithTag("StartPoint");
-        if (startPoint)
+        GameObject startPoint = GameObject.FindGameObjectWithTag("StartPoint");
+        if (startPoint != null)
             Player.transform.position = startPoint.transform.position;
     }
 
-    public int Point { get; set; }
-    int savePointCheckPoint;
+    private void Start()
+    {
+        menuManager = FindObjectOfType<MenuManager>();
+        currentCheckpoint = Player.transform.position;
+        audioService.PlaySfx(audioService.BeginMainMenuClip);
+    }
 
-    public int Coin { get; set; }
-    int saveCoinCheckPoint;
-    int checkpointBigStar;
+    private void Update()
+    {
+        ShortKey();
+        TickTransition();
+    }
 
     public void AddPoint(int addpoint)
     {
@@ -97,77 +173,20 @@ public class GameManager : MonoBehaviour
 
     public void AddBullet(int addbullet)
     {
-        /*Bullet*/
         if (DefaultValue.Instance && DefaultValue.Instance.defaultBulletMax)
+        {
             Debug.LogWarning("NO LIMIT BULLET");
-        else
-            GlobalValue.Bullets += addbullet;
+            return;
+        }
+
+        inventoryService.Darts += addbullet;
     }
 
     public void PauseCamera(bool pause)
     {
         CameraFollow.Instance.pauseCamera = pause;
-        if (pause == false)
+        if (!pause)
             CameraFollow.Instance.MoveCameraToPlayerPos();
-    }
-
-    void Start()
-    {
-        menuManager = FindObjectOfType<MenuManager>();
-        currentCheckpoint = Player.transform.position;
-
-        soundManager = FindObjectOfType<SoundManager>();
-
-        SoundManager.PlaySfx(SoundManager.Instance.beginSoundInMainMenu);
-    }
-
-    private void Update()
-    {
-        ShortKey();
-    }
-
-    void ShortKey()
-    {
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
-        {
-            PlayerPrefs.DeleteAll();
-            SceneManager.LoadScene(0);
-        }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.L))
-        {
-            GlobalValue.SaveLives += 999;
-        }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.G))
-        {
-            GlobalValue.SavedCoins += 999999;
-        }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.F))
-        {
-            FinishGame();
-        }
-
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.U))
-        {
-            PlayerPrefs.SetInt(GlobalValue.WorldReached, int.MaxValue);
-            for (int i = 1; i < 100; i++)
-            {
-                PlayerPrefs.SetInt(i.ToString(), 10000);        // world i, unlock 10000 levels
-            }
-
-            GlobalValue.LevelHighest = 9999;
-
-            SceneManager.LoadSceneAsync(1);
-
-            SoundManager.PlaySfx(soundManager.soundClick);
-        }
     }
 
     public void SaveCheckPoint(Vector2 newCheckpoint)
@@ -175,42 +194,23 @@ public class GameManager : MonoBehaviour
         currentCheckpoint = newCheckpoint;
     }
 
-    private void ResetCheckPoint()
-    {
-        if (savePointCheckPoint != 0)
-        {
-            Point = savePointCheckPoint;
-            State = GameState.Playing;
-        }
-        else
-        {
-            // Coin = GlobalValue.SavedCoins;
-        }
-    }
-
     public void ShowFloatingText(string text, Vector2 positon, Color color)
     {
-        GameObject floatingText = Instantiate(FloatingText) as GameObject;
-        var _position = Camera.main.WorldToScreenPoint(positon);
+        GameObject floatingText = Instantiate(FloatingText);
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(positon);
 
         floatingText.transform.SetParent(menuManager.transform, false);
-        floatingText.transform.position = _position;
+        floatingText.transform.position = screenPosition;
 
-        var _FloatingText = floatingText.GetComponent<FloatingText>();
-        _FloatingText.SetText(text, color);
+        FloatingText floatingTextComponent = floatingText.GetComponent<FloatingText>();
+        floatingTextComponent.SetText(text, color);
     }
 
     public void StartGame()
     {
         State = GameState.Playing;
-
-        var listener_ = FindObjectsOfType<MonoBehaviour>().OfType<IListener>();
-        foreach (var _listener in listener_)
-        {
-            _listener.IPlay();
-        }
-
-        SoundManager.PlayGameMusic();
+        listenerBroadcastService.Notify(listener => listener.IPlay());
+        audioService.PlayGameMusic();
     }
 
     public void GameFinish(int delay = 0)
@@ -219,112 +219,141 @@ public class GameManager : MonoBehaviour
             return;
 
         State = GameState.Finish;
+        listenerBroadcastService.Notify(listener => listener.ISuccess());
 
-        var listener_ = FindObjectsOfType<MonoBehaviour>().OfType<IListener>();
-        foreach (var _listener in listener_)
-        {
-            _listener.ISuccess();
-        }
-
-        Invoke("FinishGame", delay);
-    }
-
-    void FinishGame()
-    {
-    
-
-        
-        SoundManager.Instance.PauseMusic(true);
-        SoundManager.PlaySfx(soundManager.soundGamefinish, 0.3f);
+        pendingTransition = SessionTransition.Finish;
+        pendingTransitionTimer = delay;
+        if (delay <= 0)
+            CompleteFinishTransition();
     }
 
     public void UnlockLevel()
     {
-        if (GlobalValue.levelPlaying == (GlobalValue.LevelHighest))
+        if (progressService.LevelPlaying == progressService.LevelHighest)
         {
-            GlobalValue.LevelHighest++;
+            progressService.LevelHighest++;
             Debug.LogWarning("Unlock new level");
         }
     }
 
     public void GameOver(bool forceGameOver = false)
     {
-        StartCoroutine(GameOverCo(forceGameOver));
-    }
-
-    public IEnumerator GameOverCo(bool forceGameOver = false)
-    {
-        ControllerInput.Instance.Shot(false);
+        controllerInputService.SetShotHeld(false);
 
         if (State != GameState.Dead && State != GameState.Waiting)
-        {
-            GlobalValue.Attempt++;
-        }
+            progressService.Attempts++;
 
         if (State == GameState.Dead)
-            yield break;
-
-        // Ads removed: no interstitial attempts here.
+            return;
 
         if (!forceGameOver && canBeSave())
         {
             if (State == GameState.Dead || State == GameState.Waiting)
-                yield break;
+                return;
 
             State = GameState.Waiting;
             Player.Kill();
-
-            ControllerInput.Instance.StopMove();
+            controllerInputService.StopMove();
             MenuManager.Instance.GUI.SetActive(false && !hideGUI);
-            SoundManager.Instance.PauseMusic(true);
-
+            audioService.PauseMusic(true);
             MenuManager.Instance.OpenSaveMe(true);
+            return;
         }
-        else
-        {
-            // Ads removed: do nothing here.
 
-            var listener_ = FindObjectsOfType<MonoBehaviour>().OfType<IListener>();
-            foreach (var _listener in listener_)
-            {
-                _listener.IGameOver();
-            }
-
-            ControllerInput.Instance.StopMove();
-            State = GameState.Dead;
-
-            MenuManager.Instance.GameOver();
-            SoundManager.PlaySfx(soundManager.soundGameover, 0.5f);
-            SoundManager.Instance.PauseMusic(true);
-
-            GlobalValue.ResetLives();
-        }
+        listenerBroadcastService.Notify(listener => listener.IGameOver());
+        controllerInputService.StopMove();
+        State = GameState.Dead;
+        MenuManager.Instance.GameOver();
+        audioService.PlaySfx(audioService.GameOverClip, 0.5f);
+        audioService.PauseMusic(true);
+        progressService.ResetLives();
     }
 
     public void Continue()
     {
-        StartCoroutine(ContinueCo());
-    }
-
-    IEnumerator ContinueCo()
-    {
-        var listener_ = FindObjectsOfType<MonoBehaviour>().OfType<IListener>();
-        foreach (var _listener in listener_)
-        {
-            _listener.IOnRespawn();
-        }
-
+        listenerBroadcastService.Notify(listener => listener.IOnRespawn());
         MenuManager.Instance.OpenSaveMe(false);
         Player.RespawnAt(currentCheckpoint);
-
-        yield return new WaitForSeconds(1.5f);
-        State = GameState.Playing;
-        MenuManager.Instance.GUI.SetActive(true && !hideGUI);
-        SoundManager.Instance.PauseMusic(false);
+        pendingTransition = SessionTransition.Continue;
+        pendingTransitionTimer = 1.5f;
     }
 
     public void ResetLevel()
     {
         MenuManager.Instance.RestartGame();
     }
+
+    private void ShortKey()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.R))
+        {
+            sceneLoader.LoadImmediate(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
+        {
+            progressService.ResetAllPreservingRemoveAds();
+            sceneLoader.LoadImmediate(0);
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.L))
+        {
+            progressService.SaveLives += 999;
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.G))
+        {
+            progressService.SavedCoins += 999999;
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.F))
+        {
+            CompleteFinishTransition();
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.U))
+        {
+            progressService.UnlockAllLevels();
+            sceneLoader.LoadImmediateAsync(1);
+            audioService.PlaySfx(audioService.ClickClip);
+        }
+    }
+
+    private void TickTransition()
+    {
+        if (pendingTransition == SessionTransition.None || pendingTransitionTimer < 0f)
+            return;
+
+        pendingTransitionTimer -= Time.deltaTime;
+        if (pendingTransitionTimer > 0f)
+            return;
+
+        switch (pendingTransition)
+        {
+            case SessionTransition.Finish:
+                CompleteFinishTransition();
+                break;
+            case SessionTransition.Continue:
+                CompleteContinueTransition();
+                break;
+        }
+    }
+
+    private void CompleteFinishTransition()
+    {
+        pendingTransition = SessionTransition.None;
+        pendingTransitionTimer = -1f;
+        audioService.PauseMusic(true);
+        audioService.PlaySfx(audioService.GameFinishClip, 0.3f);
+    }
+
+    private void CompleteContinueTransition()
+    {
+        pendingTransition = SessionTransition.None;
+        pendingTransitionTimer = -1f;
+        State = GameState.Playing;
+        MenuManager.Instance.GUI.SetActive(!hideGUI);
+        audioService.PauseMusic(false);
+    }
+
 }

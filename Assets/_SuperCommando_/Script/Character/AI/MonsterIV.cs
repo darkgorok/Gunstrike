@@ -11,6 +11,20 @@ public class MonsterIV : MonoBehaviour, ICanTakeDamage {
 	Vector3 oldPosition;
 	SpringJoint2D springJoint;
 	Rigidbody2D rig;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [VContainer.Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
 	void Start(){
 		line = GetComponent<LineRenderer> ();
@@ -24,8 +38,8 @@ public class MonsterIV : MonoBehaviour, ICanTakeDamage {
 	}
 
 	public void Dead(){
-		SoundManager.PlaySfx(soundDead);
-		GameManager.Instance.AddPoint(scoreRewarded);
+		audioService.PlaySfx(soundDead);
+		gameSession.AddPoint(scoreRewarded);
 
 		if (deadFx != null)
 		Instantiate (deadFx, transform.position, Quaternion.identity);

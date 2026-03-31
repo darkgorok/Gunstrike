@@ -1,57 +1,83 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
 
-public class MonsterSnail : EnemyAI {
-	[Header("Owner")]
-	public Animator anim;
-	public float timeBackToAlive = 3f;
+public class MonsterSnail : EnemyAI
+{
+    [Header("Owner")]
+    public Animator anim;
+    public float timeBackToAlive = 3f;
 
-	public override void Start ()
-	{
-		base.Start ();
-		healthType = HealthType.HitToKill;		//force to HitToKill
-	}
+    private float shellRecoverTimer = -1f;
+    private bool shakeTriggered;
 
-	protected override void HitEvent ()
-	{
-		base.HitEvent ();
+    public override void Start()
+    {
+        base.Start();
+        healthType = HealthType.HitToKill;
+    }
 
-		if (currentHitLeft == 1) {
-			anim.SetBool ("hit", true);
-			isPlaying = false;
-			SoundManager.PlaySfx (hurtSound, hurtSoundVolume);
-			if (HurtEffect != null)
-				Instantiate (HurtEffect, transform.position, transform.rotation);
+    public override void Update()
+    {
+        base.Update();
 
-			StartCoroutine (BackToAliveCo (timeBackToAlive));
-		} else if (isDead)
-			Dead ();
-	}
+        if (shellRecoverTimer < 0f)
+            return;
 
-	protected override void Dead ()
-	{
-		StopAllCoroutines ();
-		base.Dead ();
+        shellRecoverTimer -= Time.deltaTime;
+        if (!shakeTriggered && shellRecoverTimer <= 1f)
+        {
+            shakeTriggered = true;
+            anim.SetTrigger("shake");
+        }
 
-		SetForce (0, 5);
-		controller.HandlePhysic = false;
-	}
+        if (shellRecoverTimer > 0f)
+            return;
 
-	protected override void OnRespawn ()
-	{
-		anim.SetBool ("hit", false);
-		controller.HandlePhysic = true;
-	}
+        anim.SetBool("hit", false);
+        currentHitLeft = maxHitToKill;
+        isSocking = false;
+        isPlaying = true;
+        shellRecoverTimer = -1f;
+        shakeTriggered = false;
+    }
 
-	IEnumerator BackToAliveCo(float time){
-		isSocking = true;
-		yield return new WaitForSeconds (time - 1f);
+    protected override void HitEvent()
+    {
+        if (currentHitLeft == 1)
+        {
+            AudioService.PlaySfx(hurtSound, hurtSoundVolume);
+            if (HurtEffect != null)
+                Instantiate(HurtEffect, transform.position, transform.rotation);
 
-		anim.SetTrigger ("shake");
+            SetForce(0f, 0f);
+            anim.SetBool("hit", true);
+            isPlaying = false;
+            isSocking = true;
+            shellRecoverTimer = timeBackToAlive;
+            shakeTriggered = false;
+        }
+        else
+        {
+            base.HitEvent();
+            if (isDead)
+                Dead();
+        }
+    }
 
-		yield return new WaitForSeconds (1f);
-		anim.SetBool ("hit", false);
-		currentHitLeft = maxHitToKill;		//reset hit
-		isSocking = false;
-	}
+    protected override void Dead()
+    {
+        shellRecoverTimer = -1f;
+        shakeTriggered = false;
+        base.Dead();
+
+        SetForce(0, 5);
+        controller.HandlePhysic = false;
+    }
+
+    protected override void OnRespawn()
+    {
+        anim.SetBool("hit", false);
+        shellRecoverTimer = -1f;
+        shakeTriggered = false;
+        controller.HandlePhysic = true;
+    }
 }

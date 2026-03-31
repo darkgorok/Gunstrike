@@ -1,81 +1,100 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
+
 [AddComponentMenu("ADDP/Enemy AI/Throw Attack")]
-public class EnemyThrowAttack : MonoBehaviour {
-    public enum ThrowAction { WaitPlayerInRange, ThrowAuto}
+public class EnemyThrowAttack : MonoBehaviour
+{
+    public enum ThrowAction { WaitPlayerInRange, ThrowAuto }
+
     public ThrowAction throwAction;
+
     [Header("Grenade")]
-	public float angleThrow = 60;		//the angle to throw the bomb
-	public float throwForce = 300;		//how strong?
-	public float addTorque = 100;		
-	public float throwRate = 0.5f;
-	public Transform throwPosition;		//throw the bomb at this position
-	public Grenade _Grenade;        //the bomb prefab object
+    public float angleThrow = 60f;
+    public float throwForce = 300f;
+    public float addTorque = 100f;
+    public float throwRate = 0.5f;
+    public Transform throwPosition;
+    public Grenade _Grenade;
     public int makeDamage = 100;
-    public float radius = 3;
+    public float radius = 3f;
     public AudioClip soundAttack;
     public GameObject fireFX;
-	float lastShoot = 0;
 
-	public LayerMask targetPlayer;
-	public Transform checkPoint;
-	public float radiusDetectPlayer = 5;
-	public bool isAttacking { get; set; }
+    public LayerMask targetPlayer;
+    public Transform checkPoint;
+    public float radiusDetectPlayer = 5f;
+    public bool isAttacking { get; set; }
 
-	public bool AllowAction(){
-		return Time.time - lastShoot > throwRate;
-	}
+    private float lastShoot;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
 
-	public void Throw(bool isFacingRight, Vector2 throwDirection)
-	{
-		Vector3 throwPos = throwPosition.position;
-		var obj = (Grenade) Instantiate (_Grenade, throwPos, Quaternion.identity);
-        obj.Init(makeDamage, radius, false,false, GameManager.Instance.Player.transform.position.y + 2);
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
 
-		if (throwDirection == Vector2.zero)
-		{
-			float angle;
-			angle = isFacingRight ? angleThrow : 135;
-			obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    public bool AllowAction()
+    {
+        return Time.time - lastShoot > throwRate;
+    }
+
+    public void Throw(bool isFacingRight, Vector2 throwDirection)
+    {
+        Vector3 throwPos = throwPosition.position;
+        var obj = Instantiate(_Grenade, throwPos, Quaternion.identity);
+        obj.Init(makeDamage, radius, false, false, gameSession.Player.transform.position.y + 2f);
+
+        if (throwDirection == Vector2.zero)
+        {
+            float angle = isFacingRight ? angleThrow : 135f;
+            obj.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
         else
         {
-			obj.transform.right = throwDirection;
-		}
+            obj.transform.right = throwDirection;
+        }
 
-		obj.GetComponent<Rigidbody2D>().AddRelativeForce(obj.transform.right * throwForce);
-		obj.GetComponent<Rigidbody2D> ().AddTorque (obj.transform.right.x * addTorque);
+        var rigidbody = obj.GetComponent<Rigidbody2D>();
+        rigidbody.AddRelativeForce(obj.transform.right * throwForce);
+        rigidbody.AddTorque(obj.transform.right.x * addTorque);
 
         if (fireFX)
-        {
             SpawnSystemHelper.GetNextObject(fireFX, true).transform.position = throwPos;
-        }
+
+        audioService.PlaySfx(soundAttack);
     }
-    
-	// Update is called once per frame
-	public bool CheckPlayer () {
+
+    public bool CheckPlayer()
+    {
         if (throwAction == ThrowAction.ThrowAuto)
-            return true;       
+            return true;
 
-		RaycastHit2D hit = Physics2D.CircleCast (checkPoint.position, radiusDetectPlayer, Vector2.zero, 0, targetPlayer);
-		if (hit)
-			return true;
-		else
-			return false;
-	}
+        return Physics2D.CircleCast(checkPoint.position, radiusDetectPlayer, Vector2.zero, 0, targetPlayer);
+    }
 
-	public void Action(){
-		if (_Grenade == null)
-			return;
-		lastShoot = Time.time;
-	}
+    public void Action()
+    {
+        if (_Grenade == null)
+            return;
 
-	void OnDrawGizmosSelected(){
-        if (throwAction == ThrowAction.WaitPlayerInRange)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(checkPoint.position, radiusDetectPlayer);
-        }
-	}
+        lastShoot = Time.time;
+        isAttacking = true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (throwAction != ThrowAction.WaitPlayerInRange)
+            return;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(checkPoint.position, radiusDetectPlayer);
+    }
 }

@@ -1,7 +1,5 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class DartChooseUiFx : MonoBehaviour
 {
@@ -10,15 +8,27 @@ public class DartChooseUiFx : MonoBehaviour
     public AudioClip startSound, hitSound;
     public bool shakeCamera = true;
 
-    private void Start()
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
     {
-        SoundManager.PlaySfx(startSound,0.6f);
+        this.audioService = audioService;
     }
 
-    //call by own animation event
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        audioService?.PlaySfx(startSound, 0.6f);
+    }
+
     public void Hit()
     {
-        SoundManager.PlaySfx(hitSound, 0.6f);
+        audioService?.PlaySfx(hitSound, 0.6f);
         if (hitFX)
             Instantiate(hitFX, transform.position, Quaternion.identity);
         CameraPlay.EarthQuakeShake(0.1f, 60, 1f);

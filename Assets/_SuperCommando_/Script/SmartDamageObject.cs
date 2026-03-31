@@ -1,74 +1,64 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class SmartDamageObject : MonoBehaviour, ICanTakeDamage
 {
-    //public enum DamageType { KILL, DAMAGE}
-    //public DamageType damageType;
-    //public float damage = 30;
-
     [Header("Like Enemy")]
     public bool canBeHit = true;
     public GameObject HurtEffect;
-    public GameObject DestroyEffect;        //spawn object when dead
+    public GameObject DestroyEffect;
     [Range(0, 100)]
     public float health = 50;
-    float currentHealth;
     public AudioClip hurtSound;
     public AudioClip deadSound;
 
+    private float currentHealth;
+    private bool isDead;
+    private IAudioService audioService;
 
-    // Use this for initialization
-    void Start () {
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
         currentHealth = health;
     }
 
-    //void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.gameObject == GameManager.Instance.Player.gameObject)
-    //    {
-    //        if (other.gameObject.GetComponent(typeof(ICanTakeDamage)))
-    //        {
-    //            other.gameObject.GetComponent<ICanTakeDamage>().TakeDamage(damageType == DamageType.KILL ? int.MaxValue : damage, Vector2.zero, gameObject);
-    //        }
-    //    }
-    //}
-
-    bool isDead = false;
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
-        if (!enabled)
-            return;
-
-        if (isDead)
-            return;
-
-        if (!canBeHit)
+        if (!enabled || isDead || !canBeHit)
             return;
 
         currentHealth -= damage;
-        //Debug.LogError(damage);
         if (currentHealth <= 0)
         {
             isDead = true;
-            Destroy();
+            DestroyObject();
         }
         else
+        {
             HitEvent();
+        }
     }
 
     protected void HitEvent()
     {
-        SoundManager.PlaySfx(hurtSound);
+        audioService?.PlaySfx(hurtSound);
         if (HurtEffect != null)
             Instantiate(HurtEffect, transform.position, transform.rotation);
     }
 
-    protected void Destroy()
+    protected void DestroyObject()
     {
-        SoundManager.PlaySfx(deadSound);
-
+        audioService?.PlaySfx(deadSound);
         if (DestroyEffect != null)
             Instantiate(DestroyEffect, transform.position, transform.rotation);
 

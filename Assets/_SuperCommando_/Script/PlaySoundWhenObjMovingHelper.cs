@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class PlaySoundWhenObjMovingHelper : MonoBehaviour
 {
@@ -8,10 +7,23 @@ public class PlaySoundWhenObjMovingHelper : MonoBehaviour
     public AudioClip movingSound;
     [Tooltip("Allow play sound when the distance with Player smaller this value")]
     public float playDistancePlayer = 6;
-    AudioSource soundScr;
-    Vector3 lastPos;
 
-    void Start()
+    private AudioSource soundScr;
+    private Vector3 lastPos;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         soundScr = gameObject.AddComponent<AudioSource>();
         soundScr.clip = movingSound;
@@ -19,19 +31,17 @@ public class PlaySoundWhenObjMovingHelper : MonoBehaviour
         soundScr.Play();
         soundScr.loop = true;
         soundScr.volume = 0;
-
         lastPos = transform.position;
-        InvokeRepeating("CheckingMoving", 0, 0.1f);
     }
 
-    void CheckingMoving()
+    private void Update()
     {
-        if (Vector3.Distance(lastPos, transform.position) != 0 && Vector2.Distance(transform.position, GameManager.Instance.Player.transform.position) < playDistancePlayer)
-        {
-            soundScr.volume = volume;
-        }else
-            soundScr.volume = 0;
+        if (gameSession?.Player == null)
+            return;
 
+        bool isMoving = Vector3.Distance(lastPos, transform.position) > 0f;
+        bool isPlayerInRange = Vector2.Distance(transform.position, gameSession.Player.transform.position) < playDistancePlayer;
+        soundScr.volume = isMoving && isPlayerInRange ? volume : 0f;
         lastPos = transform.position;
     }
 

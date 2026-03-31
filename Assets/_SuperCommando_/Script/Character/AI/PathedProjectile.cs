@@ -1,55 +1,63 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
+using VContainer;
 
-public class PathedProjectile : MonoBehaviour, ICanTakeDamage {
+public class PathedProjectile : MonoBehaviour, ICanTakeDamage
+{
+    public bool canBeKill;
+    public GameObject DestroyEffect;
+    public int pointToGivePlayer;
+    public AudioClip soundDestroy;
+    [Range(0, 1)] public float soundDestroyVolume = 0.5f;
 
-	Transform _destination;
-	float _speed;
-	public bool canBeKill;
+    private Transform destination;
+    private float speed;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
 
-	public GameObject DestroyEffect;
-	public int pointToGivePlayer;
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
 
-	public AudioClip soundDestroy;
-	[Range(0,1)]
-	public float soundDestroyVolume = 0.5f;
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
-	// Use this for initialization
-	public void Initalize (Transform destination, float speed) {
-		_destination = destination;
-		_speed = speed;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		transform.position = Vector3.MoveTowards (transform.position, _destination.position, Time.deltaTime * _speed);
-		var distance = (_destination.position - transform.position).sqrMagnitude;
-		if (distance > 0.1f * 0.1f)
-			return;
+    public void Initalize(Transform destination, float speed)
+    {
+        this.destination = destination;
+        this.speed = speed;
+    }
 
-		if (DestroyEffect != null)
-			Instantiate (DestroyEffect, transform.position, Quaternion.identity);
-		
-		Destroy (gameObject);
-	}
+    private void Update()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, destination.position, Time.deltaTime * speed);
+        float distance = (destination.position - transform.position).sqrMagnitude;
+        if (distance > 0.01f)
+            return;
 
+        if (DestroyEffect != null)
+            Instantiate(DestroyEffect, transform.position, Quaternion.identity);
 
-	void ICanTakeDamage.TakeDamage (int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
-	{
-		if (!canBeKill)
-			return;
-		
-		if (DestroyEffect != null)
-			Instantiate (DestroyEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+    }
 
-		Destroy (gameObject);
-		SoundManager.PlaySfx (soundDestroy, soundDestroyVolume);
+    void ICanTakeDamage.TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
+    {
+        if (!canBeKill)
+            return;
 
-		var projectile = instigator.GetComponent<Projectile> ();
-		if (projectile != null && projectile.Owner.GetComponent<Player> () != null && pointToGivePlayer != 0) {
-			GameManager.Instance.AddPoint (pointToGivePlayer);
-			//GameManager.Instance.ShowFloatingText ("+" + pointToGivePlayer, transform.position,Color.yellow);
-		}
-	}
+        if (DestroyEffect != null)
+            Instantiate(DestroyEffect, transform.position, Quaternion.identity);
 
+        Destroy(gameObject);
+        audioService.PlaySfx(soundDestroy, soundDestroyVolume);
+
+        var projectile = instigator.GetComponent<Projectile>();
+        if (projectile != null && projectile.Owner.GetComponent<Player>() != null && pointToGivePlayer != 0)
+            gameSession.AddPoint(pointToGivePlayer);
+    }
 }

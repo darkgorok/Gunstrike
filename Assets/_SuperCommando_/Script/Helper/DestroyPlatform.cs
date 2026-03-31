@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
+using VContainer;
 
 public class DestroyPlatform : MonoBehaviour, IStandOnEvent
 {
@@ -9,26 +9,36 @@ public class DestroyPlatform : MonoBehaviour, IStandOnEvent
     public GameObject destroyFX;
     public GameObject smokeFX;
     public AudioClip contactSound;
-
-    bool isWorking = false;
-    
     public float goBackIn = 3f;
-    Sprite oriSprite;
-    SpriteRenderer spriteRen;
-    Collider2D col;
+
+    private bool isWorking;
+    private Sprite oriSprite;
+    private SpriteRenderer spriteRen;
+    private Collider2D col;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     private void Start()
     {
         spriteRen = GetComponent<SpriteRenderer>();
-        oriSprite = GetComponent<SpriteRenderer>().sprite;
+        oriSprite = spriteRen.sprite;
         col = GetComponent<Collider2D>();
     }
 
     private IEnumerator WorkCo()
     {
         isWorking = true;
-
-        SoundManager.PlaySfx(contactSound);
+        audioService?.PlaySfx(contactSound);
         spriteRen.sprite = crackedImage;
 
         if (smokeFX)
@@ -38,11 +48,10 @@ public class DestroyPlatform : MonoBehaviour, IStandOnEvent
         Instantiate(destroyFX, transform.position, Quaternion.identity);
         spriteRen.enabled = false;
         col.enabled = false;
-        //yield return new WaitForSeconds(goBackIn);
-        Invoke("GoBack", goBackIn);
+        Invoke(nameof(GoBack), goBackIn);
     }
 
-    void GoBack()
+    private void GoBack()
     {
         spriteRen.sprite = oriSprite;
         spriteRen.enabled = true;
@@ -52,9 +61,7 @@ public class DestroyPlatform : MonoBehaviour, IStandOnEvent
 
     public void StandOnEvent(GameObject instigator)
     {
-        if (isWorking)
-            return;
-
-        StartCoroutine(WorkCo());
+        if (!isWorking)
+            StartCoroutine(WorkCo());
     }
 }

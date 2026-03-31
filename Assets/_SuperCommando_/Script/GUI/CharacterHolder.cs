@@ -1,35 +1,46 @@
-﻿using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using VContainer;
 
-public class CharacterHolder : MonoBehaviour {
-	public static CharacterHolder Instance;
-	[HideInInspector]
-	public GameObject CharacterPicked;
+public class CharacterHolder : MonoBehaviour
+{
+    public static CharacterHolder Instance;
+    [HideInInspector] public GameObject CharacterPicked;
+    public GameObject[] Characters;
 
-	public GameObject[] Characters;
+    private IPlayerProfileService playerProfileService;
 
-	// Use this for initialization
-	void Awake () {
-		if (CharacterHolder.Instance != null) {
-			Destroy (gameObject);
-			return;
-		}
-		
-		Instance = this;
-		DontDestroyOnLoad (gameObject);
+    [Inject]
+    public void Construct(IPlayerProfileService playerProfileService)
+    {
+        this.playerProfileService = playerProfileService;
+    }
 
-		GetPickedCharacter ();
-	}
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        if (CharacterHolder.Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-	public void GetPickedCharacter(){
-		CharacterPicked = null;
-		var characterIDChoosen = PlayerPrefs.GetInt (GlobalValue.ChoosenCharacterInstanceID, 0);
-		foreach (var character in Characters) {
-			var ID = character.GetInstanceID ();
-			if (ID == characterIDChoosen) {
-				CharacterPicked = character;
-				return;
-			}
-		}
-	}
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        GetPickedCharacter();
+    }
+
+    public void GetPickedCharacter()
+    {
+        CharacterPicked = null;
+        int characterInstanceId = playerProfileService.SelectedCharacterInstanceId;
+        foreach (GameObject character in Characters)
+        {
+            if (character.GetInstanceID() != characterInstanceId)
+                continue;
+
+            CharacterPicked = character;
+            return;
+        }
+    }
 }

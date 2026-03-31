@@ -1,31 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class DialogHandler : MonoBehaviour
 {
     public TextTyper RightDialog;
     public TextTyper LeftDialog;
-
     public AudioClip nextSound;
     public AudioClip skipSound;
-
     public Transform messageContainer;
 
-    bool isRightTop;
-    string messages;
-    int currentMessage = 0;
-    TextTyper currentTyper;
-    AudioClip soundMessages;
+    private bool isRightTop;
+    private string messages;
+    private int currentMessage = 0;
+    private AudioClip soundMessages;
+    private IAudioService audioService;
 
-    public void Init(string _message, bool _isRightTop, AudioClip _soundMessages)
+    [Inject]
+    public void Construct(IAudioService audioService)
     {
-        messages = _message;
-        isRightTop = _isRightTop;
-        soundMessages = _soundMessages;
+        this.audioService = audioService;
     }
 
-    void Start()
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    public void Init(string message, bool isRightTop, AudioClip soundMessages)
+    {
+        messages = message;
+        this.isRightTop = isRightTop;
+        this.soundMessages = soundMessages;
+    }
+
+    private void Start()
     {
         Next();
     }
@@ -40,37 +48,35 @@ public class DialogHandler : MonoBehaviour
         }
 
         if (isRightTop)
-            ShowLRight();
+            ShowRight();
         else
             ShowLeft();
 
         isRightTop = !isRightTop;
         currentMessage++;
-        SoundManager.PlaySfx(nextSound);
+        audioService?.PlaySfx(nextSound);
     }
 
     public void Skip()
     {
-        SoundManager.PlaySfx(skipSound);
+        audioService?.PlaySfx(skipSound);
         DialogManager.Instance.Skip();
         Destroy(gameObject);
     }
 
     public void ShowLeft()
     {
-        var obj = Instantiate(LeftDialog);
+        TextTyper obj = Instantiate(LeftDialog);
         obj.transform.SetParent(messageContainer.transform, false);
         obj.Init(messages);
-
-        SoundManager.PlaySfx(soundMessages);
+        audioService?.PlaySfx(soundMessages);
     }
 
-    public void ShowLRight()
+    public void ShowRight()
     {
-        var obj = Instantiate(RightDialog);
+        TextTyper obj = Instantiate(RightDialog);
         obj.transform.SetParent(messageContainer.transform, false);
         obj.Init(messages);
-
-        SoundManager.PlaySfx(soundMessages);
+        audioService?.PlaySfx(soundMessages);
     }
 }

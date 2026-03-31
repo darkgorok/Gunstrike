@@ -1,98 +1,109 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Advertisements;
+using UnityEngine.UI;
+using VContainer;
 
 public class Menu_AskSaveMe : MonoBehaviour
 {
     public Text timerTxt;
     public Image timerImage;
 
-    float timer = 3;
-    float timerCountDown = 0;
-
     public Button btnWatchVideoAd;
 
-    float timeStep = 0.02f;
-    // Start is called before the first frame update
-    void OnEnable()
+    private const float TimerDuration = 3f;
+    private const float TimeStep = 0.02f;
+
+    private float timerCountDown;
+    private IAdsService adsService;
+    private IProgressService progressService;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAdsService adsService, IProgressService progressService, IAudioService audioService, IGameSessionService gameSession)
     {
-        if (GlobalValue.SaveLives > 0 || (LevelMapType.Instance && LevelMapType.Instance.playerNoLimitLife))
+        this.adsService = adsService;
+        this.progressService = progressService;
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void OnEnable()
+    {
+        if (progressService.SaveLives > 0 || (LevelMapType.Instance && LevelMapType.Instance.playerNoLimitLife))
         {
-            GlobalValue.SaveLives--;
+            progressService.SaveLives--;
             Continue();
+            return;
         }
-        else
-        {
-            Time.timeScale = 0;
+
+        Time.timeScale = 0f;
 #if UNITY_ANDROID || UNITY_IOS
-            //  btnWatchVideoAd.interactable = AdsManager.Instance && AdsManager.Instance.IsRewardedReady();
+        // btnWatchVideoAd.interactable = AdsManager.Instance && AdsManager.Instance.IsRewardedReady();
 #else
-            btnWatchVideoAd.interactable = false;
-            btnWatchVideoAd.gameObject.SetActive(false);
+        btnWatchVideoAd.interactable = false;
+        btnWatchVideoAd.gameObject.SetActive(false);
 #endif
 
-            if (!btnWatchVideoAd.interactable)
-                timerCountDown = 0;
-            else
-                timerCountDown = timer;
-        }
+        timerCountDown = btnWatchVideoAd.interactable ? TimerDuration : 0f;
     }
 
-    void Update()
-    { 
-        if (!GameManager.Instance.isWatchingAd)
-        {
-            timerCountDown -= timeStep;
-            timerTxt.text = (int)timerCountDown + "" ;
-            timerImage.fillAmount = Mathf.Clamp01(timerCountDown / timer);
+    private void Update()
+    {
+        if (gameSession.IsWatchingAd)
+            return;
 
-            if (timerCountDown <= 0)
-            {
-                if(AdsManager.Instance)
-                AdsManager.Instance.ShowBanner(true);
-                GameManager.Instance.GameOver(true);
-                Time.timeScale = 1;
-                MenuManager.Instance.OpenSaveMe(false);
-                Destroy(this);      //destroy this script
-            }
-        }
+        timerCountDown -= TimeStep;
+        timerTxt.text = ((int)timerCountDown).ToString();
+        timerImage.fillAmount = Mathf.Clamp01(timerCountDown / TimerDuration);
+
+        if (timerCountDown > 0f)
+            return;
+
+        adsService.ShowBanner(true);
+
+        gameSession.GameOver(true);
+        Time.timeScale = 1f;
+        MenuManager.Instance.OpenSaveMe(false);
+        Destroy(this);
     }
-
-    
 
     public void SaveByCoin()
     {
-        SoundManager.Click();
-        GlobalValue.SavedCoins -= GameManager.Instance.continueCoinCost;
+        audioService.PlayClick();
+        progressService.SavedCoins -= gameSession.ContinueCoinCost;
         Continue();
     }
 
     public void WatchVideoAd()
     {
-        SoundManager.Click();
-        if (AdsManager.Instance)
-        {
-            AdsManager.OnRewardedResult += AdsManager_AdResult;
-            AdsManager.Instance.ShowRewardedVideo();
-            AdsManager.Instance.ResetCounters();
-        } 
+        audioService.PlayClick();
+        if (!adsService.CanShowRewarded)
+            return;
+
+        adsService.ShowRewardedVideo(AdsManager_AdResult);
+        adsService.ResetRewardCounters();
     }
 
     private void AdsManager_AdResult(bool isSuccess, int rewarded)
     {
-        AdsManager.OnRewardedResult -= AdsManager_AdResult;
-        if (isSuccess)
-        {
-            GlobalValue.SaveLives += 1;
-            Continue();
-        }
+        if (!isSuccess)
+            return;
+
+        progressService.SaveLives += 1;
+        Continue();
     }
 
-    void Continue()
+    private void Continue()
     {
-        Time.timeScale = 1;
-        GameManager.Instance.Continue();
+        Time.timeScale = 1f;
+        gameSession.ContinueGame();
     }
 }

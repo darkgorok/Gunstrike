@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(CheckTargetHelper))]
+using VContainer;
 
+[RequireComponent(typeof(CheckTargetHelper))]
 public class Turret : MonoBehaviour, ICanTakeDamage
 {
     public bool fixedCamera = false;
@@ -20,79 +19,54 @@ public class Turret : MonoBehaviour, ICanTakeDamage
     [Range(1, 10)]
     public int normalNumberBulletsRound = 3;
     public float normalBulletRate2Bullets = 0.3f;
-    float lastTimeFireNormal = -999;
     public AudioClip normalSound;
 
-    CheckTargetHelper checkTargetHelper;
-    Animator anim;
-    bool isWorking = false;
+    private CheckTargetHelper checkTargetHelper;
+    private Animator anim;
+    private bool isWorking;
+    private BurstFireController burstFireController;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
 
     private void Start()
     {
+        ProjectScope.Inject(this);
         checkTargetHelper = GetComponent<CheckTargetHelper>();
         anim = GetComponent<Animator>();
+        burstFireController = new BurstFireController(normalNumberBulletsRound, normalGunRate, normalBulletRate2Bullets);
     }
 
     private void Update()
     {
+        burstFireController.Tick(Time.deltaTime, FireNormalShot);
 
         if (isWorking && aimPlayer)
         {
-            var direction = targetDirection(Vector3.up * 0.5f);
-            gunObj.transform.right = direction;
+            gunObj.transform.right = TargetDirection(Vector3.up * 0.5f);
             return;
         }
-        else if (isWorking)
+
+        if (isWorking)
+        {
+            if (burstFireController.CanStartBurst)
+                burstFireController.StartBurst(FireNormalShot);
+            return;
+        }
+
+        if (!checkTargetHelper.CheckTarget(transform.position.x > gameSession.Player.transform.position.x ? 1 : -1))
             return;
 
-        if (checkTargetHelper.CheckTarget(transform.position.x > GameManager.Instance.Player.transform.position.x ? 1 : -1))
-        {
-            isWorking = true;
-            StartCoroutine(FireCo());
-            if (fixedCamera)
-                GameManager.Instance.PauseCamera(true);
-        }
-    }
-
-    IEnumerator FireCo()
-    {
-        while (true)
-        {
-            for (int i = 0; i < normalNumberBulletsRound; i++)
-            {
-                var projectile = SpawnSystemHelper.GetNextObject(normalBullet.gameObject, false).GetComponent<Projectile>();
-
-                Vector3 direction;
-                if (aimPlayer)
-                {
-                    direction = targetDirection(Vector3.up * 0.5f);
-                    gunObj.transform.right = direction;
-                    yield return null;
-                }
-                else
-                    direction = normalPoint.right;
-
-                projectile.transform.position = normalPoint.position;
-                projectile.transform.right = direction;
-                //projectile.transform.rotation = Quaternion.Euler (0, 0, shootAngle);
-                projectile.Initialize(gameObject, direction, Vector2.zero, false, false, normalDamage, noralBulletSpeed);
-
-                projectile.gameObject.SetActive(true);
-                SoundManager.PlaySfx(normalSound);
-                anim.SetTrigger("shot");
-                yield return new WaitForSeconds(normalBulletRate2Bullets);
-            }
-
-            yield return new WaitForSeconds(normalGunRate);
-        }
-    }
-
-    Vector2 targetDirection(Vector3 offset)
-    {
-        var lookAtPlayerDirection = (GameManager.Instance.Player.transform.position + offset) - transform.position;
-
-        lookAtPlayerDirection.Normalize();
-        return lookAtPlayerDirection;
+        isWorking = true;
+        if (fixedCamera)
+            gameSession.PauseCamera(true);
     }
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -101,18 +75,42 @@ public class Turret : MonoBehaviour, ICanTakeDamage
             return;
 
         health -= damage;
-        if (health <= 0)
-        {
-            StopAllCoroutines();
-            if (explosionFX)
-                Instantiate(explosionFX, transform.position, Quaternion.identity);
+        if (health > 0)
+            return;
 
-            if (fixedCamera)
-                GameManager.Instance.PauseCamera(false);
+        burstFireController.CancelBurst();
+        if (explosionFX)
+            Instantiate(explosionFX, transform.position, Quaternion.identity);
 
-            GetComponent<Collider2D>().enabled = false;
-            anim.SetBool("destroyed", true);
-            enabled = false;
-        }
+        if (fixedCamera)
+            gameSession.PauseCamera(false);
+
+        GetComponent<Collider2D>().enabled = false;
+        anim.SetBool("destroyed", true);
+        enabled = false;
+    }
+
+    private void FireNormalShot()
+    {
+        var projectile = SpawnSystemHelper.GetNextObject(normalBullet.gameObject, false).GetComponent<Projectile>();
+
+        Vector3 direction = aimPlayer ? TargetDirection(Vector3.up * 0.5f) : normalPoint.right;
+        if (aimPlayer)
+            gunObj.transform.right = direction;
+
+        projectile.transform.position = normalPoint.position;
+        projectile.transform.right = direction;
+        projectile.Initialize(gameObject, direction, Vector2.zero, false, false, normalDamage, noralBulletSpeed);
+        projectile.gameObject.SetActive(true);
+
+        audioService.PlaySfx(normalSound);
+        anim.SetTrigger("shot");
+    }
+
+    private Vector2 TargetDirection(Vector3 offset)
+    {
+        var lookAtPlayerDirection = (gameSession.Player.transform.position + offset) - transform.position;
+        lookAtPlayerDirection.Normalize();
+        return lookAtPlayerDirection;
     }
 }

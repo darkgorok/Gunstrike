@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
+using VContainer;
 
 public enum DoggeType { OverObject, HitObject }
 public enum GunHandlerState { AVAILABLE, SWAPPING, RELOADING, EMPTY }
@@ -73,9 +74,23 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 	public bool isFinish { get; set;}
     public bool isGrounded { get { return controller.collisions.below; } }
     bool forceStannding = false;
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private IGameSessionService gameSession;
+    private IInventoryService inventoryService;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameSessionService gameSession, IInventoryService inventoryService)
+    {
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.gameSession = gameSession;
+        this.inventoryService = inventoryService;
+    }
 
     void Awake()
     {
+        ProjectScope.Inject(this);
         controller = GetComponent<Controller2D>();
         if (anim == null)
             anim = GetComponent<Animator>();
@@ -98,8 +113,8 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 
         grenadeRemaining = maxGrenade;
 
-        if (GlobalValue.currentGunTypeID != null)
-            GunManager.Instance.SetNewGunDuringGameplay(GlobalValue.currentGunTypeID);
+        if (inventoryService.CurrentGunType != null)
+            GunManager.Instance.SetNewGunDuringGameplay(inventoryService.CurrentGunType);
     }
 
     void Update() {
@@ -122,7 +137,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 
         if (controller.collisions.below && !isPlayedLandSound) {
             isPlayedLandSound = true;
-			SoundManager.PlaySfx (landSound, landSoundVolume);
+			audioService.PlaySfx(landSound, landSoundVolume);
             if (landingFX)
                 SpawnSystemHelper.GetNextObject(landingFX, true).transform.position = transform.position;
 		} else if (!controller.collisions.below && isPlayedLandSound)
@@ -144,7 +159,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
         }
 
         if ((transform.position.y + 2) < Camera.main.ViewportToWorldPoint(Vector3.zero).y)
-            GameManager.Instance.GameOver();
+            gameSession.GameOver();
     }
 
    void CheckBelow()
@@ -219,7 +234,8 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
     }
     void GetInput()
     {
-        input = new Vector2(ControllerInput.Instance.Horizontak + Input.GetAxis("Horizontal"), ControllerInput.Instance.Vertical + Input.GetAxis("Vertical"));
+        var controllerInput = controllerInputService != null ? controllerInputService.MoveInput : Vector2.zero;
+        input = new Vector2(controllerInput.x + Input.GetAxis("Horizontal"), controllerInput.y + Input.GetAxis("Vertical"));
 
         if ((input.x < -0.2f && isFacingRight) || (input.x > 0.2f && !isFacingRight))
             Flip();
@@ -235,11 +251,11 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
         if (forceStannding)
             velocity.x = 0;
 
-        if (GameManager.Instance.State != GameManager.GameState.Playing)
+        if (gameSession.State != GameManager.GameState.Playing)
             velocity.x = 0;
 
         if (controller.raycastOrigins.bottomLeft.y < CameraFollow.Instance._min.y)
-            GameManager.Instance.GameOver();
+            gameSession.GameOver();
 
         controller.Move (velocity * Time.deltaTime, input);
         if(!isDead)
@@ -332,7 +348,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
             if (JumpEffect)
                 SpawnSystemHelper.GetNextObject(JumpEffect, true).transform.position = transform.position;
 
-            SoundManager.PlaySfx(jumpSound, jumpSoundVolume);
+            audioService.PlaySfx(jumpSound, jumpSoundVolume);
             numberOfJumpLeft = numberOfJumpMax;
         }
         else
@@ -345,7 +361,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 
                 if (JumpEffect)
                     SpawnSystemHelper.GetNextObject(JumpEffect, true).transform.position = transform.position;
-                SoundManager.PlaySfx(jumpSound, jumpSoundVolume);
+                audioService.PlaySfx(jumpSound, jumpSoundVolume);
             }
         }
     }
@@ -407,7 +423,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
         isDead = false;
         Health = maxHealth;
 
-        SoundManager.PlaySfx(respawnSound, 0.8f);
+        audioService.PlaySfx(respawnSound, 0.8f);
 
         ResetAnimation ();
 
@@ -430,7 +446,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 
         isLieDown = Mathf.Abs(velocity.x) < 0.1f && input.x < 0.3f && input.y < -0.7f && isGrounded;
         anim.SetBool("isLieDown", isLieDown);
-        if (GameManager.Instance.State == GameManager.GameState.Playing)
+        if (gameSession.State == GameManager.GameState.Playing)
         {
             //isLieDown = Mathf.Abs(velocity.x) < 0.1f && input.x < 0.3f && input.y < -0.7f && isGrounded;
             //anim.SetBool("isLieDown", isLieDown);
@@ -494,14 +510,14 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
         if (!isPlaying || isBlinking)
             return;
 
-		SoundManager.PlaySfx (hurtSound, hurtSoundVolume);
+		audioService.PlaySfx(hurtSound, hurtSoundVolume);
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = hitPoint == Vector3.zero ? instigator.transform.position : hitPoint;
 
         
 
         if (Health <= 0)
-            GameManager.Instance.GameOver();
+            gameSession.GameOver();
         else
         {
             anim.SetTrigger("hurt");
@@ -542,7 +558,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
             isDead = true;
             StopAllCoroutines();
             StopMove();
-            SoundManager.PlaySfx(deadSound, deadSoundVolume);
+            audioService.PlaySfx(deadSound, deadSoundVolume);
             anim.SetTrigger("dead");
             SetForce(new Vector2(0, 7f));
             Health = 0;
@@ -615,17 +631,17 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
 
         if (collision.CompareTag("Checkpoint"))
         {
-            var hitGround = Physics2D.Raycast(collision.transform.position, Vector2.down, 100, GameManager.Instance.groundLayer);
+            var hitGround = Physics2D.Raycast(collision.transform.position, Vector2.down, 100, gameSession.GroundLayer);
             
             if (hitGround)
-                GameManager.Instance.SaveCheckPoint(hitGround.point);
+                gameSession.SaveCheckpoint(hitGround.point);
             else
-                GameManager.Instance.SaveCheckPoint(collision.transform.position);
+                gameSession.SaveCheckpoint(collision.transform.position);
 
         }
 
         if (collision.CompareTag("DeadZone"))
-            GameManager.Instance.GameOver();
+            gameSession.GameOver();
 
         var isCollectItem = (ICanCollect)collision.GetComponent(typeof(ICanCollect));
         if (isCollectItem != null)
@@ -803,7 +819,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
             }
         }
 
-        SoundManager.PlaySfx(gunTypeID.soundFire, gunTypeID.soundFireVolume);
+        audioService.PlaySfx(gunTypeID.soundFire, gunTypeID.soundFireVolume);
 
         CancelInvoke("CheckBulletRemain");
         Invoke("CheckBulletRemain", gunTypeID.rate);
@@ -823,7 +839,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
     {
         if (gunTypeID.bullet <= 0)
         {
-            GlobalValue.currentGunTypeID = null;
+            inventoryService.CurrentGunType = null;
             GunManager.Instance.BackToDefaultGun();
         }
     }
@@ -831,12 +847,11 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
     public void ReloadGun()
     {
         SetState(GunHandlerState.RELOADING);
-        //SoundManager.PlaySfx (soundReload, soundReloadVolume);
         AnimSetTrigger("reload");
         AnimSetBool("reloading", true);
         Invoke("ReloadComplete", gunTypeID.reloadTime);
 
-        SoundManager.PlaySfx(gunTypeID.reloadSound, gunTypeID.reloadSoundVolume);
+        audioService.PlaySfx(gunTypeID.reloadSound, gunTypeID.reloadSoundVolume);
     }
 
     IEnumerator ReloadGunSub()
@@ -863,7 +878,7 @@ public class Player : MonoBehaviour, ICanTakeDamage, IListener {
         gunTypeID = gunID;
         AnimSetTrigger("swap-gun");
         allowShooting = false;
-        SoundManager.PlaySfx(SoundManager.Instance.swapGun);
+        audioService.PlaySfx(audioService.SwapGunClip);
         Invoke("AllowShooting", 0.3f);
     }
    

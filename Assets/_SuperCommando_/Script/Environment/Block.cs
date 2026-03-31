@@ -1,59 +1,67 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
+using VContainer;
 
-public class Block : MonoBehaviour, ICanTakeDamage {
-	public enum BlockTyle{Destroyable, Rocky}
-	public BlockTyle blockTyle;
-	public LayerMask enemiesLayer;
+public class Block : MonoBehaviour, ICanTakeDamage
+{
+    public enum BlockTyle { Destroyable, Rocky }
 
-	public int maxHit = 1;
-	public float pushEnemyUp = 7f;
-	public float sizeDetectEnemies = 0.25f;
-	public int pointToAdd = 100;
+    public BlockTyle blockTyle;
+    public LayerMask enemiesLayer;
 
-	[Header("Destroyable")]
-	public GameObject DestroyEffect;
+    public int maxHit = 1;
+    public float pushEnemyUp = 7f;
+    public float sizeDetectEnemies = 0.25f;
+    public int pointToAdd = 100;
 
-	[Header("HidenTreasure")]
-	public GameObject[] Treasure;
-	public Transform spawnPoint;
-	public Sprite imageBlockStatic;
+    [Header("Destroyable")]
+    public GameObject DestroyEffect;
 
-	[Header("Sound")]
-	public AudioClip soundDestroy;
-	[Range(0,1)]
-	public float soundDestroyVolume = 0.5f;
-	public AudioClip soundSpawn;
-	[Range(0,1)]
-	public float soundSpawnVolume = 0.5f;
+    [Header("HidenTreasure")]
+    public GameObject[] Treasure;
+    public Transform spawnPoint;
+    public Sprite imageBlockStatic;
 
-	Animator anim;
-	SpriteRenderer spriteRenderer;
-	Sprite oldSprite;
-	int currentHitLeft;
+    [Header("Sound")]
+    public AudioClip soundDestroy;
 
+    [Range(0, 1)]
+    public float soundDestroyVolume = 0.5f;
 
-	// Use this for initialization
-	void Start () {
-		anim = GetComponent<Animator> ();
-		spriteRenderer = GetComponent<SpriteRenderer> ();
-		oldSprite = spriteRenderer.sprite;
-		currentHitLeft = Mathf.Clamp (maxHit, 1, int.MaxValue);
-	}
-	
-   public void BoxHit()
+    public AudioClip soundSpawn;
+
+    [Range(0, 1)]
+    public float soundSpawnVolume = 0.5f;
+
+    Animator anim;
+    SpriteRenderer spriteRenderer;
+    Sprite oldSprite;
+    int currentHitLeft;
+    bool isWaitNextHit;
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
     {
-        if (isWaitNextHit)
-            return;
+        this.audioService = audioService;
+    }
 
+    void Start()
+    {
+        ProjectScope.Inject(this);
+        anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        oldSprite = spriteRenderer.sprite;
+        currentHitLeft = Mathf.Clamp(maxHit, 1, int.MaxValue);
+    }
 
-        if (currentHitLeft <= 0)
+    public void BoxHit()
+    {
+        if (isWaitNextHit || currentHitLeft <= 0)
             return;
 
         StartCoroutine(BoxHitCo());
     }
-
-    bool isWaitNextHit = false;
 
     IEnumerator BoxHitCo()
     {
@@ -63,11 +71,10 @@ public class Block : MonoBehaviour, ICanTakeDamage {
         if (random != null)
         {
             Instantiate(random, spawnPoint.position, Quaternion.identity);
-            SoundManager.PlaySfx(soundSpawn, soundSpawnVolume);
+            audioService?.PlaySfx(soundSpawn, soundSpawnVolume);
         }
 
         CheckEnemiesOnTop();
-
         anim.SetTrigger("hit");
 
         currentHitLeft--;
@@ -80,47 +87,46 @@ public class Block : MonoBehaviour, ICanTakeDamage {
 
         if (blockTyle == BlockTyle.Destroyable)
         {
-            if (random == null)     //only play destroy sound when there are no treasure to spawn
-                SoundManager.PlaySfx(soundDestroy, soundDestroyVolume);
+            if (random == null)
+                audioService?.PlaySfx(soundDestroy, soundDestroyVolume);
 
             if (DestroyEffect != null)
                 Instantiate(DestroyEffect, transform.position, Quaternion.identity);
-
-            //if (pointToAdd != 0)
-            //    GameManager.Instance.ShowFloatingText(pointToAdd.ToString(), transform.position, Color.white);
-
 
             isWaitNextHit = false;
             Destroy(gameObject);
         }
         else if (blockTyle == BlockTyle.Rocky)
+        {
             spriteRenderer.sprite = imageBlockStatic;
+        }
 
         yield return null;
         isWaitNextHit = false;
     }
 
-	void CheckEnemiesOnTop(){
-		//check if any enemies on top? kill them
-		var hits = Physics2D.CircleCastAll (spawnPoint.position, sizeDetectEnemies, Vector2.zero, 0, 1 << LayerMask.NameToLayer ("Enemies"));
-		if (hits.Length > 0) {
-            foreach (var hit in hits)
-            {
-                if (hit.collider.gameObject.GetComponent<Block>() == null)
-                {
+    void CheckEnemiesOnTop()
+    {
+        var hits = Physics2D.CircleCastAll(spawnPoint.position, sizeDetectEnemies, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Enemies"));
+        if (hits.Length <= 0)
+            return;
 
-                    var damage = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
-                    if (damage != null)
-                        damage.TakeDamage(10000, Vector2.up * pushEnemyUp, gameObject, Vector2.zero); //kill it right away
-                }
-            }
-		}
-	}
+        foreach (var hit in hits)
+        {
+            if (hit.collider.gameObject.GetComponent<Block>() != null)
+                continue;
 
-	void OnDrawGizmos(){
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere (spawnPoint.position, sizeDetectEnemies);
-	}
+            var damage = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
+            if (damage != null)
+                damage.TakeDamage(10000, Vector2.up * pushEnemyUp, gameObject, Vector2.zero);
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(spawnPoint.position, sizeDetectEnemies);
+    }
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {

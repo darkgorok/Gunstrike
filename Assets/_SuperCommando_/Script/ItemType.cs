@@ -1,10 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
+using VContainer;
 
 [RequireComponent(typeof(Collider2D))]
 public class ItemType : MonoBehaviour
 {
-    public enum Type { coin, dart, hearth } // note: "hearth" kept to avoid breaking existing references
+    public enum Type { coin, dart, hearth }
     public Type itemType;
 
     [Header("VALUES")]
@@ -15,13 +16,24 @@ public class ItemType : MonoBehaviour
     [Header("OPTION")]
     public bool gravity = false;
     public float timeLiveAfterSpawned = 6f;
-    public Vector2 forceSpawn = new Vector2(-5f, 5f); // x = horizontal range (abs used), y = upward force
+    public Vector2 forceSpawn = new Vector2(-5f, 5f);
     public GameObject effect;
 
     private Rigidbody2D rig;
     private Collider2D col;
     private bool isCollected = false;
     private bool allowCollect = false;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IProgressService progressService)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+        this.progressService = progressService;
+    }
 
     public void Init(bool useGravity, Vector2 pushForce)
     {
@@ -32,76 +44,66 @@ public class ItemType : MonoBehaviour
 
     private void Awake()
     {
+        ProjectScope.Inject(this);
         col = GetComponent<Collider2D>();
-        if (col == null) col = gameObject.AddComponent<BoxCollider2D>();
+        if (col == null)
+            col = gameObject.AddComponent<BoxCollider2D>();
     }
 
     private IEnumerator Start()
     {
         if (gravity)
         {
-            // Ensure a Rigidbody2D exists
             rig = GetComponent<Rigidbody2D>();
-            if (rig == null) rig = gameObject.AddComponent<Rigidbody2D>();
+            if (rig == null)
+                rig = gameObject.AddComponent<Rigidbody2D>();
 
-            // Freeze rotation via constraints (modern, reliable)
             rig.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-            // Solid collision while falling
             col.isTrigger = false;
 
-            // Apply initial toss: random horizontal within ±|forceSpawn.x|, vertical = forceSpawn.y
             float horiz = Random.Range(-Mathf.Abs(forceSpawn.x), Mathf.Abs(forceSpawn.x));
             rig.linearVelocity = new Vector2(horiz, forceSpawn.y);
 
-            // Small delay so physics steps kick in
             yield return new WaitForSeconds(0.1f);
-
-            // Wait until the item starts falling downwards
             while (rig != null && rig.linearVelocity.y > 0f)
                 yield return null;
 
-            // Now allow collection, then auto-despawn after lifetime
             allowCollect = true;
             yield return new WaitForSeconds(timeLiveAfterSpawned);
-            if (this != null) Destroy(gameObject);
-        }
-        else
-        {
-            // Collectible immediately; trigger collider for overlap
-            col.isTrigger = true;
-            allowCollect = true;
+            if (this != null)
+                Destroy(gameObject);
             yield break;
         }
+
+        col.isTrigger = true;
+        allowCollect = true;
     }
 
-    // Called by Player
     public void Collect()
     {
-        if (!allowCollect || isCollected) return;
+        if (!allowCollect || isCollected)
+            return;
+
         isCollected = true;
 
         switch (itemType)
         {
             case Type.coin:
-                // GameManager.Instance.AddCoin(amount);
-                GlobalValue.SavedCoins += amount;
+                progressService.SavedCoins += amount;
                 break;
-
             case Type.dart:
-                GameManager.Instance.AddBullet(amount);
+                gameSession.AddBullet(amount);
                 break;
-
             case Type.hearth:
-                GameManager.Instance.Player.GiveHealth(amount, gameObject);
+                gameSession.Player.GiveHealth(amount, gameObject);
                 break;
         }
 
-        SoundManager.PlaySfx(sound, soundVol);
+        audioService.PlaySfx(sound, soundVol);
 
         if (effect != null)
         {
-            var vfx = SpawnSystemHelper.GetNextObject(effect, true);
+            GameObject vfx = SpawnSystemHelper.GetNextObject(effect, true);
             vfx.transform.position = transform.position;
         }
 

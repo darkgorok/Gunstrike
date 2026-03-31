@@ -1,6 +1,6 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class SpearTrap : MonoBehaviour
 {
@@ -11,8 +11,6 @@ public class SpearTrap : MonoBehaviour
     public Vector2 offset;
     public Vector3[] localWaypoints;
 
-    List<GameObject> spearList;
-
     [Header("Spear Setup")]
     public float speed = 10;
     public float delayWarning = 0.5f;
@@ -22,50 +20,81 @@ public class SpearTrap : MonoBehaviour
     [Header("CheckPlayer")]
     public Vector2 checkSize = new Vector2(0.5f, 2);
     public Vector3 checkOffset;
-    
-    void Start()
+
+    private readonly List<GameObject> spearList = new List<GameObject>();
+    private bool isTriggered;
+    private int nextSpearIndex;
+    private float nextActivationTimer = -1f;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         SetupSpear();
-        InvokeRepeating("CheckPlayerInvoke", 0, 0.1f);
     }
 
-    void SetupSpear()
+    private void Update()
     {
-        spearList = new List<GameObject>();
+        if (!isTriggered)
+        {
+            if (Physics2D.BoxCast(transform.position + checkOffset, checkSize, 0, Vector2.zero, 0, gameSession.PlayerLayer))
+            {
+                isTriggered = true;
+                nextSpearIndex = 0;
+                nextActivationTimer = 0f;
+            }
+
+            return;
+        }
+
+        if (nextActivationTimer < 0f)
+            return;
+
+        nextActivationTimer -= Time.deltaTime;
+        if (nextActivationTimer > 0f)
+            return;
+
+        ActivateNextSpear();
+    }
+
+    private void SetupSpear()
+    {
+        spearList.Clear();
         for (int i = 0; i < numberOfSpear; i++)
         {
-            spearList.Add(Instantiate(spearObj, transform));
-            spearList[i].transform.position = (Vector2)transform.position + (arrangeToRight ? Vector2.right : Vector2.left) * widthOfSpear * i + offset + (i == 0 ? Vector2.up * 0.5f : Vector2.zero);
+            GameObject spear = Instantiate(spearObj, transform);
+            spear.transform.position = (Vector2)transform.position +
+                                       (arrangeToRight ? Vector2.right : Vector2.left) * widthOfSpear * i +
+                                       offset +
+                                       (i == 0 ? Vector2.up * 0.5f : Vector2.zero);
+            spearList.Add(spear);
         }
     }
 
-    void CheckPlayerInvoke()
+    private void ActivateNextSpear()
     {
-        if( Physics2D.BoxCast(transform.position + checkOffset, checkSize, 0, Vector2.zero, 0, GameManager.Instance.playerLayer))
+        if (nextSpearIndex >= numberOfSpear)
         {
-            StartCoroutine(WorkingCo());
-            CancelInvoke();
+            nextActivationTimer = -1f;
+            return;
         }
 
-    }
-
-    IEnumerator WorkingCo()
-    {
-        for (int i = 0; i < numberOfSpear; i++)
-        {
-            SoundManager.PlaySfx(sound);
-            if (i == 0)
-            {
-                spearList[0].AddComponent<SimplePathedMoving>().Init(0, speed, localWaypoints, false);
-                
-                yield return new WaitForSeconds(delayWarning);
-            }
-            else
-            {
-                spearList[i].AddComponent<SimplePathedMoving>().Init(0, speed, localWaypoints, false);
-                yield return new WaitForSeconds(delayPerSpear);
-            }
-        }
+        audioService?.PlaySfx(sound);
+        spearList[nextSpearIndex].AddComponent<SimplePathedMoving>().Init(0, speed, localWaypoints, false);
+        nextActivationTimer = nextSpearIndex == 0 ? delayWarning : delayPerSpear;
+        nextSpearIndex++;
     }
 
     private void OnDrawGizmos()

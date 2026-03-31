@@ -1,84 +1,95 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class ShakingHelper : MonoBehaviour {
-	public bool playOnStart = false;
-	public AudioClip sound;
-	bool Shaking; 
-	public float shakeDecay = 0.02f;
-	public float shakeIntensity = 0.2f;    
-	public float wide = 0.2f;
-	float ShakeDecay = 0;
-	float ShakeIntensity = 0;
-	private Vector3 OriginalPos;
-	private Quaternion OriginalRot;
-	public GameObject Target;
-	public float timeShake = 1;
-	public float timeRate = 1;
-	bool isLoop = false;
-	void Awake(){
-		if (Target == null)
-			Target = gameObject;
+public class ShakingHelper : MonoBehaviour
+{
+    public bool playOnStart = false;
+    public AudioClip sound;
+    public float shakeDecay = 0.02f;
+    public float shakeIntensity = 0.2f;
+    public float wide = 0.2f;
+    public GameObject Target;
+    public float timeShake = 1;
+    public float timeRate = 1;
 
-		Shaking = false;   
-	}
+    private bool shaking;
+    private bool isLoop;
+    private float currentShakeDecay;
+    private float currentShakeIntensity;
+    private Vector3 originalPos;
+    private Quaternion originalRot;
+    private IAudioService audioService;
 
-	public virtual void Start()
-	{
-		if (playOnStart) {
-			DoShake ();
-//			InvokeRepeating ("DoShake", timeShake, timeRate);
-		}
-	}
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
 
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        if (Target == null)
+            Target = gameObject;
 
+        shaking = false;
+    }
 
-	public void DoShake(bool loop = false)
-	{
-		if (Shaking)
-			return;
+    public virtual void Start()
+    {
+        if (playOnStart)
+            DoShake();
+    }
 
-		isLoop = loop;
-		SoundManager.PlaySfx (sound);
-		OriginalPos = Target.transform.position;
-		OriginalRot = Target.transform.rotation;
+    public void DoShake(bool loop = false)
+    {
+        if (shaking)
+            return;
 
-		ShakeIntensity = shakeIntensity;
-		ShakeDecay = shakeDecay;
-		Shaking = true;
-	}   
+        isLoop = loop;
+        audioService?.PlaySfx(sound);
+        originalPos = Target.transform.position;
+        originalRot = Target.transform.rotation;
+        currentShakeIntensity = shakeIntensity;
+        currentShakeDecay = shakeDecay;
+        shaking = true;
+    }
 
-	public void StopShake(){
-		Shaking = false;
-		isLoop = false;
-	}
+    public void StopShake()
+    {
+        shaking = false;
+        isLoop = false;
+    }
 
+    private void Update()
+    {
+        if (currentShakeIntensity > 0)
+        {
+            Target.transform.position = originalPos + Random.insideUnitSphere * currentShakeIntensity;
+            Target.transform.rotation = new Quaternion(
+                originalRot.x + Random.Range(-currentShakeIntensity, currentShakeIntensity) * wide,
+                originalRot.y + Random.Range(-currentShakeIntensity, currentShakeIntensity) * wide,
+                originalRot.z + Random.Range(-currentShakeIntensity, currentShakeIntensity) * wide,
+                originalRot.w + Random.Range(-currentShakeIntensity, currentShakeIntensity) * wide);
 
-	// Update is called once per frame
-	void Update () 
-	{
-		if(ShakeIntensity > 0)
-		{
-			Target.transform.position = OriginalPos + Random.insideUnitSphere * ShakeIntensity;
-			Target.transform.rotation = new Quaternion(OriginalRot.x + Random.Range(-ShakeIntensity, ShakeIntensity)*wide,
-				OriginalRot.y + Random.Range(-ShakeIntensity, ShakeIntensity)*wide,
-				OriginalRot.z + Random.Range(-ShakeIntensity, ShakeIntensity)*wide,
-				OriginalRot.w + Random.Range(-ShakeIntensity, ShakeIntensity)*wide);
+            currentShakeIntensity -= currentShakeDecay;
+        }
+        else if (shaking)
+        {
+            if (isLoop)
+            {
+                currentShakeIntensity = shakeIntensity;
+                currentShakeDecay = shakeDecay;
+            }
+            else
+            {
+                shaking = false;
+            }
+        }
+    }
 
-			ShakeIntensity -= ShakeDecay;
-		}
-		else if (Shaking)
-		{
-			if (isLoop) {
-				ShakeIntensity = shakeIntensity;
-				ShakeDecay = shakeDecay;
-			} else
-				Shaking = false;
-		}
-	}
-
-	void OnDisable(){
-		StopShake ();
-	}
+    private void OnDisable()
+    {
+        StopShake();
+    }
 }

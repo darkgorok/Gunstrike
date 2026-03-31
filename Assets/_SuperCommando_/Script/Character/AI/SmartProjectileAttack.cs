@@ -1,212 +1,168 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class SmartProjectileAttack : MonoBehaviour
 {
-    public enum ShootingType { FixedAngle, FixedForce}
+    public enum ShootingType { FixedAngle, FixedForce }
     public ShootingType shootingType;
+
     public enum ShootingTarget { FixedTarget, DetectedTarget }
     public ShootingTarget shootingTarget;
 
     [Header("Setup")]
     public ArrowProjectile arrow;
     public GameObject startFX;
-    public float shootRate = 1;
+    public float shootRate = 1f;
     public float gravityScale = 1f;
     public Transform fixedTarget;
-    [Range(0.01f, 0.1f)]
-    [ReadOnly] public float stepCheck = 0.1f;
+    [Range(0.01f, 0.1f)] [ReadOnly] public float stepCheck = 0.1f;
     [ReadOnly] public bool onlyShootTargetInFront = true;
     public Transform headPos;
     public Transform cannonBody;
+    public Transform firePoint;
 
     [Header("FIXED ANGLE SETUP")]
-    public float fixedAngle = 45;
+    public float fixedAngle = 45f;
     public float stepForceCheck = 0.5f;
 
     [Header("FIXED FORCE SETUP")]
-    public float force = 20;
-    public float stepAngleCheck = 1;
-    
+    public float force = 20f;
+    public float stepAngleCheck = 1f;
+
     [Header("Sound")]
     public float soundShootVolume = 0.5f;
     public AudioClip[] soundShoot;
 
-    private float x1, y1;
-    bool isTargetRight = false;
-    float lastShoot;
-
     [ReadOnly] public bool isAvailable = true;
-    
-    Animator anim;
-    bool forceManualShoot = false;
-    Vector2 forceManualShootPoint;
 
-    void Start()
+    private Animator anim;
+    private bool forceManualShoot;
+    private Vector2 forceManualShootPoint;
+    private float reloadTimer = -1f;
+    private float idleTriggerTimer = -1f;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
     {
-        anim = GetComponent<Animator>();
-        //StartCoroutine(AutoCheckAndShoot());
+        this.audioService = audioService;
     }
 
-    //IEnumerator AutoCheckAndShoot()
-    //{
-    //    while (true)
-    //    {
-    //        if (shootingType == ShootingType.Auto)
-    //        {
-    //            Shoot(false, Vector2.zero);
-    //        }
-    //        else
-    //        {
-    //            if (!isDetectedPlayer)
-    //            {
-    //                if (checkTargetHelper.CheckTarget())
-    //                {
-    //                    isDetectedPlayer = true;
-    //                    Shoot(false, Vector2.zero);
-    //                }
-    //            }
-    //            else
-    //            {
-    //                if (Vector2.Distance(GameManager.Instance.Player.transform.position, transform.position) < dismissTargetDistance)
-    //                    Shoot(false, Vector2.zero);
-    //                else
-    //                    isDetectedPlayer = false;
-    //            }
-    //        }
-    //        yield return new WaitForSeconds(0.1f);
-    //    }
-    //}
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        if (reloadTimer >= 0f)
+        {
+            reloadTimer -= Time.deltaTime;
+            if (reloadTimer <= 0f)
+            {
+                reloadTimer = -1f;
+                anim.SetTrigger("idle");
+                idleTriggerTimer = 0.2f;
+            }
+        }
+
+        if (idleTriggerTimer >= 0f)
+        {
+            idleTriggerTimer -= Time.deltaTime;
+            if (idleTriggerTimer <= 0f)
+            {
+                idleTriggerTimer = -1f;
+                isAvailable = true;
+            }
+        }
+    }
 
     public bool Shoot(GameObject targetPosition)
     {
-        if (!isAvailable/* || target == null*/)
+        if (!isAvailable)
             return false;
 
         forceManualShoot = shootingTarget == ShootingTarget.DetectedTarget && targetPosition != null;
         if (forceManualShoot)
             forceManualShootPoint = targetPosition.transform.position;
 
-        isTargetRight = /*Camera.main.ScreenToWorldPoint(Input.mousePosition).x*/ (forceManualShoot ? forceManualShootPoint.x : fixedTarget.position.x) > transform.position.x;
-
-        StartCoroutine(CheckTarget());
-
+        FireProjectile();
         isAvailable = false;
-
+        reloadTimer = shootRate;
+        idleTriggerTimer = -1f;
         return true;
     }
 
-    public Transform firePoint;
-    IEnumerator CheckTarget()
+    private void FireProjectile()
     {
-        Vector3 mouseTempLook = /*Camera.main.ScreenToWorldPoint(Input.mousePosition)*/ (forceManualShoot ? forceManualShootPoint : (Vector2)fixedTarget.position);
-        mouseTempLook -= transform.position;
-        yield return null;
-
         Vector2 fromPosition = firePoint.position;
-        Vector2 target = (forceManualShoot ? forceManualShootPoint : (Vector2)fixedTarget.position);
-
-        float beginAngle = (shootingType == ShootingType.FixedAngle)? fixedAngle : UltiHelper.Vector2ToAngle(target - fromPosition);
-        Vector2 ballPos = fromPosition;
-
-        float cloestAngleDistance = int.MaxValue;
-
+        Vector2 target = forceManualShoot ? forceManualShootPoint : (Vector2)fixedTarget.position;
+        bool isTargetRight = target.x > transform.position.x;
+        float solvedForce = shootingType == ShootingType.FixedAngle ? 1f : force;
+        float beginAngle = shootingType == ShootingType.FixedAngle ? fixedAngle : UltiHelper.Vector2ToAngle(target - fromPosition);
+        float closestAngleDistance = float.MaxValue;
         bool checkingPerAngle = true;
-
-        if ((shootingType == ShootingType.FixedAngle))
-            force = 1;
+        Vector2 ballPos = fromPosition;
 
         while (checkingPerAngle)
         {
             int k = 0;
             Vector2 lastPos = fromPosition;
             bool isCheckingAngle = true;
-            float clostestDistance = int.MaxValue;
+            float closestDistance = float.MaxValue;
 
             while (isCheckingAngle)
             {
-                Vector2 shotForce = force * UltiHelper.AngleToVector2(beginAngle);
-                x1 = ballPos.x + shotForce.x * Time.fixedDeltaTime * (stepCheck * k);    //X position for each point is found
-                y1 = ballPos.y + shotForce.y * Time.fixedDeltaTime * (stepCheck * k) - (-(Physics2D.gravity.y * gravityScale) / 2f * Time.fixedDeltaTime * Time.fixedDeltaTime * (stepCheck * k) * (stepCheck * k));    //Y position for each point is found
+                Vector2 shotForce = solvedForce * UltiHelper.AngleToVector2(beginAngle);
+                float x = ballPos.x + shotForce.x * Time.fixedDeltaTime * (stepCheck * k);
+                float y = ballPos.y + shotForce.y * Time.fixedDeltaTime * (stepCheck * k) -
+                          (-(Physics2D.gravity.y * gravityScale) / 2f * Time.fixedDeltaTime * Time.fixedDeltaTime * (stepCheck * k) * (stepCheck * k));
 
-                float _distance = Vector2.Distance(target, new Vector2(x1, y1));
-                if (_distance < clostestDistance)
-                    clostestDistance = _distance;
+                float distance = Vector2.Distance(target, new Vector2(x, y));
+                if (distance < closestDistance)
+                    closestDistance = distance;
 
-                if ((y1 < lastPos.y) && (y1 < target.y))
+                if (y < lastPos.y && y < target.y)
                     isCheckingAngle = false;
                 else
                     k++;
 
-                lastPos = new Vector2(x1, y1);
+                lastPos = new Vector2(x, y);
             }
 
-            if (clostestDistance >= cloestAngleDistance)
+            if (closestDistance >= closestAngleDistance)
+            {
                 checkingPerAngle = false;
+            }
             else
             {
-                cloestAngleDistance = clostestDistance;
-
-                if (isTargetRight)
+                closestAngleDistance = closestDistance;
+                if (shootingType == ShootingType.FixedAngle)
                 {
-                    if ((shootingType == ShootingType.FixedAngle)) {
-                        force += stepForceCheck;
-                    }
-                    else
-                    {
-                        beginAngle += stepAngleCheck;
-                    }
+                    solvedForce += stepForceCheck;
                 }
                 else
                 {
-                    if ((shootingType == ShootingType.FixedAngle))
-                    {
-                        force += stepForceCheck;
-                    }
-                    else
-                    {
-                        beginAngle -= stepAngleCheck;
-                    }
+                    beginAngle += isTargetRight ? stepAngleCheck : -stepAngleCheck;
                 }
-                //if (beginAngle <= maxAngle)
-                //    checkingPerAngle = false;
             }
         }
-        cannonBody.right = UltiHelper.AngleToVector2(beginAngle);
 
-        yield return null;
+        cannonBody.right = UltiHelper.AngleToVector2(beginAngle);
         anim.SetTrigger("fire");
 
-        //Fire number arrow
-        ArrowProjectile _tempArrow;
+        ArrowProjectile tempArrow = Instantiate(arrow, fromPosition, Quaternion.identity);
+        tempArrow.Init(solvedForce * UltiHelper.AngleToVector2(beginAngle), gravityScale);
 
-        _tempArrow = Instantiate(arrow, fromPosition, Quaternion.identity);
-        _tempArrow.Init(force * UltiHelper.AngleToVector2(beginAngle), gravityScale);
+        if (soundShoot != null && soundShoot.Length > 0)
+            audioService.PlaySfx(soundShoot[Random.Range(0, soundShoot.Length)], soundShootVolume);
 
-        SoundManager.PlaySfx(soundShoot[Random.Range(0, soundShoot.Length)], soundShootVolume);
-        if (startFX)
-        {
+        if (startFX != null)
             Instantiate(startFX, headPos.position, Quaternion.identity);
-        }
-
-        StartCoroutine(ReloadingCo());
     }
-
-    IEnumerator ReloadingCo()
-    {
-        isAvailable = false;
-        lastShoot = Time.time;
-
-        yield return new WaitForSeconds(0.1f);
-
-        while (Time.time < (lastShoot + shootRate)) { yield return null; }
-
-        anim.SetTrigger("idle");
-
-        yield return new WaitForSeconds(0.2f);
-
-        isAvailable = true;
-    }
-
 }

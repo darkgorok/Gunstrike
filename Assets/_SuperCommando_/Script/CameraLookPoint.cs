@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class CameraLookPoint : MonoBehaviour
 {
@@ -13,66 +14,66 @@ public class CameraLookPoint : MonoBehaviour
     public bool changeGameMusic = true;
     [Space]
     public AudioClip soundShowUp;
-    Vector3 mainCameraStartPoint;
-    
-    bool moveCameraToTarget = true;
-    [Header("MOVE TO TARGET")]
     public float cameraMoveToSpeed = 1;
     public float cameraMoveBackSpeed = 2;
     public Transform targetCameraLook;
-    [Header("SET CAMERA MIN MAX")]
     public Transform limitMinPos, limitMaxPos;
-    [Header("MOVE PLAYER")]
     public float movePlayerSpeed = 1.5f;
     public Transform movePlayerToPointPos;
-    [Header("ACTIVE GATE")]
     public float delayGate = 1f;
     public GameObject theGate;
-    [Header("GAME MUSIC")]
     public AudioClip newMusic;
 
-    CameraFollow mainCamera;
-    bool isWorked = false;
+    private Vector3 mainCameraStartPoint;
+    private CameraFollow mainCamera;
+    private bool isWorked = false;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+    private IGameplayPresentationService presentationService;
 
-    void Start()
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IGameplayPresentationService presentationService)
     {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+        this.presentationService = presentationService;
+    }
+
+    private void Start()
+    {
+        ProjectScope.Inject(this);
         mainCamera = CameraFollow.Instance;
     }
-    
-    IEnumerator OnTriggerEnter2D(Collider2D other)
+
+    private IEnumerator OnTriggerEnter2D(Collider2D other)
     {
         if (isWorked)
             yield break;
 
-        if (other.gameObject != GameManager.Instance.Player.gameObject)
+        if (other.gameObject != gameSession.Player.gameObject)
             yield break;
 
         isWorked = true;
         if (setCameraLimitMin)
             mainCamera._min.x = limitMinPos.position.x;
-        if(setCameraLimitMax)
+        if (setCameraLimitMax)
             mainCamera._max.x = limitMaxPos.position.x;
 
-        GameManager.Instance.Player.Frozen(true);
-        MenuManager.Instance.TurnController(false);
-        SoundManager.PlaySfx(soundShowUp);
+        gameSession.Player.Frozen(true);
+        presentationService.SetControllerVisible(false);
+        audioService.PlaySfx(soundShowUp);
 
         mainCamera.isFollowing = false;
         mainCameraStartPoint = mainCamera.transform.position;
 
-        SoundManager.Instance.PauseMusic(true);
-        GroupEnemySystemUI.Instance.ShowWarning(true);
+        audioService.PauseMusic(true);
+        presentationService.ShowWarning(true);
 
         Vector3 targetPos = targetCameraLook.position;
         targetPos.z = mainCameraStartPoint.z;
 
-        float percent = 0;
-
-
-       
-
-        percent = 0;
-        while (percent < 1)
+        float percent = 0f;
+        while (percent < 1f)
         {
             percent += Time.deltaTime * cameraMoveToSpeed;
             percent = Mathf.Clamp01(percent);
@@ -80,11 +81,11 @@ public class CameraLookPoint : MonoBehaviour
             yield return null;
         }
 
-        percent = 0;
+        percent = 0f;
         if (setCameraLimitMin)
         {
-            var targetBack = new Vector3(mainCamera._min.x + mainCamera.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
-            while (percent < 1)
+            Vector3 targetBack = new Vector3(mainCamera._min.x + mainCamera.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
+            while (percent < 1f)
             {
                 percent += Time.deltaTime * cameraMoveBackSpeed;
                 percent = Mathf.Clamp01(percent);
@@ -94,7 +95,7 @@ public class CameraLookPoint : MonoBehaviour
         }
         else
         {
-            while (percent < 1)
+            while (percent < 1f)
             {
                 percent += Time.deltaTime * cameraMoveBackSpeed;
                 percent = Mathf.Clamp01(percent);
@@ -103,17 +104,17 @@ public class CameraLookPoint : MonoBehaviour
             }
         }
 
-        percent = 0;
+        percent = 0f;
         if (movePlayerToPoint)
         {
-            Vector3 playerStartPos = GameManager.Instance.Player.transform.position;
+            Vector3 playerStartPos = gameSession.Player.transform.position;
             Vector3 playerEndPos = movePlayerToPointPos.position;
             playerEndPos.y = playerStartPos.y;
-            while (percent < 1)
+            while (percent < 1f)
             {
                 percent += Time.deltaTime * movePlayerSpeed;
                 percent = Mathf.Clamp01(percent);
-                GameManager.Instance.Player.transform.position = Vector3.Lerp(playerStartPos, playerEndPos, percent);
+                gameSession.Player.transform.position = Vector3.Lerp(playerStartPos, playerEndPos, percent);
                 yield return null;
             }
         }
@@ -125,15 +126,13 @@ public class CameraLookPoint : MonoBehaviour
         }
 
         if (changeGameMusic)
-            SoundManager.PlayMusic(newMusic, 1);
-
+            audioService.PlayMusic(newMusic, 1f);
 
         mainCamera.isFollowing = true;
-        GroupEnemySystemUI.Instance.ShowWarning(false);
-        SoundManager.Instance.PauseMusic(false);
-        GameManager.Instance.Player.Frozen(false);
-        MenuManager.Instance.TurnController(true);
-       
+        presentationService.ShowWarning(false);
+        audioService.PauseMusic(false);
+        gameSession.Player.Frozen(false);
+        presentationService.SetControllerVisible(true);
     }
 
     private void OnDrawGizmos()
@@ -141,7 +140,7 @@ public class CameraLookPoint : MonoBehaviour
         if (targetCameraLook)
         {
             Gizmos.DrawLine(transform.position, targetCameraLook.position);
-            Gizmos.DrawWireCube(targetCameraLook.position, new Vector2(Camera.main.orthographicSize * ((float)Screen.width / Screen.height) * 2, Camera.main.orthographicSize*2));
+            Gizmos.DrawWireCube(targetCameraLook.position, new Vector2(Camera.main.orthographicSize * ((float)Screen.width / Screen.height) * 2, Camera.main.orthographicSize * 2));
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class PlaySoundWhenPlayerInRange : MonoBehaviour
 {
@@ -8,9 +7,22 @@ public class PlaySoundWhenPlayerInRange : MonoBehaviour
     public AudioClip movingSound;
     [Tooltip("Allow play sound when the distance with Player smaller this value")]
     public float playDistancePlayer = 6;
-    AudioSource soundScr;
 
-    void Start()
+    private AudioSource soundScr;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
     {
         soundScr = gameObject.AddComponent<AudioSource>();
         soundScr.clip = movingSound;
@@ -18,18 +30,16 @@ public class PlaySoundWhenPlayerInRange : MonoBehaviour
         soundScr.Play();
         soundScr.loop = true;
         soundScr.volume = 0;
-        
-        InvokeRepeating("CheckingPlayer", 0, 0.1f);
     }
 
-    void CheckingPlayer()
+    private void Update()
     {
-        if (Vector3.Distance(GameManager.Instance.Player.transform.position, transform.position) < playDistancePlayer)
-        {
-            soundScr.volume = volume;
-        }
-        else
-            soundScr.volume = 0;
+        if (gameSession?.Player == null)
+            return;
+
+        soundScr.volume = Vector3.Distance(gameSession.Player.transform.position, transform.position) < playDistancePlayer
+            ? volume
+            : 0f;
     }
 
     private void OnDrawGizmos()

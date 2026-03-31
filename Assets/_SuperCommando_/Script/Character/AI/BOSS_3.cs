@@ -1,67 +1,75 @@
-﻿using UnityEngine;	
-using System.Collections;	
-	
-public class BOSS_3 : MonoBehaviour,ICanTakeDamage
+using UnityEngine;
+using VContainer;
+
+public class BOSS_3 : MonoBehaviour, ICanTakeDamage
 {
     public bool isBoss = false;
-    Animator anim;
-
-	[Range(10,500)]
-	public int health = 500;
+    [Range(10, 500)] public int health = 500;
     [ReadOnly] public int currentHealth;
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     protected HealthBarEnemyNew healthBar;
-    //public float damagePerHit = 10f;
 
     public AudioClip attackSound;
-	public AudioClip deadSound;
+    public AudioClip deadSound;
     public AudioClip hurtSound;
-
-	
     public GameObject deadFX;
 
-    public float speedFly  = 3;
-	public float speedAttack ;
+    public float speedFly = 3f;
+    public float speedAttack;
+    public float attackMin = 5f;
+    public float attackMax = 10f;
+    public Transform[] PointBackUps;
 
-	public float attackMin = 5;
-	public float attackMax = 10;
+    [Header("damage")]
+    public int DamageToPlayer;
+    public float rateDamage = 0.2f;
+    public Vector2 pushPlayer = new Vector2(0, 10);
+    public bool canBeKillOnHead = false;
 
-	public Transform[] PointBackUps;
-	Transform pointBackUp;
-	Transform currentPatrolPoint;
+    [Header("BLINKING")]
+    public float blinking = 1.5f;
+    public SpriteRenderer characterImage;
+    public Material whiteMaterial;
 
-	Player player;
+    [HideInInspector] public GameObject saveOwner;
 
-	bool attack;
-	bool backup;
-	bool patrolRight;
+    private Animator anim;
+    private Rigidbody2D rig;
+    private Transform pointBackUp;
+    private Transform currentPatrolPoint;
+    private bool attack;
+    private bool backup;
+    private float oldPos;
+    private float currentPos;
+    private bool isDead;
+    private float nextDamage;
+    private Material objMat;
+    private float attackTimer = -1f;
+    private float disableTimer = -1f;
+    private float blinkTimer = -1f;
+    private float nextBlinkToggle;
+    private bool blinkUsingWhite;
 
-	float oldPos, currentPos;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
 
-	bool isDead = false;
-	Rigidbody2D rig;
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
 
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
-	[Header("damage")]
-	public int DamageToPlayer;
-	[Tooltip("delay a moment before give next damage to Player")]
-	public float rateDamage = 0.2f;
-	public Vector2 pushPlayer = new Vector2 (0, 10);
-	float nextDamage;
-
-	[Tooltip("Give damage to this object when Player jump on his head")]
-	public bool canBeKillOnHead = false;
-
-    [HideInInspector]
-    public GameObject saveOwner;
-
-    // Use this for initialization	
-    void Start () {		
-		player = FindObjectOfType<Player> ();
-		currentPatrolPoint = PointBackUps [Random.Range (0, PointBackUps.Length)];
-
-		rig = GetComponent<Rigidbody2D> ();
-		anim = GetComponent<Animator> ();
+    private void Start()
+    {
+        currentPatrolPoint = PointBackUps[Random.Range(0, PointBackUps.Length)];
+        rig = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         objMat = characterImage.material;
 
         currentHealth = health;
@@ -70,194 +78,201 @@ public class BOSS_3 : MonoBehaviour,ICanTakeDamage
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
         oldPos = currentPos = transform.position.x;
-
-        saveOwner = Instantiate(transform.root.gameObject, transform.root.position, Quaternion.identity) as GameObject;
+        saveOwner = Instantiate(transform.root.gameObject, transform.root.position, Quaternion.identity);
         saveOwner.SetActive(false);
     }
 
-	public void Play(){
-		StartCoroutine (AttackCo ());
-	}
-		
-	// Update is called once per frame	
-	void Update () {	
-		if (isDead)
-			return;
-		
-		if (attack) {
-			transform.position = Vector2.MoveTowards (transform.position, player.transform.position, speedAttack * Time.deltaTime);
-			if (Vector2.Distance (transform.position, player.transform.position) < 0.1f || GameManager.Instance.State == GameManager.GameState.Dead) {
-				BackUp ();
-			}
-		} else if (backup) {
-			transform.position = Vector2.MoveTowards (transform.position, pointBackUp.position, speedFly * Time.deltaTime * 2);
-			if (Vector2.Distance (transform.position, pointBackUp.position) < 0.1f) {
-				backup = false;
-				StartCoroutine (AttackCo ());
-			}
-		} else {
-			transform.position = Vector2.MoveTowards (transform.position, currentPatrolPoint.position, speedFly * Time.deltaTime/2);
-			if (Vector2.Distance (transform.position, currentPatrolPoint.position) < 0.1f) {
-				currentPatrolPoint = PointBackUps [Random.Range (0, PointBackUps.Length)];
-			}
-		}
+    public void Play()
+    {
+        ScheduleNextAttack();
+    }
 
-		currentPos = transform.position.x;
+    private void Update()
+    {
+        TickTimers();
 
-		if (currentPos < oldPos) 
-			transform.localScale = new Vector3 (1, 1, 1);
-		else if(currentPos > oldPos)
-			transform.localScale = new Vector3 (-1, 1, 1);
+        if (isDead || gameSession.Player == null)
+            return;
 
-		oldPos = currentPos;
-	}	
-
-	void BackUp(){
-		attack = false;
-		backup = true;
-		pointBackUp = PointBackUps [Random.Range (0, PointBackUps.Length)];
-	}
-
-	IEnumerator AttackCo(){
-		var delay = Random.Range (attackMin, attackMax);
-
-        yield return new WaitForSeconds(Mathf.Max(delay - 1, 0));
-
-        while(GameManager.Instance.State != GameManager.GameState.Playing)
+        if (attack)
         {
-            yield return null;
+            transform.position = Vector2.MoveTowards(transform.position, gameSession.Player.transform.position, speedAttack * Time.deltaTime);
+            if (Vector2.Distance(transform.position, gameSession.Player.transform.position) < 0.1f || gameSession.State == GameManager.GameState.Dead)
+                BackUp();
+        }
+        else if (backup)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, pointBackUp.position, speedFly * Time.deltaTime * 2f);
+            if (Vector2.Distance(transform.position, pointBackUp.position) < 0.1f)
+            {
+                backup = false;
+                ScheduleNextAttack();
+            }
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, currentPatrolPoint.position, speedFly * Time.deltaTime / 2f);
+            if (Vector2.Distance(transform.position, currentPatrolPoint.position) < 0.1f)
+                currentPatrolPoint = PointBackUps[Random.Range(0, PointBackUps.Length)];
         }
 
-        yield return new WaitForSeconds(1);
+        currentPos = transform.position.x;
+        if (currentPos < oldPos)
+            transform.localScale = new Vector3(1, 1, 1);
+        else if (currentPos > oldPos)
+            transform.localScale = new Vector3(-1, 1, 1);
 
-        attack = true;
-		SoundManager.PlaySfx (attackSound);
-	}
+        oldPos = currentPos;
+    }
 
-	public void TakeDamage (int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
-	{
-		if (isDead)
-			return;
+    public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
+    {
+        if (isDead)
+            return;
 
         currentHealth -= damage;
-
-		isDead = currentHealth <= 0 ? true : false;
+        isDead = currentHealth <= 0;
         if (healthBar)
             healthBar.UpdateValue(currentHealth / (float)health);
 
         if (isDead)
         {
-            SoundManager.PlaySfx(deadSound);
+            audioService.PlaySfx(deadSound);
             anim.SetTrigger("Dead");
-            var boxCo = GetComponents<BoxCollider2D>();
-            foreach (var box in boxCo)
-            {
-                box.enabled = false;
-            }
-            var CirCo = GetComponents<CircleCollider2D>();
-            foreach (var cir in CirCo)
-            {
-                cir.enabled = false;
-            }
+            DisableAllColliders();
             rig.isKinematic = false;
             rig.AddForce(new Vector2(0, 200));
+            attack = false;
+            backup = false;
+            attackTimer = -1f;
+            blinkTimer = -1f;
+            characterImage.material = objMat;
 
             if (isBoss)
             {
-                GameManager.Instance.MissionStarCollected = 3;
-                GameManager.Instance.GameFinish();
+                gameSession.MissionStarCollected = 3;
+                gameSession.GameFinish();
             }
             else
             {
-                Invoke("DisableBoss", 2);
-                //try spawn random item
+                disableTimer = 2f;
                 var spawnItem = GetComponent<EnemySpawnItem>();
-
-               
-
                 if (spawnItem != null)
-                {
                     spawnItem.SpawnItem();
-                }
             }
         }
         else
         {
-            StartCoroutine(BlinkEffecrCo());		//begin the blink effect
-            SoundManager.PlaySfx(hurtSound);
+            StartBlink();
+            audioService.PlaySfx(hurtSound);
         }
 
-		BackUp ();
-	}
-
-    [Header("BLINKING")]
-
-    public float blinking = 1.5f;       //blinking time allowed
-    bool isBlinking = false;
-    public SpriteRenderer characterImage;
-    public Material whiteMaterial;
-    Material objMat;
-    IEnumerator BlinkEffecrCo()
-    {
-        isBlinking = true;
-        int blink = (int)(blinking * 0.5f / 0.2f);
-
-        for (int i = 0; i < blink; i++)
-        {
-            characterImage.material = whiteMaterial;
-            yield return new WaitForSeconds(0.2f);
-            characterImage.material = objMat;
-            yield return new WaitForSeconds(0.2f);
-        }
-        characterImage.material = objMat;
-        isBlinking = false;
+        BackUp();
     }
 
-    void DisableBoss()
+    private void TickTimers()
+    {
+        if (attackTimer >= 0f)
+        {
+            if (gameSession.State == GameManager.GameState.Playing)
+                attackTimer -= Time.deltaTime;
+
+            if (attackTimer <= 0f)
+            {
+                attackTimer = -1f;
+                attack = true;
+                audioService.PlaySfx(attackSound);
+            }
+        }
+
+        if (disableTimer >= 0f)
+        {
+            disableTimer -= Time.deltaTime;
+            if (disableTimer <= 0f)
+            {
+                disableTimer = -1f;
+                DisableBoss();
+            }
+        }
+
+        if (blinkTimer >= 0f)
+        {
+            blinkTimer -= Time.deltaTime;
+            nextBlinkToggle -= Time.deltaTime;
+
+            if (nextBlinkToggle <= 0f)
+            {
+                blinkUsingWhite = !blinkUsingWhite;
+                characterImage.material = blinkUsingWhite ? whiteMaterial : objMat;
+                nextBlinkToggle = 0.2f;
+            }
+
+            if (blinkTimer <= 0f)
+            {
+                blinkTimer = -1f;
+                blinkUsingWhite = false;
+                characterImage.material = objMat;
+            }
+        }
+    }
+
+    private void ScheduleNextAttack()
+    {
+        attack = false;
+        attackTimer = Random.Range(attackMin, attackMax);
+    }
+
+    private void BackUp()
+    {
+        attack = false;
+        backup = true;
+        pointBackUp = PointBackUps[Random.Range(0, PointBackUps.Length)];
+    }
+
+    private void StartBlink()
+    {
+        blinkTimer = blinking;
+        nextBlinkToggle = 0f;
+        blinkUsingWhite = false;
+    }
+
+    private void DisableAllColliders()
+    {
+        foreach (var box in GetComponents<BoxCollider2D>())
+            box.enabled = false;
+
+        foreach (var cir in GetComponents<CircleCollider2D>())
+            cir.enabled = false;
+    }
+
+    private void DisableBoss()
     {
         if (deadFX)
             Instantiate(deadFX, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
-    void OnTriggerStay2D(Collider2D other){
-		var Player = other.GetComponent<Player> ();
-		if (Player == null)
-			return;
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        var player = other.GetComponent<Player>();
+        if (player == null || !player.isPlaying)
+            return;
 
-		if (!Player.isPlaying)
-			return;
+        if (Time.time < nextDamage + rateDamage)
+            return;
 
-		if (Time.time < nextDamage + rateDamage)
-			return;
+        nextDamage = Time.time;
 
-		nextDamage = Time.time;
+        float facingDirectionX = Mathf.Sign(player.transform.position.x - transform.position.x);
+        float facingDirectionY = Mathf.Sign(player.velocity.y);
 
-		//if (canBeKillOnHead && (Player.transform.position.y + 0.5f) > transform.position.y) {
+        player.SetForce(new Vector2(
+            Mathf.Clamp(Mathf.Abs(player.velocity.x), 10, 15) * facingDirectionX,
+            Mathf.Clamp(Mathf.Abs(player.velocity.y), 5, 15) * facingDirectionY * -1));
 
-		//	Player.SetForce (new Vector2 (transform.localScale.x > 0 ? -pushPlayer.x : pushPlayer.x, pushPlayer.y));
-		//	var canTakeDamage = (ICanTakeDamage) GetComponent (typeof(ICanTakeDamage));
-		//	if (canTakeDamage != null)
-		//		canTakeDamage.TakeDamage (damagePerHit, Vector2.zero, gameObject);
-            
-		//	return;
-		//}
+        if (DamageToPlayer == 0)
+            return;
 
-        //Push player back
-        //		var facingDirectionX = Mathf.Sign (Player.transform.localScale.x);
-        //		var facingDirectionY = Mathf.Sign (Player.velocity.y);
-
-
-        var facingDirectionX = Mathf.Sign (Player.transform.position.x - transform.position.x);
-		var facingDirectionY = Mathf.Sign (Player.velocity.y);
-
-		Player.SetForce(new Vector2 (Mathf.Clamp (Mathf.Abs(Player.velocity.x), 10, 15) * facingDirectionX,
-			Mathf.Clamp (Mathf.Abs(Player.velocity.y), 5, 15) * facingDirectionY * -1));
-
-		if (DamageToPlayer == 0)
-			return;
-		Player.TakeDamage (DamageToPlayer, Vector2.zero, gameObject, Vector2.zero);
-
-
-	}
-}	
+        player.TakeDamage(DamageToPlayer, Vector2.zero, gameObject, Vector2.zero);
+    }
+}

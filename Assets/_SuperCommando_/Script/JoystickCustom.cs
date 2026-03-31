@@ -2,11 +2,13 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using VContainer;
 
 namespace UnityStandardAssets.CrossPlatformInput
 {
 	public class JoystickCustom : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 	{
+        private IControllerInputService controllerInputService;
 		
 		public enum AxisOption
 		{
@@ -29,8 +31,16 @@ namespace UnityStandardAssets.CrossPlatformInput
 		CrossPlatformInputManager.VirtualAxis m_HorizontalVirtualAxis; // Reference to the joystick in the cross platform input
 		CrossPlatformInputManager.VirtualAxis m_VerticalVirtualAxis; // Reference to the joystick in the cross platform input
 		public Transform targetDotImage, targetRing;
+
+        [Inject]
+        public void Construct(IControllerInputService controllerInputService)
+        {
+            this.controllerInputService = controllerInputService;
+        }
+
 		void OnEnable()
 		{
+            ProjectScope.Inject(this);
 			CreateVirtualAxes();
 		}
 
@@ -57,8 +67,8 @@ namespace UnityStandardAssets.CrossPlatformInput
 				m_VerticalVirtualAxis.Update(delta.y);
 			}
 
-			ControllerInput.Instance.Horizontak = -delta.x;
-			ControllerInput.Instance.Vertical = delta.y;
+            if (controllerInputService != null)
+                controllerInputService.MoveInput = new Vector2(-delta.x, delta.y);
 		}
 
 		void CreateVirtualAxes()

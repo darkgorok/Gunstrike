@@ -1,18 +1,31 @@
-﻿using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-public class Menu_GUI : MonoBehaviour {
+public class Menu_GUI : MonoBehaviour
+{
     public static Menu_GUI Instance;
-	public Text bulletText;
+    public Text bulletText;
     public Text grenadeTxt;
     public Text liveTxt;
-    private void Awake()
+
+    private bool firstPlay = true;
+    private IGameSessionService gameSession;
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IProgressService progressService)
     {
-        Instance = this;
+        this.gameSession = gameSession;
+        this.progressService = progressService;
     }
 
-    bool firstPlay = true;
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -25,10 +38,10 @@ public class Menu_GUI : MonoBehaviour {
             return;
     }
 
-    void Update()
+    private void Update()
     {
-        bulletText.text = GameManager.Instance.Player.gunTypeID.unlimitedBullet ? "-/-" : (GameManager.Instance.Player.gunTypeID.bullet + "");
-        grenadeTxt.text = GameManager.Instance.Player.grenadeRemaining + "";
-        liveTxt.text = GlobalValue.SaveLives + "";
+        bulletText.text = gameSession.Player.gunTypeID.unlimitedBullet ? "-/-" : gameSession.Player.gunTypeID.bullet.ToString();
+        grenadeTxt.text = gameSession.Player.grenadeRemaining.ToString();
+        liveTxt.text = progressService.SaveLives.ToString();
     }
 }

@@ -1,21 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class ChangeGameMusic : MonoBehaviour {
+public class ChangeGameMusic : MonoBehaviour
+{
     public AudioClip gameMusic;
 
-    bool isWorked = false;
-    void OnTriggerEnter2D(Collider2D other)
+    private bool isWorked;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
     {
-        if (isWorked)
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isWorked || other.gameObject.GetComponent<Player>() == null)
             return;
 
-        if (other.gameObject.GetComponent<Player>() == null)
-            return;
-
-        SoundManager.PlayMusic(gameMusic);
-
+        audioService?.PlayMusic(gameMusic);
         isWorked = true;
     }
 }

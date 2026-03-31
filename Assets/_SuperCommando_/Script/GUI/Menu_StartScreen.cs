@@ -1,19 +1,34 @@
-﻿using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-public class Menu_StartScreen : MonoBehaviour {
+public class Menu_StartScreen : MonoBehaviour
+{
     public Text worldTxt;
 
-    void Start()
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IProgressService progressService)
     {
-        if (GlobalValue.levelPlaying == -1)
+        this.progressService = progressService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        if (progressService.LevelPlaying == -1)
         {
             worldTxt.text = "TEST GAMEPLAY";
         }
         else
         {
-            worldTxt.text = "LEVEL: " + GlobalValue.levelPlaying;
+            worldTxt.text = "LEVEL: " + progressService.LevelPlaying;
         }
     }
 }

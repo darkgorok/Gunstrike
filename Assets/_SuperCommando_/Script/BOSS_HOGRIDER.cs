@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class BOSS_HOGRIDER : BossManager, ICanTakeDamage, IListener
 {
     public float walkSpeed = 1f;
-    public float runningSpeed = 3;
+    public float runningSpeed = 3f;
     [Range(1, 1000)]
     public int health = 350;
     [ReadOnly] public int currentHealth;
@@ -15,7 +14,7 @@ public class BOSS_HOGRIDER : BossManager, ICanTakeDamage, IListener
 
     [Header("EARTH QUAKE")]
     public float _eqTime = 0.3f;
-    public float _eqSpeed = 60;
+    public float _eqSpeed = 60f;
     public float _eqSize = 1.5f;
 
     [Header("SOUND")]
@@ -25,92 +24,121 @@ public class BOSS_HOGRIDER : BossManager, ICanTakeDamage, IListener
     public AudioClip detectSound;
     public AudioClip[] hitWallSound;
 
+    [Header("*** HODRIDER ***")]
+    public float minDelay = 2f;
+    public float maxDelay = 4f;
+    public float stunningTime = 3f;
+    public GameObject hitWallFX;
+    public GameObject stunningFX;
+
+    [Header("EFFECT WHEN DIE")]
+    public GameObject dieExplosionFX;
+    public Vector2 dieExplosionSize = new Vector2(2, 3);
+    public AudioClip dieExplosionSound;
+
     [HideInInspector]
     public bool isDead = false;
 
     [HideInInspector]
     protected Vector3 velocity;
-    protected float velocityXSmoothing = 0;
-    Controller2D controller;
-    Animator anim;
+    protected float velocityXSmoothing = 0f;
     [ReadOnly] public bool moving = false;
-    bool isRunning = false;
-
     [ReadOnly] public bool isPlaying = false;
-    public bool isFacingRight()
+
+    private Controller2D controller;
+    private Animator anim;
+    private bool isRunning;
+    private Vector2 direction;
+    private readonly EnemyStateMachine stateMachine = new EnemyStateMachine();
+    private WaitingState waitingState;
+    private ChargingState chargingState;
+    private StunningState stunningState;
+    private DeathState deathState;
+    private BossDeathSequence deathSequence;
+    private float stateTimer;
+
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private IGameplayPresentationService presentationService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameplayPresentationService presentationService, IGameSessionService gameSession)
     {
-        return transform.rotation.y == 0 ? true : false;
-    }
-    //HODRIDER ACTION
-    [Header("*** HODRIDER ***")]
-    public float minDelay = 2;
-    public float maxDelay = 4;
-    public float stunningTime = 3;
-    public GameObject hitWallFX;
-    public GameObject stunningFX;
-    bool isWaitingAttack = false;
-
-    IEnumerator BOSS_ACTION_CO()
-    {
-        float delay = Random.Range(0.5f, 1f);
-        while (true)
-        {
-            isWaitingAttack = true;
-            while (isWaitingAttack)
-            {
-                delay -= Time.deltaTime;
-                if (delay <= 0)
-                    isWaitingAttack = false;
-
-                yield return null;
-            }
-
-            //perform attacking
-            LookAtPlayer();
-            isRunning = true;
-            moving = true;
-            SoundManager.PlaySfx(attackSound);
-
-            while((_direction.x > 0 && !controller.collisions.right) || (_direction.x < 0 && !controller.collisions.left)) { yield return null; }
-            CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
-            anim.SetBool("isStunning", true);
-
-            foreach (var sound in hitWallSound)
-                SoundManager.PlaySfx(sound);
-            stunningFX.SetActive(true);
-            if (hitWallFX)
-                Instantiate(hitWallFX, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-
-            yield return new WaitForSeconds(stunningTime);
-            SoundManager.PlaySfx(detectSound);
-            anim.SetBool("isStunning", false);
-            stunningFX.SetActive(false);
-            LookAtPlayer();
-            moving = false;
-            delay = Random.Range(minDelay, maxDelay);
-        }
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.presentationService = presentationService;
+        this.gameSession = gameSession;
     }
 
-    void LookAtPlayer()
+    private void Awake()
     {
-        if ((isFacingRight() && transform.position.x > GameManager.Instance.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameManager.Instance.Player.transform.position.x))
-        {
-            Flip();
-        }
+        ProjectScope.Inject(this);
+        waitingState = new WaitingState(this);
+        chargingState = new ChargingState(this);
+        stunningState = new StunningState(this);
+        deathState = new DeathState(this);
     }
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<Controller2D>();
         anim = GetComponent<Animator>();
+
         var healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
         healthBar = (HealthBarEnemyNew)Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
-        _direction = isFacingRight() ? Vector2.right : Vector2.left;
+        direction = isFacingRight() ? Vector2.right : Vector2.left;
         currentHealth = health;
-
         stunningFX.SetActive(false);
+
+        deathSequence = new BossDeathSequence(
+            audioService,
+            controllerInputService,
+            presentationService,
+            gameSession,
+            transform,
+            () => gameObject.SetActive(false));
+    }
+
+    private void Update()
+    {
+        anim.SetFloat("speed", Mathf.Abs(velocity.x));
+
+        if (!isPlaying && !isDead)
+            return;
+
+        stateMachine.Tick(Time.deltaTime);
+
+        if (isDead || gameSession.State != GameManager.GameState.Playing || gameSession.Player.isFinish)
+        {
+            velocity.x = 0f;
+            return;
+        }
+
+        float targetVelocityX = direction.x * (isRunning ? runningSpeed : walkSpeed);
+        velocity.x = moving ? Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, controller.collisions.below ? 0.1f : 0.2f) : 0f;
+        velocity.y += -gravity * Time.deltaTime;
+
+        if (!moving)
+            velocity.x = 0f;
+    }
+
+    private void LateUpdate()
+    {
+        if (isDead)
+            return;
+
+        controller.Move(velocity * Time.deltaTime, false);
+
+        if (controller.collisions.above || controller.collisions.below)
+            velocity.y = 0f;
+    }
+
+    public bool isFacingRight()
+    {
+        return transform.rotation.y == 0;
     }
 
     public override void Play()
@@ -119,44 +147,7 @@ public class BOSS_HOGRIDER : BossManager, ICanTakeDamage, IListener
             return;
 
         isPlaying = true;
-        StartCoroutine(BOSS_ACTION_CO());
-    }
-
-    void Update()
-    {
-        anim.SetFloat("speed", Mathf.Abs(velocity.x));
-
-        if (isDead || GameManager.Instance.State != GameManager.GameState.Playing || GameManager.Instance.Player.isFinish)
-        {
-            velocity.x = 0;
-
-            return;
-        }
-
-        float targetVelocityX = _direction.x * (isRunning? runningSpeed: walkSpeed);
-        velocity.x = moving ? Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.1f : 0.2f) : 0;
-        velocity.y += -gravity * Time.deltaTime;
-        if (!moving)
-            velocity.x = 0;
-    }
-
-    void LateUpdate()
-    {
-        if (isDead)
-            return;
-
-        controller.Move(velocity * Time.deltaTime, false);
-
-        if (controller.collisions.above || controller.collisions.below)
-            velocity.y = 0;
-    }
-
-    private Vector2 _direction;
-
-    void Flip()
-    {
-        _direction = -_direction;
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
+        stateMachine.ChangeState(waitingState);
     }
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -164,116 +155,275 @@ public class BOSS_HOGRIDER : BossManager, ICanTakeDamage, IListener
         if (!isPlaying || isDead)
             return;
 
-        currentHealth -= (int)damage;
-        isDead = currentHealth <= 0 ? true : false;
+        currentHealth -= damage;
+        isDead = currentHealth <= 0;
 
         if (healthBar)
             healthBar.UpdateValue(currentHealth / (float)health);
 
-        if (isDead)
-        {
-            StopAllCoroutines();
-            CancelInvoke();
-
-            anim.SetBool("isDead", true);
-            var boxCo = GetComponents<BoxCollider2D>();
-            foreach (var box in boxCo)
-            {
-                box.enabled = false;
-            }
-            var CirCo = GetComponents<CircleCollider2D>();
-            foreach (var cir in CirCo)
-            {
-                cir.enabled = false;
-            }
-
-            StartCoroutine(BossDieBehavior());
-
-        }
-        else
+        if (!isDead)
         {
             anim.SetTrigger("hurt");
-            SoundManager.PlaySfx(hurtSound, 0.7f);
+            audioService.PlaySfx(hurtSound, 0.7f);
+            return;
         }
-    }
 
-    [Header("EFFECT WHEN DIE")]
-    public GameObject dieExplosionFX;
-    public Vector2 dieExplosionSize = new Vector2(2, 3);
-    public AudioClip dieExplosionSound;
-
-    IEnumerator BossDieBehavior()
-    {
-        SoundManager.Instance.PauseMusic(true);
+        isPlaying = false;
+        anim.SetBool("isDead", true);
         anim.enabled = false;
-        GameManager.Instance.MissionStarCollected = 3;
-        ControllerInput.Instance.StopMove();
-        MenuManager.Instance.TurnController(false);
-        MenuManager.Instance.TurnGUI(false);
-        SoundManager.PlaySfx(deadSound);
-        yield return new WaitForSeconds(1f);
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (dieExplosionFX)
-                Instantiate(dieExplosionFX, transform.position + new Vector3(Random.Range(-dieExplosionSize.x, dieExplosionSize.x), Random.Range(0, dieExplosionSize.y), 0), Quaternion.identity);
-            SoundManager.PlaySfx(dieExplosionSound);
-            CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        BlackScreenUI.instance.Show(2, Color.white);
-        for (int i = 0; i < 4; i++)
-        {
-            if (dieExplosionFX)
-                Instantiate(dieExplosionFX, transform.position + new Vector3(Random.Range(-dieExplosionSize.x, dieExplosionSize.x), Random.Range(0, dieExplosionSize.y), 0), Quaternion.identity);
-            SoundManager.PlaySfx(dieExplosionSound);
-            CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        BlackScreenUI.instance.Hide(1);
-        GameManager.Instance.GameFinish(1);
-        gameObject.SetActive(false);
+        DisableCombatColliders();
+        deathSequence.Begin(CreateDeathSettings());
+        stateMachine.ChangeState(deathState);
     }
 
     public void IPlay()
     {
-
     }
 
     public void ISuccess()
     {
-
     }
 
     public void IPause()
     {
-
     }
 
     public void IUnPause()
     {
-
     }
 
     public void IGameOver()
     {
-        StopAllCoroutines();
+        isPlaying = false;
     }
 
     public void IOnRespawn()
     {
-
     }
 
     public void IOnStopMovingOn()
     {
-
     }
 
     public void IOnStopMovingOff()
     {
+    }
 
+    private bool CanRunCombat()
+    {
+        return isPlaying && !isDead && gameSession.State == GameManager.GameState.Playing && !gameSession.Player.isFinish;
+    }
+
+    private void EnterWaiting()
+    {
+        moving = false;
+        isRunning = false;
+        stateTimer = Random.Range(minDelay, maxDelay);
+    }
+
+    private void TickWaiting(float deltaTime)
+    {
+        if (!CanRunCombat())
+            return;
+
+        stateTimer -= deltaTime;
+        if (stateTimer <= 0f)
+            stateMachine.ChangeState(chargingState);
+    }
+
+    private void EnterCharging()
+    {
+        LookAtPlayer();
+        isRunning = true;
+        moving = true;
+        audioService.PlaySfx(attackSound);
+    }
+
+    private void TickCharging()
+    {
+        if (!CanRunCombat())
+            return;
+
+        if ((direction.x > 0f && controller.collisions.right) || (direction.x < 0f && controller.collisions.left))
+            stateMachine.ChangeState(stunningState);
+    }
+
+    private void EnterStunning()
+    {
+        moving = false;
+        isRunning = false;
+        stateTimer = stunningTime;
+
+        CameraPlay.EarthQuakeShake(_eqTime, _eqSpeed, _eqSize);
+        anim.SetBool("isStunning", true);
+        foreach (var sound in hitWallSound)
+            audioService.PlaySfx(sound);
+
+        stunningFX.SetActive(true);
+        if (hitWallFX)
+            Instantiate(hitWallFX, transform.position + Vector3.up * 1.5f, Quaternion.identity);
+    }
+
+    private void TickStunning(float deltaTime)
+    {
+        if (!CanRunCombat())
+            return;
+
+        stateTimer -= deltaTime;
+        if (stateTimer <= 0f)
+            stateMachine.ChangeState(waitingState);
+    }
+
+    private void ExitStunning()
+    {
+        audioService.PlaySfx(detectSound);
+        anim.SetBool("isStunning", false);
+        stunningFX.SetActive(false);
+        LookAtPlayer();
+    }
+
+    private void TickDeath(float deltaTime)
+    {
+        deathSequence.Tick(deltaTime);
+    }
+
+    private void LookAtPlayer()
+    {
+        if ((isFacingRight() && transform.position.x > gameSession.Player.transform.position.x) ||
+            (!isFacingRight() && transform.position.x < gameSession.Player.transform.position.x))
+        {
+            Flip();
+        }
+    }
+
+    private void Flip()
+    {
+        direction = -direction;
+        transform.rotation = Quaternion.Euler(transform.rotation.x, isFacingRight() ? 180f : 0f, transform.rotation.z);
+    }
+
+    private void DisableCombatColliders()
+    {
+        foreach (var box in GetComponents<BoxCollider2D>())
+            box.enabled = false;
+
+        foreach (var circle in GetComponents<CircleCollider2D>())
+            circle.enabled = false;
+    }
+
+    private BossDeathSequenceSettings CreateDeathSettings()
+    {
+        return new BossDeathSequenceSettings
+        {
+            IntroDelay = 1f,
+            FirstWaveExplosions = 3,
+            SecondWaveExplosions = 4,
+            ExplosionInterval = 0.5f,
+            BlackScreenShowDuration = 2f,
+            BlackScreenHideDuration = 1f,
+            EarthQuakeTime = _eqTime,
+            EarthQuakeSpeed = _eqSpeed,
+            EarthQuakeSize = _eqSize,
+            ExplosionPrefab = dieExplosionFX,
+            ExplosionArea = dieExplosionSize,
+            DeathSound = deadSound,
+            ExplosionSound = dieExplosionSound
+        };
+    }
+
+    private sealed class WaitingState : IEnemyState
+    {
+        private readonly BOSS_HOGRIDER owner;
+
+        public WaitingState(BOSS_HOGRIDER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            owner.EnterWaiting();
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickWaiting(deltaTime);
+        }
+
+        public void Exit()
+        {
+        }
+    }
+
+    private sealed class ChargingState : IEnemyState
+    {
+        private readonly BOSS_HOGRIDER owner;
+
+        public ChargingState(BOSS_HOGRIDER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            owner.EnterCharging();
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickCharging();
+        }
+
+        public void Exit()
+        {
+        }
+    }
+
+    private sealed class StunningState : IEnemyState
+    {
+        private readonly BOSS_HOGRIDER owner;
+
+        public StunningState(BOSS_HOGRIDER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+            owner.EnterStunning();
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickStunning(deltaTime);
+        }
+
+        public void Exit()
+        {
+            owner.ExitStunning();
+        }
+    }
+
+    private sealed class DeathState : IEnemyState
+    {
+        private readonly BOSS_HOGRIDER owner;
+
+        public DeathState(BOSS_HOGRIDER owner)
+        {
+            this.owner = owner;
+        }
+
+        public void Enter()
+        {
+        }
+
+        public void Tick(float deltaTime)
+        {
+            owner.TickDeath(deltaTime);
+        }
+
+        public void Exit()
+        {
+        }
     }
 }

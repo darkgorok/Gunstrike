@@ -1,128 +1,123 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class GroupEnemySystem : MonoBehaviour {
-    
-    public enum SHOWENEMYTYPE { ShowAll, OneByOne}
+public class GroupEnemySystem : MonoBehaviour
+{
+    public enum SHOWENEMYTYPE { ShowAll, OneByOne }
+    public enum GETKEYTYPE { KEY, NOKEY }
 
     public SHOWENEMYTYPE showEnemyType;
-
-    bool isWorked = false;
     [Header("NOTE: IF PLACE BOSS INTO THIS, NEED DISABLE 'DETECTPLAYER' object in BOSS")]
     public GroupMiniEnemy[] EnemyGroup;
     public int[] showOrderGroup;
     [Tooltip("Just in case this is boss and need avtive it")]
     public bool sendMessage = false;
     public string trySendAMessage = "Play";
-    int currentGroup = 0;
 
     public AudioClip soundShowUp;
     public AudioClip soundWarning;
     public AudioClip soundClean;
     public AudioClip soundGetKey;
-    AudioSource soundWarningScr;
     public Transform targetCameraLook;
-    bool isCameraLooking = false;
-    CameraFollow mainCamera;
-    Vector3 mainCameraStartPoint;
-    float moveCameraPercent = 0;
-    bool moveCameraToTarget = true;
     public float moveCameraSpeed = 5;
-    //public GameObject keyForLastEnemey;
-    public enum GETKEYTYPE { KEY, NOKEY}
     public GETKEYTYPE getKeyType;
 
-    List<MonoBehaviour> listMono;
-    List<GameObject> listEnemyNeedKill;
+    private bool isWorked = false;
+    private int currentGroup = 0;
+    private AudioSource soundWarningScr;
+    private bool isCameraLooking = false;
+    private CameraFollow mainCamera;
+    private Vector3 mainCameraStartPoint;
+    private float moveCameraPercent = 0f;
+    private bool moveCameraToTarget = true;
+    private List<MonoBehaviour> listMono;
+    private List<GameObject> listEnemyNeedKill;
+    private bool isFinishUse = false;
+    private GameObject lastEnemyPosition;
+    private bool isShowingNextGroup = false;
+    private IAudioService audioService;
+    private IGameplayPresentationService presentationService;
+    private IGameSessionService gameSession;
 
-    bool isFinishUse = false;
+    [Inject]
+    public void Construct(IAudioService audioService, IGameplayPresentationService presentationService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.presentationService = presentationService;
+        this.gameSession = gameSession;
+    }
 
-    GameObject lastEnemyPosition;
-
-    // Use this for initialization
-    void Start () {
+    private void Start()
+    {
+        ProjectScope.Inject(this);
         mainCamera = FindObjectOfType<CameraFollow>();
-        //Invoke("Init", 1f);
         StartCoroutine(InitCo());
 
         soundWarningScr = gameObject.AddComponent<AudioSource>();
         soundWarningScr.clip = soundWarning;
         soundWarningScr.loop = true;
-        soundWarningScr.volume = 1;
+        soundWarningScr.volume = 1f;
     }
 
-    IEnumerator InitCo()
+    private IEnumerator InitCo()
     {
         yield return null;
-        //listEnemyNeedKill = new List<GameObject>(Monsters);
         listEnemyNeedKill = new List<GameObject>();
         listMono = new List<MonoBehaviour>();
-        foreach (var target in EnemyGroup)
+        foreach (GroupMiniEnemy target in EnemyGroup)
         {
-            if (target != null)
+            if (target == null)
+                continue;
+
+            foreach (GameObject miniEnemy in target.miniGroup)
             {
-                foreach (var _miniE in target.miniGroup)
+                if (miniEnemy == null)
+                    continue;
+
+                MonoBehaviour[] monos = miniEnemy.GetComponents<MonoBehaviour>();
+                foreach (MonoBehaviour mono in monos)
                 {
-                    if (_miniE != null)
-                    {
-                        MonoBehaviour[] monos = _miniE.GetComponents<MonoBehaviour>();
-                        foreach (var mono in monos)
-                        {
-                            listMono.Add(mono);
-                            mono.enabled = false;
-                        }
+                    listMono.Add(mono);
+                    mono.enabled = false;
+                }
 
-                        if (showEnemyType == SHOWENEMYTYPE.OneByOne)
-                        {
-                            _miniE.SetActive(false);
-
-                        }
-                        else
-                        {
-                            _miniE.SetActive(true);
-                            listEnemyNeedKill.Add(_miniE);
-                        }
-                    }
+                if (showEnemyType == SHOWENEMYTYPE.OneByOne)
+                    miniEnemy.SetActive(false);
+                else
+                {
+                    miniEnemy.SetActive(true);
+                    listEnemyNeedKill.Add(miniEnemy);
                 }
             }
         }
 
-        lastEnemyPosition = new GameObject();
-        lastEnemyPosition.name = "FollowLastEnemy-GroupEnemySystem.cs";
+        lastEnemyPosition = new GameObject("FollowLastEnemy-GroupEnemySystem.cs");
 
-        //ShowNextGroup();
-
-        //show first group
         GameObject[] pickGroup = EnemyGroup[showOrderGroup[0] - 1].miniGroup;
-        foreach (var enemy in pickGroup)
+        foreach (GameObject enemy in pickGroup)
         {
             if (enemy != null)
                 enemy.SetActive(true);
         }
     }
 
-    //void OnGUI()
-    //{
-    //    GUI.Label(new Rect(10, 10, 200, 20), "isCameraLooking: " + isCameraLooking);
-    //}
-
-    // Update is called once per frame
-    void Update () {
+    private void Update()
+    {
         if (isFinishUse)
             return;
 
-
         if (isCameraLooking)
         {
-            
-            if (moveCameraToTarget) {
+            if (moveCameraToTarget)
+            {
                 moveCameraPercent += moveCameraSpeed * Time.deltaTime;
                 mainCamera.transform.position = Vector3.Lerp(mainCameraStartPoint, targetCameraLook.position, moveCameraPercent);
-                if(Vector2.Distance(mainCamera.transform.position, targetCameraLook.position) < 0.1f)
+                if (Vector2.Distance(mainCamera.transform.position, targetCameraLook.position) < 0.1f)
                 {
                     moveCameraToTarget = false;
-                    moveCameraPercent = 0;
+                    moveCameraPercent = 0f;
                 }
             }
             else
@@ -130,73 +125,71 @@ public class GroupEnemySystem : MonoBehaviour {
                 moveCameraPercent += moveCameraSpeed * Time.deltaTime;
                 mainCamera.transform.position = Vector3.Lerp(targetCameraLook.position, mainCameraStartPoint, moveCameraPercent);
                 if (Vector2.Distance(mainCameraStartPoint, mainCamera.transform.position) < 0.1f)
-                {
                     isCameraLooking = false;
-
-                }
             }
         }
 
-        if (isWorked)
+        if (!isWorked)
+            return;
+
+        int alive = 0;
+        foreach (GameObject target in listEnemyNeedKill)
         {
-            int alive = 0;
-            foreach(var _target in listEnemyNeedKill)
+            if (target != null && target.activeInHierarchy)
             {
-                if (_target != null && _target.activeInHierarchy)
-                {
-                    alive++;
-                    lastEnemyPosition.transform.position = _target.transform.position;
-                }
-            }
-
-            if (alive == 0)
-            {
-                if (showEnemyType == SHOWENEMYTYPE.ShowAll)
-                    KillTheLastEnemyEvent();
-                else
-                    StartCoroutine(ShowNextGroup());
+                alive++;
+                lastEnemyPosition.transform.position = target.transform.position;
             }
         }
-	}
 
-    void KillTheLastEnemyEvent()
+        if (alive == 0)
+        {
+            if (showEnemyType == SHOWENEMYTYPE.ShowAll)
+                KillTheLastEnemyEvent();
+            else
+                StartCoroutine(ShowNextGroup());
+        }
+    }
+
+    private void KillTheLastEnemyEvent()
     {
-        SoundManager.PlaySfx(soundClean);
-        //Instantiate(keyForLastEnemey, lastEnemyPosition.transform.position + Vector3.up * 1.5f, Quaternion.identity);
-        if(getKeyType == GETKEYTYPE.KEY)
+        audioService.PlaySfx(soundClean);
+        if (getKeyType == GETKEYTYPE.KEY)
         {
-            GameManager.Instance.isHasKey = true;
-            SoundManager.PlaySfx(soundGetKey);
+            gameSession.HasKey = true;
+            audioService.PlaySfx(soundGetKey);
         }
-        GroupEnemySystemUI.Instance.ShowClean();
+
+        presentationService.ShowClean();
         isFinishUse = true;
     }
 
-    IEnumerator OnTriggerEnter2D(Collider2D other)
+    private IEnumerator OnTriggerEnter2D(Collider2D other)
     {
         if (isWorked)
             yield break;
 
-        if (other.gameObject != GameManager.Instance.Player.gameObject)
+        if (other.gameObject != gameSession.Player.gameObject)
             yield break;
-        
-        GameManager.Instance.Player.PausePlayer(true);
-        SoundManager.PlaySfx(soundShowUp);
+
+        gameSession.Player.PausePlayer(true);
+        audioService.PlaySfx(soundShowUp);
 
         mainCamera.enabled = false;
         mainCameraStartPoint = mainCamera.transform.position;
         isCameraLooking = true;
-        GroupEnemySystemUI.Instance.ShowWarning(true);
-        SoundManager.Instance.PauseMusic(true);
+        presentationService.ShowWarning(true);
+        audioService.PauseMusic(true);
         soundWarningScr.Play();
 
-        while (isCameraLooking) { yield return null; }
+        while (isCameraLooking)
+            yield return null;
 
         mainCamera.enabled = true;
-        GroupEnemySystemUI.Instance.ShowWarning(false);
-        SoundManager.Instance.PauseMusic(false);
+        presentationService.ShowWarning(false);
+        audioService.PauseMusic(false);
         soundWarningScr.Stop();
-        GameManager.Instance.Player.PausePlayer(false);
+        gameSession.Player.PausePlayer(false);
 
         if (showEnemyType == SHOWENEMYTYPE.ShowAll)
             ShowAllEnemy();
@@ -206,69 +199,62 @@ public class GroupEnemySystem : MonoBehaviour {
         isWorked = true;
     }
 
-    void ShowAllEnemy()
+    private void ShowAllEnemy()
     {
-        foreach (var mono in listMono)
+        foreach (MonoBehaviour mono in listMono)
         {
             mono.enabled = true;
-            if (sendMessage)
-            {
-                mono.SendMessage(trySendAMessage, SendMessageOptions.DontRequireReceiver);
-                mono.SendMessage("IPlay", SendMessageOptions.DontRequireReceiver);
-            }
+            if (!sendMessage)
+                continue;
+
+            mono.SendMessage(trySendAMessage, SendMessageOptions.DontRequireReceiver);
+            mono.SendMessage("IPlay", SendMessageOptions.DontRequireReceiver);
         }
     }
 
-    bool isShowingNextGroup = false;
-    IEnumerator ShowNextGroup()
+    private IEnumerator ShowNextGroup()
     {
         if (isShowingNextGroup)
             yield break;
+
         isShowingNextGroup = true;
-        //Debug.LogError("Show " + currentGroup);
         if (currentGroup >= EnemyGroup.Length)
         {
             KillTheLastEnemyEvent();
             yield break;
         }
-        else
+
+        int nextGroup = showOrderGroup[currentGroup];
+        if (nextGroup > EnemyGroup.Length)
         {
-            int nextGroup = showOrderGroup[currentGroup];
-            if (nextGroup > EnemyGroup.Length)
-            {
-                Debug.LogError("WRONG SET ORDER, MUST LOWER THAN OR EQUAL ENEMY GROUP NUMBER");
-                yield break;
-            }
-            GameObject[] pickGroup = EnemyGroup[nextGroup - 1].miniGroup;
-
-            foreach (var enemy in pickGroup)
-            {
-                enemy.SetActive(true);
-            }
-            foreach (var enemy in pickGroup)
-            {
-                //enemy.SetActive(true);
-                MonoBehaviour[] monos = enemy.GetComponents<MonoBehaviour>();
-                foreach (var mono in monos)
-                {
-                    listMono.Add(mono);
-                    mono.enabled = true;
-                    yield return null;
-                    //Debug.LogError(mono.gameObject.name);
-                    if (sendMessage)
-                    {
-                        mono.SendMessage(trySendAMessage, SendMessageOptions.DontRequireReceiver);
-                        mono.SendMessage("IPlay", SendMessageOptions.DontRequireReceiver);
-                    }
-                }
-            }
-
-            //listEnemyNeedKill.Clear();
-            listEnemyNeedKill = new List<GameObject>(pickGroup);
-
-            currentGroup++;
+            Debug.LogError("WRONG SET ORDER, MUST LOWER THAN OR EQUAL ENEMY GROUP NUMBER");
+            yield break;
         }
 
+        GameObject[] pickGroup = EnemyGroup[nextGroup - 1].miniGroup;
+        foreach (GameObject enemy in pickGroup)
+        {
+            enemy.SetActive(true);
+        }
+
+        foreach (GameObject enemy in pickGroup)
+        {
+            MonoBehaviour[] monos = enemy.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour mono in monos)
+            {
+                listMono.Add(mono);
+                mono.enabled = true;
+                yield return null;
+                if (!sendMessage)
+                    continue;
+
+                mono.SendMessage(trySendAMessage, SendMessageOptions.DontRequireReceiver);
+                mono.SendMessage("IPlay", SendMessageOptions.DontRequireReceiver);
+            }
+        }
+
+        listEnemyNeedKill = new List<GameObject>(pickGroup);
+        currentGroup++;
         isShowingNextGroup = false;
     }
 

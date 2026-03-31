@@ -1,83 +1,121 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-[RequireComponent(typeof(CheckTargetHelper))]
+using VContainer;
 
+[RequireComponent(typeof(CheckTargetHelper))]
 public class EnemyHideAndShow : MonoBehaviour, ICanTakeDamage
 {
     [Range(0, 1000)]
     public int health = 100;
-    int currentHealth;
     [Space]
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     public GameObject hitFX;
+
+    [ReadOnly] public CheckTargetHelper checkTarget;
+
     protected EnemyThrowAttack throwAttack;
-    [ReadOnlyAttribute] public CheckTargetHelper checkTarget;
-    Animator anim;
-    bool isDead;
     protected HealthBarEnemyNew healthBar;
-    bool isDetectedPlayer = false;
+
+    private Animator anim;
+    private bool isDead;
+    private bool isDetectedPlayer;
+    private bool isAttackLoopStarted;
+    private int currentHealth;
+    private float showDelayRemaining = -1f;
+    private float attackIntervalRemaining = -1f;
+    private float destroyDelayRemaining = -1f;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
     public bool isFacingRight()
     {
-        return transform.rotation.y == 0 ? true : false;
+        return transform.rotation.y == 0;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         currentHealth = health;
-           throwAttack = GetComponent<EnemyThrowAttack>();
+        throwAttack = GetComponent<EnemyThrowAttack>();
         checkTarget = GetComponent<CheckTargetHelper>();
         anim = GetComponent<Animator>();
 
-        var healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
-        healthBar = (HealthBarEnemyNew)Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
+        HealthBarEnemyNew healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
+        healthBar = Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
         healthBar.Init(transform, (Vector3)healthBarOffset);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (isDead || isDetectedPlayer)
+        if (destroyDelayRemaining >= 0f)
+        {
+            destroyDelayRemaining -= Time.deltaTime;
+            if (destroyDelayRemaining <= 0f)
+                Destroy(gameObject);
+        }
+
+        if (isDead)
             return;
 
-        if (checkTarget.CheckTarget(isFacingRight() ? 1 : -1))
+        if (!isDetectedPlayer && checkTarget.CheckTarget(isFacingRight() ? 1 : -1))
         {
             isDetectedPlayer = true;
-            StartCoroutine(ThrowCo());
+            isAttackLoopStarted = true;
+            showDelayRemaining = 1f;
+            attackIntervalRemaining = -1f;
+            anim.SetTrigger("show");
+        }
+
+        if (!isAttackLoopStarted)
+            return;
+
+        if (showDelayRemaining >= 0f)
+        {
+            showDelayRemaining -= Time.deltaTime;
+            if (showDelayRemaining > 0f)
+                return;
+
+            showDelayRemaining = -1f;
+            attackIntervalRemaining = 0f;
+        }
+
+        attackIntervalRemaining -= Time.deltaTime;
+        if (attackIntervalRemaining > 0f)
+            return;
+
+        attackIntervalRemaining = 0.1f;
+        CheckTargetAndFlip();
+        if (throwAttack.AllowAction() && throwAttack.CheckPlayer())
+        {
+            throwAttack.Action();
+            anim.SetTrigger("throw");
         }
     }
 
-    IEnumerator ThrowCo()
+    private void CheckTargetAndFlip()
     {
-        anim.SetTrigger("show");
-        yield return new WaitForSeconds(1);
-        while (true)
-        {
-            CheckTargetAndFlip();
-            if (throwAttack.AllowAction())
-            {
-                if (throwAttack.CheckPlayer())
-                {
-                    throwAttack.Action();
-                    anim.SetTrigger("throw");
-                }
-            }
+        Player player = gameSession?.Player;
+        if (player == null)
+            return;
 
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
+        bool shouldFlip =
+            Mathf.Abs(transform.position.x - player.transform.position.x) > 0.1f &&
+            ((isFacingRight() && transform.position.x > player.transform.position.x) ||
+             (!isFacingRight() && transform.position.x < player.transform.position.x));
 
-    void CheckTargetAndFlip()
-    {
-        if (Mathf.Abs(transform.position.x - GameManager.Instance.Player.transform.position.x) > 0.1f && ((isFacingRight() && transform.position.x > GameManager.Instance.Player.transform.position.x) || (!isFacingRight() && transform.position.x < GameManager.Instance.Player.transform.position.x)))
-        {
+        if (shouldFlip)
             Flip();
-        }
     }
 
-    void Flip()
+    private void Flip()
     {
         transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
     }
@@ -85,21 +123,22 @@ public class EnemyHideAndShow : MonoBehaviour, ICanTakeDamage
     public void AnimThrow()
     {
         CheckTargetDirection();
-
         throwAttack.Throw(isFacingRight(), lookAtPlayerDirection);
     }
 
-    Vector2 lookAtPlayerDirection;
-    void CheckTargetDirection()
+    private Vector2 lookAtPlayerDirection;
+
+    private void CheckTargetDirection()
     {
-        var hitPlayer = Physics2D.CircleCast(transform.position, 8, Vector2.zero, 0, 1 << (LayerMask.NameToLayer("Player")));
-        if (hitPlayer)
-        {
+        if (gameSession?.Player == null)
+            return;
 
-            lookAtPlayerDirection = (hitPlayer.transform.position - transform.position);
+        RaycastHit2D hitPlayer = Physics2D.CircleCast(transform.position, 8, Vector2.zero, 0, gameSession.PlayerLayer);
+        if (!hitPlayer)
+            return;
 
-            lookAtPlayerDirection.Normalize();
-        }
+        lookAtPlayerDirection = hitPlayer.transform.position - transform.position;
+        lookAtPlayerDirection.Normalize();
     }
 
     public virtual void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
@@ -107,23 +146,27 @@ public class EnemyHideAndShow : MonoBehaviour, ICanTakeDamage
         if (isDead)
             return;
 
-        Vector2 hitPos = hitPoint;
-        currentHealth -= (int)damage;
+        currentHealth -= damage;
         if (hitFX)
+        {
             SpawnSystemHelper.GetNextObject(hitFX, true).transform.position =
-                hitPos + new Vector2(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
+                hitPoint + new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
+        }
 
         if (healthBar)
             healthBar.UpdateValue(currentHealth / (float)health);
 
         if (currentHealth <= 0)
         {
-            StopAllCoroutines();
-            anim.SetTrigger("die");
             isDead = true;
-            Destroy(gameObject, 3);
+            isAttackLoopStarted = false;
+            showDelayRemaining = -1f;
+            attackIntervalRemaining = -1f;
+            destroyDelayRemaining = 3f;
+            anim.SetTrigger("die");
+            return;
         }
-        else
-            anim.SetTrigger("hurt");
+
+        anim.SetTrigger("hurt");
     }
 }

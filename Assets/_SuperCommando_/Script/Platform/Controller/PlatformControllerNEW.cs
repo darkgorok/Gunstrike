@@ -41,8 +41,6 @@ public class PlatformControllerNEW : RaycastController, IListener {
     public float offsetLineZ = -1;
 	LineRenderer lineRen;
 
-//	public bool isStickPlayer = false;
-
 	int fromWaypointIndex;
 	float percentBetweenWaypoints;
 	float nextMoveTime;
@@ -118,18 +116,6 @@ public class PlatformControllerNEW : RaycastController, IListener {
 		CalculatePassengerMovement (velocity);
 
 		
-//		if (followTarget)
-//			transform.position = followTarget.position;
-		
-//		if (isStickPlayer) {
-//			if (isStanding) {
-//				GameManager.Instance.Player.transform.SetParent (transform);
-//			} else {
-//				if (!isStanding && !GameManager.Instance.Player.isRoping)
-//					GameManager.Instance.Player.transform.SetParent (null);
-//			}
-//		} else {
-			
         if ((!moveWhenPlayer || isStanding) && !isStop)
         {
             MovePassengers(true);
@@ -145,7 +131,6 @@ public class PlatformControllerNEW : RaycastController, IListener {
 
         if (lookAtNextPoint)
             Look();
-        //		}
     }
 	int toWaypointIndex;
     public void Look()

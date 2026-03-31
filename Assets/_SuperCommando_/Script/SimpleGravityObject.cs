@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 [RequireComponent(typeof(Controller2D))]
 public class SimpleGravityObject : MonoBehaviour, ICanTakeDamage
@@ -15,16 +16,24 @@ public class SimpleGravityObject : MonoBehaviour, ICanTakeDamage
     [Header("Can Take Damage")]
     public bool canBeHit = true;
     public Vector2 forceBeHit = new Vector2(2, 0);
-    
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
     void Start()
     {
+        ProjectScope.Inject(this);
         controller = GetComponent<Controller2D>();
     }
-    
+
     void Update()
     {
         float targetVelocityX = 0;
-        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.1f : 0.2f);
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, controller.collisions.below ? 0.1f : 0.2f);
         velocity.y += -gravity * Time.deltaTime;
     }
 
@@ -36,9 +45,7 @@ public class SimpleGravityObject : MonoBehaviour, ICanTakeDamage
             velocity.y = 0;
 
         if (controller.collisions.below)
-        {
-            CheckBelow();       //check the object below if it have Stand on event
-        }
+            CheckBelow();
     }
 
     void CheckBelow()
@@ -61,8 +68,8 @@ public class SimpleGravityObject : MonoBehaviour, ICanTakeDamage
         if (!canBeHit)
             return;
 
-        int dir = (instigator.transform.position.x > transform.position.x) ? -1 : 1;
+        int dir = instigator.transform.position.x > transform.position.x ? -1 : 1;
         AddForce(forceBeHit * dir);
-        SoundManager.PlaySfx(soundHit);
+        audioService?.PlaySfx(soundHit);
     }
 }

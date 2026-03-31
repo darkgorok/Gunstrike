@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 [AddComponentMenu("ADDP/Enemy AI/Enemy Range Attack")]
 public class EnemyRangeAttack : MonoBehaviour
@@ -15,52 +14,53 @@ public class EnemyRangeAttack : MonoBehaviour
     public int multiShoot = 1;
     public float multiShootRate = 0.2f;
     public AudioClip soundAttack;
-    float lastShoot = 0;
-    int multiShootCounter = 0;
+
+    private BurstFireController burstFireController;
+    private Vector2 queuedDirection;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+        burstFireController = new BurstFireController(multiShoot, shootingRate, multiShootRate);
+    }
+
+    private void Update()
+    {
+        burstFireController.Tick(Time.deltaTime, FireQueuedShot);
+    }
+
     public bool AllowAction()
     {
-        bool allowShoot = Time.time - lastShoot > shootingRate;
-        if (allowShoot)
-            lastShoot = Time.time;
-        return allowShoot;
+        return burstFireController.CanStartBurst;
     }
 
     public void Shoot(Vector2 bulletDirection)
     {
-        StartCoroutine(ShootCo(bulletDirection));
+        queuedDirection = bulletDirection;
+        burstFireController.StartBurst(FireQueuedShot);
     }
 
-    IEnumerator ShootCo(Vector2 bulletDirection)
+    private void FireQueuedShot()
     {
-
-        //float shootAngle = 0;
-        //if (allowAimPlayer)
-        //	shootAngle = AimHelperEnemy.Aim (transform, GameManager.Instance.Player.transform, isFacingRight);
-        //else
-        //	shootAngle = isFacingRight ? 0 : 180;
-
         var projectile = SpawnSystemHelper.GetNextObject(bullet.gameObject, false).GetComponent<Projectile>();
         projectile.transform.position = firePoint.position;
-        projectile.transform.right = bulletDirection;
-        //projectile.transform.rotation = Quaternion.Euler (0, 0, shootAngle);
-        projectile.Initialize(gameObject, bulletDirection, Vector2.zero, false, false, damage, bulletSpeed);
+        projectile.transform.right = queuedDirection;
+        projectile.Initialize(gameObject, queuedDirection, Vector2.zero, false, false, damage, bulletSpeed);
 
         projectile.gameObject.SetActive(true);
-        SoundManager.PlaySfx(soundAttack);
+        audioService.PlaySfx(soundAttack);
 
         if (muzzleFX)
         {
-            var _muzzle = SpawnSystemHelper.GetNextObject(muzzleFX, firePoint.position, true);
-            _muzzle.transform.right = bulletDirection;
+            var muzzle = SpawnSystemHelper.GetNextObject(muzzleFX, firePoint.position, true);
+            muzzle.transform.right = queuedDirection;
         }
-
-        multiShootCounter++;
-        if (multiShootCounter < multiShoot)
-        {
-            yield return new WaitForSeconds(multiShootRate);
-            lastShoot = 0;
-        }
-        else
-            multiShootCounter = 0;
     }
 }

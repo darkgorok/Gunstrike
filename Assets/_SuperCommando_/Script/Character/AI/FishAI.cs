@@ -1,33 +1,35 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
+using VContainer;
 
-public class FishAI : MonoBehaviour, ICanTakeDamage {
-	
-	public GameObject DestroyEffect;
-	public AudioClip deadSound;
-	[Range(0,1)]
-	public float deadSoundVolume = 0.5f;
+public class FishAI : MonoBehaviour, ICanTakeDamage
+{
+    public GameObject DestroyEffect;
+    public AudioClip deadSound;
+    [Range(0, 1)] public float deadSoundVolume = 0.5f;
 
-	Vector3 _oldPosition;
+    private IAudioService audioService;
 
-	// Use this for initialization
-	void Start () {
-		_oldPosition = transform.position;
-	}
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
 
-	public void TakeDamage (int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
-	{
-		if (DestroyEffect != null)
-			Instantiate (DestroyEffect, transform.position, transform.rotation);
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
 
-		SoundManager.PlaySfx (deadSound, deadSoundVolume);
+    public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
+    {
+        if (DestroyEffect != null)
+            Instantiate(DestroyEffect, transform.position, transform.rotation);
 
-        //try spawn random item
+        audioService.PlaySfx(deadSound, deadSoundVolume);
+
         var spawnItem = GetComponent<EnemySpawnItem>();
         if (spawnItem != null)
-        {
             spawnItem.SpawnItem();
-        }
 
         Destroy(gameObject);
     }

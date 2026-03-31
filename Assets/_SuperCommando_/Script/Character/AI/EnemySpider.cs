@@ -1,53 +1,68 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class EnemySpider : MonoBehaviour, ICanTakeDamage
 {
-    public enum AttackType { Auto, DetectPlayer}
+    public enum AttackType { Auto, DetectPlayer }
+
     public AttackType attackType;
     public float speedDown = 5;
     public float speedUp = 2;
     public float waitAtBottom = 1;
     public float waitAtTop = 0.5f;
-    public GameObject DestroyEffect;        //spawn object when dead
+    public GameObject DestroyEffect;
     public float destroyTime = 1.5f;
+
     [Header("Health")]
     [Range(0, 100)]
     public float health = 50;
+
     float currentHealth;
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     protected HealthBarEnemyNew healthBar;
+
     [Header("Patrol")]
     public Vector2 localUpPoint;
-    public Vector2 localDownPoint = new Vector2(0,-3);
+    public Vector2 localDownPoint = new Vector2(0, -3);
 
-    public AudioClip soundAttack, soundHit, soundDie;
+    public AudioClip soundAttack;
+    public AudioClip soundHit;
+    public AudioClip soundDie;
 
-    Vector2 upPoint, downPoint;
+    Vector2 upPoint;
+    Vector2 downPoint;
 
     public LineRenderer lineRen;
     CheckTargetHelper checkTargetHelper;
-    bool isMoving = false;
-  
+    bool isMoving;
+    bool isDead;
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
     void OnEnable()
     {
         if (upPoint != Vector2.zero)
             transform.position = upPoint;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
+        ProjectScope.Inject(this);
         currentHealth = health;
-        upPoint = (Vector2) transform.position + localUpPoint;
-        downPoint = (Vector2) transform.position + localDownPoint;
+        upPoint = (Vector2)transform.position + localUpPoint;
+        downPoint = (Vector2)transform.position + localDownPoint;
         if (attackType == AttackType.Auto)
             StartCoroutine(MovingCo());
 
         var healthBarObj = (HealthBarEnemyNew)Resources.Load("HealthBar", typeof(HealthBarEnemyNew));
         healthBar = (HealthBarEnemyNew)Instantiate(healthBarObj, healthBarOffset, Quaternion.identity);
-        
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
         if (attackType == AttackType.DetectPlayer)
@@ -60,7 +75,7 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
         isMoving = true;
         while (true)
         {
-            SoundManager.PlaySfx(soundAttack);
+            audioService?.PlaySfx(soundAttack);
             percent = 0;
             while (percent < 1)
             {
@@ -78,7 +93,6 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
                 yield return null;
             }
 
-
             yield return new WaitForSeconds(waitAtTop);
         }
     }
@@ -92,13 +106,12 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
             lineRen.SetPosition(1, transform.position);
         }
         else
-            lineRen.positionCount = 0;
-
-        if (!isMoving && attackType == AttackType.DetectPlayer)
         {
-            if (checkTargetHelper.CheckTarget())
-                StartCoroutine(MovingCo());
+            lineRen.positionCount = 0;
         }
+
+        if (!isMoving && attackType == AttackType.DetectPlayer && checkTargetHelper.CheckTarget())
+            StartCoroutine(MovingCo());
     }
 
     void OnDisable()
@@ -107,22 +120,18 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
         isMoving = false;
     }
 
-    bool isDead;
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
-        //Debug.LogError(damage);
         if (isDead)
             return;
-        
+
         currentHealth -= damage;
 
         if (healthBar)
-            healthBar.UpdateValue(currentHealth / (float)health);
+            healthBar.UpdateValue(currentHealth / health);
 
         if (currentHealth <= 0)
-        {
             isDead = true;
-        }
 
         if (isDead)
         {
@@ -135,15 +144,20 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
             Destroy(gameObject, 1.5f);
 
             var boxCol = gameObject.GetComponent<BoxCollider2D>();
-            if (boxCol) boxCol.enabled = false;
-            var cirCol = gameObject.GetComponent<CircleCollider2D>();
-            if (cirCol) cirCol.enabled = false;
+            if (boxCol)
+                boxCol.enabled = false;
 
-            SoundManager.PlaySfx(soundDie);
+            var cirCol = gameObject.GetComponent<CircleCollider2D>();
+            if (cirCol)
+                cirCol.enabled = false;
+
+            audioService?.PlaySfx(soundDie);
             enabled = false;
         }
         else
-            SoundManager.PlaySfx(soundHit);
+        {
+            audioService?.PlaySfx(soundHit);
+        }
     }
 
     private void OnDrawGizmos()
@@ -160,10 +174,9 @@ public class EnemySpider : MonoBehaviour, ICanTakeDamage
                 if (checkTargetHelper == null)
                     checkTargetHelper = gameObject.AddComponent<CheckTargetHelper>();
             }
-            else
+            else if (checkTargetHelper != null)
             {
-                if (checkTargetHelper != null)
-                    Destroy(checkTargetHelper);
+                Destroy(checkTargetHelper);
             }
         }
         else

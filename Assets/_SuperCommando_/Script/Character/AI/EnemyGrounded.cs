@@ -1,144 +1,140 @@
-﻿/*
+/*
  * ENEMY GROUNDED dung Enemy binh thuong, co nhieu skill tan cong, nhung khong truy duoi Player
  * neu muon su dung Enemy co kha nang truy duoi Player, chon su dung SmartEnemyGrounded
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 [RequireComponent(typeof(Controller2D))]
 public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
 {
-
     public enum WeaponsType { None, Melee, Fire, Throw, FireProjectileObj, Spawn }
 
     [Header("Setup")]
     public float gravity = 35f;
-    public float moveSpeed = 3;
+    public float moveSpeed = 3f;
     public float waitingTurn = 0.5f;
-    bool isWaiting = false;
-    float waitingTime = 0;
     public float sockingTime = 0.5f;
-    public GameObject BonusItem;    //spawn bonus item when it dead
+    public GameObject BonusItem;
     public GameObject HurtEffect;
-    public GameObject DestroyEffect;        //spawn object when dead
+    public GameObject DestroyEffect;
     public float destroyTime = 1.5f;
     public int pointToGivePlayer = 100;
 
     [Header("Behavior")]
     public bool isAllowChasingPlayer = false;
-    public bool isChasing { get; set; }     //set by another script
-    public bool canBeFallDown = false;  //if true, the enemy will be fall from the higher platform
+    public bool isChasing { get; set; }
+    public bool canBeFallDown = false;
     public DIEBEHAVIOR dieBehavior;
 
     [Header("Health")]
-    [Range(0, 100)]
-    public float health = 50;
-    float currentHealth;
+    [Range(0, 100)] public float health = 50;
     public Vector2 healthBarOffset = new Vector2(0, 1.5f);
     protected HealthBarEnemyNew healthBar;
 
     [Header("Patrol")]
     public bool doPatrol = true;
-    public float localLimitLeft = 3;
-    public float localLimitRight = 3;
-    float limitLeft, limitRight;
-
-   
+    public float localLimitLeft = 3f;
+    public float localLimitRight = 3f;
 
     [Header("Attack")]
     public WeaponsType attackType;
     public bool attackOnStart = false;
     public CheckTargetHelper checkTargetHelper;
     public float attackRate = 2f;
-    float attackRateCounter;
-    bool isDetectingPlayer;
 
     [Header("Melee Attack")]
     public Transform meleePoint;
-    public float meleeAttackZone = .7f;
+    public float meleeAttackZone = 0.7f;
     public float meleeAttackCheckPlayer = 0.1f;
-    public float meleeRate = 2;
-    public int meleeDamage = 20;  //give damage to player
+    public float meleeRate = 2f;
+    public int meleeDamage = 20;
 
     [Header("Range Attack")]
     public Transform rangePoint;
     public Projectile rangeprojectile;
     public int bulletDamage = 50;
-    public float bulletSpeed = 10;
+    public float bulletSpeed = 10f;
 
     [Header("Grenade")]
-    public float angleThrow = 60;       //the angle to throw the bomb
-    public float throwForce = 300;      //how strong?
-    public Transform throwPosition;     //throw the bomb at this position
-    public GameObject _Grenade;     //the bomb prefab object
+    public float angleThrow = 60f;
+    public float throwForce = 300f;
+    public Transform throwPosition;
+    public GameObject _Grenade;
 
     [Header("Spawn Obj")]
     public Transform spawnPoint;
     public GameObject spawnObj;
-    public float spawnRate = 2;
+    public float spawnRate = 2f;
     public int maxSpawnActive = 3;
-    List<GameObject> activeSpawnedObj = new List<GameObject>();
-    bool isSpawningObject = false;
-    
-    //[Header("Fire Projectile Obj")]
-    //public float 
-    
+
     [Header("Chasing")]
-    public float chaseSpeed = 3;
+    public float chaseSpeed = 3f;
     public float offsetPlayerY = 0.5f;
     public float finishDistance = 0.5f;
-    
+
     [Header("Sound")]
     public AudioClip soundMeleeAttack;
     public AudioClip soundRangAttack;
     public AudioClip soundSpawnttack;
     public AudioClip hurtSound;
-    [Range(0, 1)]
-    public float hurtSoundVolume = 0.5f;
+    [Range(0, 1)] public float hurtSoundVolume = 0.5f;
     public AudioClip deadSound;
-    [Range(0, 1)]
-    public float deadSoundVolume = 0.5f;
+    [Range(0, 1)] public float deadSoundVolume = 0.5f;
 
     public bool isPlaying { get; set; }
     public bool isSocking { get; set; }
     public bool isDead { get; set; }
 
-    [HideInInspector]
-    public Vector3 velocity;
-    private Vector2 _direction;
+    [HideInInspector] public Vector3 velocity;
+    [HideInInspector] public Controller2D controller;
 
-    public bool isFacingRight()
+    private Animator animator;
+    private Vector2 direction;
+    private float currentHealth;
+    private float limitLeft;
+    private float limitRight;
+    private float attackRateCounter;
+    private float waitingTime;
+    private float velocityXSmoothing;
+    private float directionFace;
+    private bool isWaiting;
+    private bool isDetectingPlayer;
+    private bool isStop;
+    private bool detectToWaiting;
+    private Vector3 waitingAfterPlayerGoHidingZone;
+    private Vector2 pushForce;
+    private readonly List<GameObject> activeSpawnedObj = new List<GameObject>();
+    private SmartProjectileAttack smartProjectileAttack;
+    private bool pendingFaceDirInit = true;
+    private float pushBackTimer = -1f;
+    private float destroyTimer = -1f;
+    private float meleeHitTimer = -1f;
+    private float meleeRecoverTimer = -1f;
+
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
     {
-        return transform.rotation.y == 0 ? true : false;
+        this.audioService = audioService;
+        this.gameSession = gameSession;
     }
 
-    [HideInInspector]
-    public Controller2D controller;
-    Animator animator;
-
-    float velocityXSmoothing = 0;
-    Vector2 pushForce;
-    private float _directionFace;
-    bool isStop = false;
-    bool detectToWaiting = false;       //mean when detect player, player go to hiding zone, wait there and attack player when player go out hiding zone
-    Vector3 waitingAfterPlayerGoHidingZone;
-    SmartProjectileAttack smartProjectileAttack;
-
-    void Flip()
+    private void Awake()
     {
-        _direction = -_direction;
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, isFacingRight() ? 180 : 0, transform.rotation.z));
+        ProjectScope.Inject(this);
     }
 
-    IEnumerator Start()
+    private void Start()
     {
         controller = GetComponent<Controller2D>();
         animator = GetComponent<Animator>();
         if (checkTargetHelper == null)
             checkTargetHelper = GetComponent<CheckTargetHelper>();
-        //_direction = Vector2.left;
         if (attackType == WeaponsType.FireProjectileObj)
             smartProjectileAttack = GetComponent<SmartProjectileAttack>();
 
@@ -148,60 +144,42 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
         healthBar.Init(transform, (Vector3)healthBarOffset);
 
         if (moveSpeed == 0)
-        {
-            _direction = isFacingRight() ? Vector2.right : Vector2.left;
-        }
+            direction = isFacingRight() ? Vector2.right : Vector2.left;
 
         attackRateCounter = attackRate;
-
         limitLeft = transform.position.x - localLimitLeft;
         limitRight = transform.position.x + localLimitRight;
 
         isPlaying = true;
         isSocking = false;
         isChasing = false;
-
-        yield return new WaitForEndOfFrame();
-        controller.collisions.faceDir = -1;
     }
 
-    bool SpawnObject()
+    private void Update()
     {
-        if (activeSpawnedObj.Count < maxSpawnActive)
+        TickTimers();
+        if (pendingFaceDirInit)
         {
-            animator.SetTrigger("spawn");
-            return true;
+            pendingFaceDirInit = false;
+            controller.collisions.faceDir = -1;
         }
-        else
-        {
-            for (int i = 0; i < activeSpawnedObj.Count; i++)
-            {
-                if (activeSpawnedObj[i] ==null || activeSpawnedObj[i].activeInHierarchy == false)
-                    activeSpawnedObj.Remove(activeSpawnedObj[i]);
-            }
 
-            return false;
-        }
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!isPlaying)
-            return;
-
-        if (isStop)
+        if (!isPlaying || isStop)
             return;
 
         HandleAnimation();
-        healthBar.transform.localScale = new Vector2(transform.localScale.x > 0 ? Mathf.Abs(healthBar.transform.localScale.x) : -Mathf.Abs(healthBar.transform.localScale.x), healthBar.transform.localScale.y);
+        if (healthBar)
+        {
+            healthBar.transform.localScale = new Vector2(
+                transform.localScale.x > 0 ? Mathf.Abs(healthBar.transform.localScale.x) : -Mathf.Abs(healthBar.transform.localScale.x),
+                healthBar.transform.localScale.y);
+        }
 
         attackRateCounter -= Time.deltaTime;
 
-        if (!isPlaying || isSocking || !GameManager.Instance.Player.isPlaying)
+        if (!isPlaying || isSocking || !gameSession.Player.isPlaying)
         {
-            velocity.x = 0;
+            velocity.x = 0f;
             return;
         }
 
@@ -211,72 +189,32 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
             if (waitingTime >= waitingTurn)
             {
                 isWaiting = false;
-                waitingTime = 0;
-
-                //_direction = -_direction;
-                //transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+                waitingTime = 0f;
                 Flip();
             }
         }
-        else
+        else if ((direction.x > 0f && controller.collisions.right) ||
+                 (direction.x < 0f && controller.collisions.left) ||
+                 (!canBeFallDown && !controller.isGrounedAhead(velocity.x > 0f) && controller.collisions.below) ||
+                 (doPatrol && ((direction.x > 0f && transform.position.x > limitRight) || (direction.x < 0f && transform.position.x < limitLeft))))
         {
-
-            if ((_direction.x > 0 && controller.collisions.right) || (_direction.x < 0 && controller.collisions.left)
-               || (!canBeFallDown && !controller.isGrounedAhead(velocity.x > 0) && controller.collisions.below)
-               || (doPatrol && ((_direction.x > 0 && transform.position.x > limitRight) || (_direction.x < 0 && transform.position.x < limitLeft))))
-            {
-                isWaiting = true;
-            }
+            isWaiting = true;
         }
 
-        if (!attackOnStart)
+        if (attackOnStart)
         {
-            if (attackType != WeaponsType.None && !isSocking)
-            {
-                var hit = checkTargetHelper.CheckTarget((int)_direction.x);
-                isDetectingPlayer = hit!=null;
-                if (hit)
-                {
-                    DoAttack(hit);
-                }
-            }
-        }else
             DoAttack();
-    }
-
-    void DoAttack(GameObject targetHit = null)
-    {
-        if (attackRateCounter <= 0)
-        {
-
-            if (attackType == WeaponsType.Fire)
-            {
-                FireProjectile();
-                attackRateCounter = attackRate;
-            }
-            else if (attackType == WeaponsType.Throw)
-            {
-                ThrowGrenade();
-                attackRateCounter = attackRate;
-            }
-
-            else if (attackType == WeaponsType.Spawn)
-            {
-                if (SpawnObject())
-                    attackRateCounter = attackRate;
-            }
-            else if(attackType == WeaponsType.FireProjectileObj)
-            {
-                smartProjectileAttack.Shoot(targetHit);
-            }
-            else if (attackType == WeaponsType.Melee)
-            {
-                StartCoroutine(CheckMeleeAttack(meleeAttackCheckPlayer));
-                attackRateCounter = attackRate;
-            }
+            return;
         }
-    }
 
+        if (attackType == WeaponsType.None || isSocking)
+            return;
+
+        var hit = checkTargetHelper.CheckTarget((int)direction.x);
+        isDetectingPlayer = hit != null;
+        if (hit)
+            DoAttack(hit);
+    }
 
     public virtual void LateUpdate()
     {
@@ -284,16 +222,13 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
         {
             if (isDead && dieBehavior == DIEBEHAVIOR.FALLOUT)
             {
-                velocity.y += -35 * Time.deltaTime;
+                velocity.y += -35f * Time.deltaTime;
                 controller.Move(velocity * Time.deltaTime, false);
             }
             return;
         }
 
-        if (isStop)
-            return;
-
-        if (GameManager.Instance.State != GameManager.GameState.Playing)
+        if (isStop || gameSession.State != GameManager.GameState.Playing)
             return;
 
         if (!isPlaying || isSocking || isDetectingPlayer)
@@ -302,24 +237,18 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
             return;
         }
 
-        if (!GameManager.Instance.Player.isPlaying)
+        if (!gameSession.Player.isPlaying)
             return;
-
-        //		if (isPlaying && !isSocking) {
-
-        //		}
-
-        //		Debug.LogError (isChasing + "/" + isAllowChasingPlayer);
 
         if (isChasing && isAllowChasingPlayer)
         {
-            if (GameManager.Instance.Player.gameObject.layer != LayerMask.NameToLayer("HidingZone"))
+            if (gameSession.Player.gameObject.layer != LayerMask.NameToLayer("HidingZone"))
             {
-                if (Mathf.Abs(Vector3.Distance(transform.position, GameManager.Instance.Player.transform.position)) > finishDistance)
+                if (Mathf.Abs(Vector3.Distance(transform.position, gameSession.Player.transform.position)) > finishDistance)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position + new Vector3(0, offsetPlayerY, 0), chaseSpeed * Time.deltaTime);
-                    _directionFace = transform.position.x > GameManager.Instance.Player.transform.position.x ? -1 : 1;
-                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * _directionFace, transform.localScale.y, transform.localScale.z);
+                    transform.position = Vector3.MoveTowards(transform.position, gameSession.Player.transform.position + new Vector3(0, offsetPlayerY, 0), chaseSpeed * Time.deltaTime);
+                    directionFace = transform.position.x > gameSession.Player.transform.position.x ? -1 : 1;
+                    transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * directionFace, transform.localScale.y, transform.localScale.z);
                 }
             }
             else
@@ -327,248 +256,353 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
                 isChasing = false;
                 if (gravity == 0)
                 {
-                    detectToWaiting = true; //mean this enemy is flying kind
-                    waitingAfterPlayerGoHidingZone = GameManager.Instance.Player.transform.position + Vector3.up * 5;
+                    detectToWaiting = true;
+                    waitingAfterPlayerGoHidingZone = gameSession.Player.transform.position + Vector3.up * 5;
                 }
                 else
+                {
                     transform.localScale = new Vector3((velocity.x > 0 ? -1 : 1) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                }
             }
-
         }
         else if (detectToWaiting)
         {
             transform.position = Vector3.MoveTowards(transform.position, waitingAfterPlayerGoHidingZone, chaseSpeed * Time.deltaTime);
-            if (GameManager.Instance.Player.gameObject.layer != LayerMask.NameToLayer("HidingZone"))
+            if (gameSession.Player.gameObject.layer != LayerMask.NameToLayer("HidingZone"))
             {
                 isChasing = true;
                 detectToWaiting = false;
-
             }
         }
-
         else
         {
-            float targetVelocityX = _direction.x * moveSpeed;
-            velocity.x = isWaiting ? 0 : Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.1f : 0.2f);
-
-
+            float targetVelocityX = direction.x * moveSpeed;
+            velocity.x = isWaiting ? 0f : Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, controller.collisions.below ? 0.1f : 0.2f);
             velocity.y += -gravity * Time.deltaTime;
             if (isStop)
                 velocity = Vector2.zero;
+
             controller.Move(velocity * Time.deltaTime, false);
-
             if (controller.collisions.above || controller.collisions.below)
-                velocity.y = 0;
+                velocity.y = 0f;
         }
     }
-
-    void HandleAnimation()
-    {
-        animator.SetFloat("speed", Mathf.Abs(velocity.x));
-    }
-
-
-    IEnumerator CheckMeleeAttack(float delay)
-    {
-        animator.SetTrigger("attack");
-        isPlaying = false;
-
-        yield return new WaitForSeconds(delay);
-
-        if (isSocking)
-        {
-            isPlaying = true;
-            yield break;
-        }
-
-        var hit = Physics2D.CircleCast(meleePoint.position, meleeAttackZone, Vector2.zero, 0, GameManager.Instance.playerLayer);
-
-        if (!hit)
-        {
-            isPlaying = true;
-            yield break;
-        }
-        
-        var damage = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
-        if (damage == null)
-        {
-            isPlaying = true;
-            yield break;
-        }
-        damage.TakeDamage(meleeDamage, Vector2.zero, gameObject, Vector2.zero);
-
-        yield return new WaitForSeconds(attackRate);
-        isPlaying = true;
-    }
-
-    public void SetForce(float x, float y)
-    {
-        velocity = new Vector3(x, y, 0);
-    }
-    
-    private void FireProjectile()
-    {
-        animator.SetTrigger("throw");
-        //Invoke("FireBulletDelay", fireDelay);
-    }
-    
-    //called by animation event
-    void AnimFire()
-    {
-        var _projectile = (Projectile)Instantiate(rangeprojectile, rangePoint.position, Quaternion.identity);
-        _projectile.Initialize(gameObject, _direction, Vector2.zero, false,false,bulletDamage,bulletSpeed);
-        SoundManager.PlaySfx(soundRangAttack);
-    }
-
-    //called by animation event
-    void AnimSpawn()
-    {
-        //yield return new WaitForSeconds (fireDelay);
-        activeSpawnedObj.Add(Instantiate(spawnObj, spawnPoint.position, spawnObj.transform.rotation));
-        SoundManager.PlaySfx(soundSpawnttack);
-    }
-
-    //This action is called by the Input/ControllerInput
-    public void ThrowGrenade()
-    {
-        if (_Grenade == null)
-            return;
-        
-        GameObject obj = Instantiate(_Grenade, throwPosition.position, Quaternion.identity) as GameObject;
-        obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, transform.localScale.x < 1 ? angleThrow : 180 - angleThrow));
-        
-        obj.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(throwForce, 0));
-
-        animator.SetTrigger("throw");
-    }
-
 
     public void TakeDamage(int damage, Vector2 force, GameObject instigator, Vector3 hitPoint)
     {
-        //Debug.LogError(damage);
         if (isDead)
             return;
 
         pushForce = force;
-
-        //if (HurtEffect != null)
-        //    Instantiate(HurtEffect, instigator.transform.position, Quaternion.identity);
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = instigator.transform.position;
 
         currentHealth -= damage;
-
         if (healthBar)
-            healthBar.UpdateValue(currentHealth / (float)health);
+            healthBar.UpdateValue(currentHealth / health);
 
-        if (currentHealth <= 0)
-        {
+        if (currentHealth <= 0f)
             isDead = true;
-        }
-
 
         if (instigator && instigator.GetComponent<Block>() != null)
             isDead = true;
 
         if (isDead)
-        {
             Dead();
-        }
         else
             HitEvent();
-
     }
 
     protected virtual void HitEvent()
     {
-
-        SoundManager.PlaySfx(hurtSound, hurtSoundVolume);
-        //if (HurtEffect != null)
-        //    Instantiate(HurtEffect, transform.position, transform.rotation);
+        audioService.PlaySfx(hurtSound, hurtSoundVolume);
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = transform.position;
-        //		StopAllCoroutines ();
+
         animator.SetTrigger("hurt");
-        StartCoroutine(PushBack(sockingTime));
+        BeginPushBack(sockingTime);
     }
 
     protected virtual void Dead()
     {
         isPlaying = false;
-
-        StopAllCoroutines();
-        SoundManager.PlaySfx(deadSound, deadSoundVolume);
+        audioService.PlaySfx(deadSound, deadSoundVolume);
 
         if (BonusItem != null)
             Instantiate(BonusItem, transform.position, transform.rotation);
 
         animator.SetTrigger("die");
+        velocity.x = 0f;
 
-        velocity.x = 0;
-        GetComponent<BoxCollider2D>().enabled = false;
-        
-        //try spawn random item
+        var boxCollider = GetComponent<BoxCollider2D>();
+        if (boxCollider != null)
+            boxCollider.enabled = false;
+
         var spawnItem = GetComponent<EnemySpawnItem>();
         if (spawnItem != null)
-        {
             spawnItem.SpawnItem();
-        }
 
         if (dieBehavior == DIEBEHAVIOR.BLOWUP)
         {
             if (DestroyEffect)
-            {
                 SpawnSystemHelper.GetNextObject(DestroyEffect, true).transform.position = transform.position + Vector3.up * 0.5f;
-            }
             DestroyObject();
         }
         else if (dieBehavior == DIEBEHAVIOR.FALLOUT)
         {
             controller.HandlePhysic = false;
-            velocity = new Vector2(0, 8);
-            Invoke("DestroyObject", 1);
+            velocity = new Vector2(0f, 8f);
+            destroyTimer = 1f;
         }
         else
         {
-            Invoke("DestroyObject", 1);
+            destroyTimer = 1f;
         }
 
-        //try remove path moving
         var havePathMoving = GetComponent<SimplePathedMoving>();
         if (havePathMoving)
             Destroy(havePathMoving);
     }
 
-    void DestroyObject()
-    {
-       
-        Destroy(gameObject);
-    }
-
     protected virtual void OnRespawn()
     {
-
     }
-    
-    public IEnumerator PushBack(float delay)
+
+    public void IPlay()
+    {
+    }
+
+    public void ISuccess()
+    {
+    }
+
+    public void IPause()
+    {
+    }
+
+    public void IUnPause()
+    {
+    }
+
+    public void IGameOver()
+    {
+    }
+
+    public void IOnRespawn()
+    {
+    }
+
+    public void IOnStopMovingOn()
+    {
+        if (!this)
+            return;
+
+        animator.enabled = false;
+        isStop = true;
+    }
+
+    public void IOnStopMovingOff()
+    {
+        if (!this)
+            return;
+
+        animator.enabled = true;
+        isStop = false;
+    }
+
+    public bool isFacingRight()
+    {
+        return transform.rotation.y == 0;
+    }
+
+    public void SetForce(float x, float y)
+    {
+        velocity = new Vector3(x, y, 0f);
+    }
+
+    private void Flip()
+    {
+        direction = -direction;
+        transform.rotation = Quaternion.Euler(transform.rotation.x, isFacingRight() ? 180f : 0f, transform.rotation.z);
+    }
+
+    private void DoAttack(GameObject targetHit = null)
+    {
+        if (attackRateCounter > 0f)
+            return;
+
+        switch (attackType)
+        {
+            case WeaponsType.Fire:
+                FireProjectile();
+                attackRateCounter = attackRate;
+                break;
+            case WeaponsType.Throw:
+                ThrowGrenade();
+                attackRateCounter = attackRate;
+                break;
+            case WeaponsType.Spawn:
+                if (SpawnObject())
+                    attackRateCounter = attackRate;
+                break;
+            case WeaponsType.FireProjectileObj:
+                smartProjectileAttack.Shoot(targetHit);
+                break;
+            case WeaponsType.Melee:
+                BeginMeleeAttack(meleeAttackCheckPlayer);
+                attackRateCounter = attackRate;
+                break;
+        }
+    }
+
+    private bool SpawnObject()
+    {
+        for (int i = activeSpawnedObj.Count - 1; i >= 0; i--)
+        {
+            if (activeSpawnedObj[i] == null || !activeSpawnedObj[i].activeInHierarchy)
+                activeSpawnedObj.RemoveAt(i);
+        }
+
+        if (activeSpawnedObj.Count >= maxSpawnActive)
+            return false;
+
+        animator.SetTrigger("spawn");
+        return true;
+    }
+
+    private void HandleAnimation()
+    {
+        animator.SetFloat("speed", Mathf.Abs(velocity.x));
+    }
+
+    private void BeginMeleeAttack(float delay)
+    {
+        animator.SetTrigger("attack");
+        isPlaying = false;
+        meleeHitTimer = delay;
+        meleeRecoverTimer = -1f;
+    }
+
+    private void TickTimers()
+    {
+        if (pushBackTimer >= 0f)
+        {
+            pushBackTimer -= Time.deltaTime;
+            if (pushBackTimer <= 0f)
+            {
+                pushBackTimer = -1f;
+                SetForce(0f, 0f);
+                isSocking = false;
+                isPlaying = true;
+            }
+        }
+
+        if (destroyTimer >= 0f)
+        {
+            destroyTimer -= Time.deltaTime;
+            if (destroyTimer <= 0f)
+            {
+                destroyTimer = -1f;
+                DestroyObject();
+            }
+        }
+
+        if (meleeHitTimer >= 0f)
+        {
+            meleeHitTimer -= Time.deltaTime;
+            if (meleeHitTimer <= 0f)
+            {
+                ResolveMeleeAttack();
+                meleeHitTimer = -1f;
+            }
+        }
+
+        if (meleeRecoverTimer >= 0f)
+        {
+            meleeRecoverTimer -= Time.deltaTime;
+            if (meleeRecoverTimer <= 0f)
+            {
+                meleeRecoverTimer = -1f;
+                isPlaying = true;
+            }
+        }
+    }
+
+    private void ResolveMeleeAttack()
+    {
+        if (isSocking)
+        {
+            isPlaying = true;
+            return;
+        }
+
+        var hit = Physics2D.CircleCast(meleePoint.position, meleeAttackZone, Vector2.zero, 0, gameSession.PlayerLayer);
+        if (!hit)
+        {
+            isPlaying = true;
+            return;
+        }
+
+        var damage = (ICanTakeDamage)hit.collider.gameObject.GetComponent(typeof(ICanTakeDamage));
+        if (damage == null)
+        {
+            isPlaying = true;
+            return;
+        }
+
+        damage.TakeDamage(meleeDamage, Vector2.zero, gameObject, Vector2.zero);
+        meleeRecoverTimer = attackRate;
+    }
+
+    private void BeginPushBack(float delay)
     {
         isSocking = true;
-        SetForce(GameManager.Instance.Player.transform.localScale.x * pushForce.x, pushForce.y);
+        SetForce(gameSession.Player.transform.localScale.x * pushForce.x, pushForce.y);
 
         if (isDead)
         {
             Dead();
-            yield break;
+            return;
         }
 
-        yield return new WaitForSeconds(delay);
-
-        SetForce(0, 0);
-        isSocking = false;
-        isPlaying = true;
+        pushBackTimer = delay;
     }
 
-    void OnDrawGizmos()
+    private void FireProjectile()
+    {
+        animator.SetTrigger("throw");
+    }
+
+    private void AnimFire()
+    {
+        var projectile = Instantiate(rangeprojectile, rangePoint.position, Quaternion.identity);
+        projectile.Initialize(gameObject, direction, Vector2.zero, false, false, bulletDamage, bulletSpeed);
+        audioService.PlaySfx(soundRangAttack);
+    }
+
+    private void AnimSpawn()
+    {
+        activeSpawnedObj.Add(Instantiate(spawnObj, spawnPoint.position, spawnObj.transform.rotation));
+        audioService.PlaySfx(soundSpawnttack);
+    }
+
+    public void ThrowGrenade()
+    {
+        if (_Grenade == null)
+            return;
+
+        var obj = Instantiate(_Grenade, throwPosition.position, Quaternion.identity);
+        obj.transform.rotation = Quaternion.Euler(0f, 0f, transform.localScale.x < 1 ? angleThrow : 180f - angleThrow);
+        obj.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(throwForce, 0f));
+        animator.SetTrigger("throw");
+    }
+
+    private void DestroyObject()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnDrawGizmos()
     {
         if (doPatrol)
         {
@@ -602,59 +636,8 @@ public class EnemyGrounded : MonoBehaviour, ICanTakeDamage, IListener
                 gameObject.AddComponent<SmartProjectileAttack>();
         }
         else if (GetComponent<SmartProjectileAttack>() != null)
+        {
             DestroyImmediate(GetComponent<SmartProjectileAttack>());
-    }
-
-    #region IListener implementation
-
-    public void IPlay()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void ISuccess()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void IPause()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void IUnPause()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void IGameOver()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void IOnRespawn()
-    {
-        //		throw new System.NotImplementedException ();
-    }
-
-    public void IOnStopMovingOn()
-    {
-        if (this)
-        {
-           
-            animator.enabled = false;
-            isStop = true;
         }
     }
-
-    public void IOnStopMovingOff()
-    {
-        if (this)
-        {
-            animator.enabled = true;
-            isStop = false;
-        }
-    }
-
-    #endregion
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using VContainer;
 //using UnityEngine.Advertisements;
 
 public class MenuManager : MonoBehaviour
@@ -23,23 +24,37 @@ public class MenuManager : MonoBehaviour
     public Sprite soundImageOn, soundImageOff, musicImageOn, musicImageOff;
 
     public GameObject passLevelButton;
+    private IAdsService adsService;
+    private ILevelCatalogService levelCatalogService;
+    private ISceneLoader sceneLoader;
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private IGameSessionService gameSession;
+    private IProgressService progressService;
+
+    [Inject]
+    public void Construct(IAdsService adsService, ILevelCatalogService levelCatalogService, ISceneLoader sceneLoader, IAudioService audioService, IControllerInputService controllerInputService, IGameSessionService gameSession, IProgressService progressService)
+    {
+        this.adsService = adsService;
+        this.levelCatalogService = levelCatalogService;
+        this.sceneLoader = sceneLoader;
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.gameSession = gameSession;
+        this.progressService = progressService;
+    }
 
     void Awake()
     {
+        ProjectScope.Inject(this);
         Instance = this;
-       
-
     }
 
     // Use this for initialization
     void Start()
     {
-        if (AdsManager.Instance)
-        {
-            AdsManager.Instance.ShowBanner(false);
-            AdsManager.Instance.ShowRectBanner(false);
-
-        }
+        adsService.ShowBanner(false);
+        adsService.ShowRectBanner(false);
 
         Startmenu.SetActive(true);
         GUI.SetActive(false);
@@ -50,74 +65,56 @@ public class MenuManager : MonoBehaviour
         Loading.SetActive(false);
         StartCoroutine(StartGame(2));
 
-        soundImage.sprite = GlobalValue.isSound ? soundImageOn : soundImageOff;
-        musicImage.sprite = GlobalValue.isMusic ? musicImageOn : musicImageOff;
-        if (!GlobalValue.isSound)
-            SoundManager.SoundVolume = 0;
-        if (!GlobalValue.isMusic)
-            SoundManager.MusicVolume = 0;
+        soundImage.sprite = progressService.IsSoundEnabled ? soundImageOn : soundImageOff;
+        musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
+        if (!progressService.IsSoundEnabled)
+            audioService.SoundVolume = 0;
+        if (!progressService.IsMusicEnabled)
+            audioService.MusicVolume = 0;
 
     }
 
     #region Music and Sound
     public void TurnSound()
     {
-        GlobalValue.isSound = !GlobalValue.isSound;
-        soundImage.sprite = GlobalValue.isSound ? soundImageOn : soundImageOff;
-
-        SoundManager.SoundVolume = GlobalValue.isSound ? 1 : 0;
+        progressService.IsSoundEnabled = !progressService.IsSoundEnabled;
+        soundImage.sprite = progressService.IsSoundEnabled ? soundImageOn : soundImageOff;
+        audioService.SoundVolume = progressService.IsSoundEnabled ? 1f : 0f;
     }
 
     public void TurnMusic()
     {
-        GlobalValue.isMusic = !GlobalValue.isMusic;
-        musicImage.sprite = GlobalValue.isMusic ? musicImageOn : musicImageOff;
-
-        SoundManager.MusicVolume = GlobalValue.isMusic ? SoundManager.Instance.musicsGameVolume : 0;
+        progressService.IsMusicEnabled = !progressService.IsMusicEnabled;
+        musicImage.sprite = progressService.IsMusicEnabled ? musicImageOn : musicImageOff;
+        audioService.MusicVolume = progressService.IsMusicEnabled ? audioService.GameplayMusicVolume : 0f;
     }
     #endregion
 
     public void NextLevel()
     {
         Time.timeScale = 1;
-        SoundManager.PlaySfx(SoundManager.Instance.soundClick);
+        audioService.PlayClick();
 
-        GameManager.Instance.UnlockLevel();
+        gameSession.UnlockLevel();
 
-        GlobalValue.levelPlaying++;
+        progressService.LevelPlaying++;
 
-        Loading.SetActive(true);
-        if (GlobalValue.levelPlaying <= GlobalValue.totalLevel)
-            StartCoroutine(LoadAsynchronously("Level " + GlobalValue.levelPlaying));
+        if (progressService.LevelPlaying <= progressService.TotalLevel)
+            sceneLoader.BeginLoad(this, levelCatalogService.GetLevelSceneName(progressService.LevelPlaying), LoadingScreenViewResolver.Resolve(Loading, slider, progressText));
         else
-            StartCoroutine(LoadAsynchronously("MainMenu"));
+            sceneLoader.BeginLoad(this, "MainMenu", LoadingScreenViewResolver.Resolve(Loading, slider, progressText));
     }
 
     [Header("LOADING PROGRESS")]
     public Slider slider;
     public Text progressText;
-    IEnumerator LoadAsynchronously(string name)
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(name);
-        while (!operation.isDone)
-        {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            if (slider != null)
-                slider.value = progress;
-            if (progressText != null)
-                progressText.text = (int)progress * 100f + "%";
-            //			Debug.LogError (progress);
-            yield return null;
-        }
-    }
-
     public void TurnController(bool turnOn)
     {
         Controller.SetActive(turnOn);
     }
     public void TurnGUI(bool turnOn)
     {
-        GUI.SetActive(turnOn && !GameManager.Instance.hideGUI);
+        GUI.SetActive(turnOn && !gameSession.HideGui);
     }
 
     public void OpenSaveMe(bool open)
@@ -138,32 +135,15 @@ public class MenuManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1;
-        SoundManager.PlaySfx(SoundManager.Instance.soundClick);
-        //if (!GlobalValue.RemoveAds && DefaultValue.Instance && DefaultValue.Instance.restartLevelAd && Advertisement.IsReady())
-        //{
-        //    watchVideoType = WatchVideoType.Restart;
-        //    var options = new ShowOptions { resultCallback = HandleShowResult };
-        //    if (!Advertisement.isShowing)
-        //        Advertisement.Show(options);
-        //}
-        //else
-        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        Loading.SetActive(true);
-        StartCoroutine(LoadAsynchronously(SceneManager.GetActiveScene().name));
+        audioService.PlayClick();
+        sceneLoader.BeginReloadCurrent(this, LoadingScreenViewResolver.Resolve(Loading, slider, progressText));
     }
 
     public void HomeScene()
     {
-        //if (GameManager.Instance.State != GameManager.GameState.Finish)
-        //{
-        //    if (LevelMapType.Instance && !LevelMapType.Instance.playerNoLimitLife)
-        //        GlobalValue.SaveLives -= 1;
-        //}
-        SoundManager.PlaySfx(SoundManager.Instance.soundClick);
+        audioService.PlayClick();
         Time.timeScale = 1;
-        //SceneManager.LoadSceneAsync("MainMenu");
-        Loading.SetActive(true);
-        StartCoroutine(LoadAsynchronously("MainMenu"));
+        sceneLoader.BeginLoad(this, "MainMenu", LoadingScreenViewResolver.Resolve(Loading, slider, progressText));
 
     }
 
@@ -179,27 +159,25 @@ public class MenuManager : MonoBehaviour
 
     public void Pause()
     {
-        SoundManager.PlaySfx(SoundManager.Instance.soundClick);
+        audioService.PlayClick();
         if (Time.timeScale == 0)
         {
-            if(AdsManager.Instance)
-            AdsManager.Instance.ShowBanner(false);
+            adsService.ShowBanner(false);
             GamePause.SetActive(false);
-            GUI.SetActive(true && !GameManager.Instance.hideGUI);
+            GUI.SetActive(!gameSession.HideGui);
             Time.timeScale = 1;
-            SoundManager.Instance.PauseMusic(false);
+            audioService.PauseMusic(false);
         }
         else
         {
-            if(AdsManager.Instance)
-            AdsManager.Instance.ShowBanner(true);
+            adsService.ShowBanner(true);
             GamePause.SetActive(true);
             GUI.SetActive(false);
             Time.timeScale = 0;
-            SoundManager.Instance.PauseMusic(true);
+            audioService.PauseMusic(true);
         }
 
-        ControllerInput.Instance.StopMove();
+        controllerInputService.StopMove();
     }
 
     public enum WatchVideoType { Checkpoint, Restart, Next }
@@ -212,23 +190,21 @@ public class MenuManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         Startmenu.SetActive(false);
-        GUI.SetActive(true && !GameManager.Instance.hideGUI);
+        GUI.SetActive(!gameSession.HideGui);
 
-        GameManager.Instance.StartGame();
+        gameSession.StartGame();
     }
 
     IEnumerator GamefinishCo(float time)
     {
         GUI.SetActive(false);
         yield return new WaitForSeconds(time);
-        if (AdsManager.Instance)
-            AdsManager.Instance.TryShowInterstitial(GameManager.GameState.Finish);
+        adsService.TryShowInterstitial(GameManager.GameState.Finish);
         yield return new WaitForSeconds(0.2f);
-        if (AdsManager.Instance)
-            AdsManager.Instance.ShowBanner(true);
+        adsService.ShowBanner(true);
         GameFinish.SetActive(true);
-        SoundManager.MusicVolume = 1;
-        SoundManager.PlayMusic(SoundManager.Instance.musicFinishPanel, false);
+        audioService.MusicVolume = 1f;
+        audioService.PlayMusic(audioService.FinishPanelMusic, false);
     }
 
     IEnumerator GameOverCo(float time)
@@ -240,12 +216,11 @@ public class MenuManager : MonoBehaviour
         //show ads
        
         Gameover.SetActive(true);
-        if(AdsManager.Instance)
-        AdsManager.Instance.ShowBanner(true);
+        adsService.ShowBanner(true);
     }
 
     public void ForceFinishLevel()
     {
-        GameManager.Instance.GameFinish();
+        gameSession.GameFinish();
     }
 }

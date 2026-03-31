@@ -1,60 +1,61 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class GunManager : MonoBehaviour
 {
     public static GunManager Instance;
     public List<GunTypeID> listGun;
-   [ReadOnly] public List<GunTypeID> listGunPicked;
+    [ReadOnly] public List<GunTypeID> listGunPicked;
 
-    int currentPos = 0;
+    private int currentPos = 0;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
+    private IInventoryService inventoryService;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession, IInventoryService inventoryService)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+        this.inventoryService = inventoryService;
+    }
 
     private void Awake()
     {
-        if (GunManager.Instance != null)
-            Destroy(gameObject);
-        else
-        {
-            Instance = this;
-            //if (GameMode.Instance)
-            //{
-            //    foreach (var gun in listGun)
-            //    {
-            //        if (GlobalValue.isPicked(gun))
-            //        {
-            //            AddGun(gun);
-            //        }
-            //    }
-            //}
-            //else
-            //{
-                for (int i = 0; i < listGun.Count; i++)
-                {
-                    AddGun(listGun[i]);
-                }
-            //}
+        ProjectScope.Inject(this);
 
-            DontDestroyOnLoad(gameObject);
+        if (GunManager.Instance != null)
+        {
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        for (int i = 0; i < listGun.Count; i++)
+        {
+            AddGun(listGun[i]);
+        }
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public void ResetPlayerCarryGun()
     {
         listGunPicked.Clear();
-        foreach (var gun in listGun)
+        foreach (GunTypeID gun in listGun)
         {
-            if (GlobalValue.isPicked(gun))
-            {
+            if (inventoryService.IsGunPicked(gun))
                 AddGun(gun);
-            }
         }
+
         currentPos = 0;
     }
 
     public void AddBullet(int amount)
     {
-        foreach (var gun in listGunPicked)
+        foreach (GunTypeID gun in listGunPicked)
         {
             gun.bullet += amount;
         }
@@ -62,20 +63,11 @@ public class GunManager : MonoBehaviour
 
     public void ResetGunBullet()
     {
-        foreach (var gun in listGunPicked)
+        foreach (GunTypeID gun in listGunPicked)
         {
             gun.ResetBullet();
         }
     }
-
-    //public void ResetGunBullet(GunTypeID gun)
-    //{
-    //    foreach (var g in listGunPicked)
-    //    {
-    //        if (g.gameObject == gun.gameObject)
-    //            g.ResetBullet();
-    //    }
-    //}
 
     public void AddGun(GunTypeID gunID, bool pickImmediately = false)
     {
@@ -85,31 +77,34 @@ public class GunManager : MonoBehaviour
     public void SetNewGunDuringGameplay(GunTypeID gunID)
     {
         GunTypeID pickGun = null;
-        GlobalValue.currentGunTypeID = gunID;
-        foreach (var gun in listGun)
+        inventoryService.CurrentGunType = gunID;
+
+        foreach (GunTypeID gun in listGun)
         {
-            if (gun.gunID == gunID.gunID)
+            if (gun.gunID != gunID.gunID)
+                continue;
+
+            if (!listGunPicked.Contains(gun))
             {
-                if (!listGunPicked.Contains(gun))
-                    AddGun(gun);
-                else
-                {
-                    foreach (var _gun in listGunPicked)
-                    {
-                        if (_gun.gunID == gun.gunID)
-                            _gun.ResetBullet();
-                    }
-                }
-
-                pickGun = gun;
+                AddGun(gun);
             }
+            else
+            {
+                foreach (GunTypeID pickedGun in listGunPicked)
+                {
+                    if (pickedGun.gunID == gun.gunID)
+                        pickedGun.ResetBullet();
+                }
+            }
+
+            pickGun = gun;
         }
 
-        if (pickGun != null)
-        {
-            NextGun(pickGun);
-            pickGun.ResetBullet();
-        }
+        if (pickGun == null)
+            return;
+
+        NextGun(pickGun);
+        pickGun.ResetBullet();
     }
 
     public void RemoveGun(GunTypeID gunID)
@@ -120,35 +115,33 @@ public class GunManager : MonoBehaviour
     public void NextGun()
     {
         currentPos++;
-        if(currentPos>= listGunPicked.Count)
-        {
+        if (currentPos >= listGunPicked.Count)
             currentPos = 0;
-        }
 
-        GameManager.Instance.Player.SetGun(listGunPicked[currentPos]);
-        SoundManager.PlaySfx(SoundManager.Instance.swapGun);
+        gameSession.Player.SetGun(listGunPicked[currentPos]);
+        audioService.PlaySfx(audioService.SwapGunClip);
     }
 
     public void BackToDefaultGun()
     {
         currentPos = 0;
-        GameManager.Instance.Player.SetGun(listGunPicked[currentPos]);
-        SoundManager.PlaySfx(SoundManager.Instance.swapGun);
+        gameSession.Player.SetGun(listGunPicked[currentPos]);
+        audioService.PlaySfx(audioService.SwapGunClip);
     }
 
     public void NextGun(GunTypeID gunID)
     {
         if (listGunPicked[currentPos].gunID == gunID.gunID)
-            return;     //don't swap gun when the player holding the same gun
+            return;
 
-        for(int i = 0; i < listGunPicked.Count; i++)
+        for (int i = 0; i < listGunPicked.Count; i++)
         {
-            if(listGunPicked[i].gunID == gunID.gunID)
-            {
-                currentPos = i;
-                GameManager.Instance.Player.SetGun(listGunPicked[currentPos]);
-                SoundManager.PlaySfx(SoundManager.Instance.swapGun);
-            }
+            if (listGunPicked[i].gunID != gunID.gunID)
+                continue;
+
+            currentPos = i;
+            gameSession.Player.SetGun(listGunPicked[currentPos]);
+            audioService.PlaySfx(audioService.SwapGunClip);
         }
     }
 

@@ -1,57 +1,54 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class SetLayerFollowPlayer : MonoBehaviour {
-    List<SpriteRenderer> listSpriteRenderer;
-    List<ParticleSystemRenderer> listParticle;
-	// Use this for initialization
-	void Start () {
-        listSpriteRenderer = new List<SpriteRenderer>();
-        listParticle = new List<ParticleSystemRenderer>();
+public class SetLayerFollowPlayer : MonoBehaviour
+{
+    private readonly List<SpriteRenderer> listSpriteRenderer = new List<SpriteRenderer>();
+    private readonly List<ParticleSystemRenderer> listParticle = new List<ParticleSystemRenderer>();
+    private IGameSessionService gameSession;
 
-        if (GetComponent<SpriteRenderer>())
-            listSpriteRenderer.Add(GetComponent<SpriteRenderer>());
-        if (GetComponent<ParticleSystemRenderer>())
-            listParticle.Add(GetComponent<ParticleSystemRenderer>());
-
-        var listSR = transform.GetComponentsInChildren<SpriteRenderer>();
-        if (listSR.Length > 0)
-        {
-            foreach (var _temp in listSR)
-            {
-                listSpriteRenderer.Add(_temp);
-            }
-        }
-
-        var listPS = transform.GetComponentsInChildren<ParticleSystemRenderer>();
-        if (listPS.Length > 0)
-        {
-            foreach (var _temp in listPS)
-            {
-                listParticle.Add(_temp);
-            }
-        }
-
-
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (listSpriteRenderer.Count > 0)
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        SpriteRenderer selfSpriteRenderer = GetComponent<SpriteRenderer>();
+        if (selfSpriteRenderer)
+            listSpriteRenderer.Add(selfSpriteRenderer);
+
+        ParticleSystemRenderer selfParticle = GetComponent<ParticleSystemRenderer>();
+        if (selfParticle)
+            listParticle.Add(selfParticle);
+
+        listSpriteRenderer.AddRange(transform.GetComponentsInChildren<SpriteRenderer>());
+        listParticle.AddRange(transform.GetComponentsInChildren<ParticleSystemRenderer>());
+    }
+
+    private void Update()
+    {
+        if (gameSession?.Player == null)
+            return;
+
+        string sortingLayerName = LayerMask.LayerToName(gameSession.Player.gameObject.layer);
+        foreach (SpriteRenderer spriteRenderer in listSpriteRenderer)
         {
-            foreach (var _SR in listSpriteRenderer)
-            {
-                _SR.sortingLayerName = LayerMask.LayerToName(GameManager.Instance.Player.gameObject.layer);
-            }
+            if (spriteRenderer != null)
+                spriteRenderer.sortingLayerName = sortingLayerName;
         }
 
-        if (listParticle.Count > 0)
+        foreach (ParticleSystemRenderer particleRenderer in listParticle)
         {
-            foreach (var _PS in listParticle)
-            {
-                _PS.sortingLayerName = LayerMask.LayerToName(GameManager.Instance.Player.gameObject.layer);
-            }
+            if (particleRenderer != null)
+                particleRenderer.sortingLayerName = sortingLayerName;
         }
     }
 }

@@ -1,16 +1,17 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class DialogUITrigger : MonoBehaviour
 {
     public bool isFinishLevel = false;
     public bool disableWhenDone = false;
-   [HideInInspector] public bool canTalkAgain = false;
+    [HideInInspector] public bool canTalkAgain = false;
     [HideInInspector] public bool hideSmallFaceIcon;
     [HideInInspector] public bool givePlayerAKey = false;
     public AudioClip soundDetectPlayer;
-    
+
     public Dialogs[] dialogs;
     public Dialogs[] talkAgainDialogs;
 
@@ -36,110 +37,120 @@ public class DialogUITrigger : MonoBehaviour
     [Space]
     public KeyItem keyItem;
 
-    [HideInInspector]
-    public bool isTalk = false;
-    [HideInInspector]
-    public bool isTalking = false;
-    [HideInInspector]
-    public bool isTakingFinish = false;
+    [HideInInspector] public bool isTalk = false;
+    [HideInInspector] public bool isTalking = false;
+    [HideInInspector] public bool isTakingFinish = false;
 
-    bool isGaveAKey = false;
+    private bool isGaveAKey = false;
+    private bool isFirstTalk = true;
+    private IAudioService audioService;
+    private IControllerInputService controllerInputService;
+    private IGameSessionService gameSession;
+    private IGameplayPresentationService presentationService;
 
-    bool isFirstTalk = true;
-    void Start()
+    [Inject]
+    public void Construct(IAudioService audioService, IControllerInputService controllerInputService, IGameSessionService gameSession, IGameplayPresentationService presentationService)
     {
-        if (hideBossOnStart)
-        {
-            bossObject.gameObject.SetActive(false);
-        }
+        this.audioService = audioService;
+        this.controllerInputService = controllerInputService;
+        this.gameSession = gameSession;
+        this.presentationService = presentationService;
     }
 
-    IEnumerator OnTriggerEnter2D(Collider2D other)
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        if (hideBossOnStart)
+            bossObject.gameObject.SetActive(false);
+    }
+
+    private IEnumerator OnTriggerEnter2D(Collider2D other)
     {
         if (isTalk && !canTalkAgain)
             yield break;
-        
-        if (other.GetComponent<Player>())
+
+        if (other.GetComponent<Player>() == null)
+            yield break;
+
+        audioService.PlaySfx(soundDetectPlayer, 0.8f);
+        if (setCameraLimitMin)
+            CameraFollow.Instance._min.x = transform.position.x - limitLeftPos;
+        if (setCameraLimitMax)
+            CameraFollow.Instance._max.x = transform.position.x + limitRightPos;
+
+        gameSession.Player.velocity.x = 0;
+        audioService.PauseMusic(true);
+        controllerInputService.StopMove();
+        presentationService.SetControllerVisible(false);
+        presentationService.SetGameplayUiVisible(false);
+
+        if (setCameraLimitMin)
         {
-            SoundManager.PlaySfx(soundDetectPlayer, 0.8f);
-            if (setCameraLimitMin)
-                CameraFollow.Instance._min.x = transform.position.x - limitLeftPos;
-            if (setCameraLimitMax)
-                CameraFollow.Instance._max.x = transform.position.x + limitRightPos;
+            Vector3 targetPos = CameraFollow.Instance.transform.position;
+            targetPos.z = CameraFollow.Instance.transform.position.z;
 
+            CameraFollow.Instance.isFollowing = false;
+            Vector3 mainCameraStartPoint = CameraFollow.Instance.transform.position;
 
-            GameManager.Instance.Player.velocity.x = 0;
-
-
-            SoundManager.Instance.PauseMusic(true);
-            GameManager.Instance.Player.StopMove();
-            MenuManager.Instance.TurnController(false);
-            MenuManager.Instance.TurnGUI(false);
-
-            if (setCameraLimitMin)
+            float percent = 0f;
+            Vector3 targetBack = new Vector3(CameraFollow.Instance._min.x + CameraFollow.Instance.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
+            while (percent < 1f)
             {
-                Vector3 targetPos = CameraFollow.Instance.transform.position;
-                targetPos.z = CameraFollow.Instance.transform.position.z;
-
-                CameraFollow.Instance.isFollowing = false;
-                Vector3 mainCameraStartPoint = CameraFollow.Instance.transform.position;
-
-                float percent = 0;
-                var targetBack = new Vector3(CameraFollow.Instance._min.x + CameraFollow.Instance.CameraHalfWidth, mainCameraStartPoint.y, mainCameraStartPoint.z);
-                while (percent < 1)
-                {
-                    percent += Time.deltaTime * 1;
-                    percent = Mathf.Clamp01(percent);
-                    CameraFollow.Instance.transform.position = Vector3.Lerp(targetPos, targetBack, percent);
-                    yield return null;
-                }
-                CameraFollow.Instance.isFollowing = true;
+                percent += Time.deltaTime;
+                percent = Mathf.Clamp01(percent);
+                CameraFollow.Instance.transform.position = Vector3.Lerp(targetPos, targetBack, percent);
+                yield return null;
             }
 
-            if (hideBossOnStart)
-            {
-                bossObject.gameObject.SetActive(true);
-                if (showBossEffect)
-                    Instantiate(showBossEffect, bossObject.gameObject.transform.position, Quaternion.identity);
-                SoundManager.PlaySfx(bossVisibleSound);
-                yield return new WaitForSeconds(2);
-            }
-            
-            isTalk = true;
-            isTalking = true;
-            DialogManager.Instance.StartDialog(isFirstTalk ? dialogs : talkAgainDialogs, gameObject, disableWhenDone, isFinishLevel, hideSmallFaceIcon, this);
-            isFirstTalk = false;
+            CameraFollow.Instance.isFollowing = true;
         }
+
+        if (hideBossOnStart)
+        {
+            bossObject.gameObject.SetActive(true);
+            if (showBossEffect)
+                Instantiate(showBossEffect, bossObject.gameObject.transform.position, Quaternion.identity);
+
+            audioService.PlaySfx(bossVisibleSound);
+            yield return new WaitForSeconds(2f);
+        }
+
+        isTalk = true;
+        isTalking = true;
+        DialogManager.Instance.StartDialog(isFirstTalk ? dialogs : talkAgainDialogs, gameObject, disableWhenDone, isFinishLevel, hideSmallFaceIcon, this);
+        isFirstTalk = false;
     }
 
-    //called from DialogManager
     public void FinishDialog()
     {
         StartCoroutine(FinishDialogueCo());
     }
 
-
-    IEnumerator FinishDialogueCo()
+    private IEnumerator FinishDialogueCo()
     {
         if (givePlayerAKey && !isGaveAKey)
         {
             isGaveAKey = true;
-            Instantiate(keyItem, GameManager.Instance.Player.transform.position, Quaternion.identity);
+            Instantiate(keyItem, gameSession.Player.transform.position, Quaternion.identity);
         }
-        
+
         if (activeBoss)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1f);
             bossObject.Play();
         }
 
-        SoundManager.Instance.PauseMusic(false);
+        audioService.PauseMusic(false);
         if (changeMusic)
-            SoundManager.PlayMusic(music, musicVolume);
+            audioService.PlayMusic(music, musicVolume);
 
-        ControllerInput.Instance.StopMove();
-        MenuManager.Instance.TurnController(true);
-        MenuManager.Instance.TurnGUI(true);
+        controllerInputService.StopMove();
+        presentationService.SetControllerVisible(true);
+        presentationService.SetGameplayUiVisible(true);
 
         isTakingFinish = true;
     }

@@ -1,37 +1,53 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
-public class StandFallingSpikedObject : RaycastController,IListener
+public class StandFallingSpikedObject : RaycastController, IListener
 {
     public enum RespawnType { PlayerDead, AfterTime }
+
     public RespawnType respawnType;
     public float delayRespawn = 1;
-
     public LayerMask passengerMask;
-    Vector3[] globalWaypoints;
-
     public float speed = 1;
-    private bool cyclic;
-    private float waitTime;
-    //[Range(0, 2)]
-    private float easeAmount = 0;
-    private bool isLoop = false;
-    int fromWaypointIndex;
-    float percentBetweenWaypoints;
-    float nextMoveTime;
     public GameObject destroyFX;
-
-    List<PassengerMovement> passengerMovement;
-    Dictionary<Transform, Controller2D> passengerDictionary = new Dictionary<Transform, Controller2D>();
-    bool isMoving = false;
-
     public float fallingDelay = 1;
     [Tooltip("Active the object when Player in this range")]
     public float detectPlayerDistanceX = 3;
     public float detectPlayerDistanceY = 5;
     public AudioClip soundFalling, soundDestroy;
-    Vector3 oriPos;
+
+    private Vector3[] globalWaypoints;
+    private Vector3 oriPos;
+    private readonly Dictionary<Transform, Controller2D> passengerDictionary = new Dictionary<Transform, Controller2D>();
+    private List<PassengerMovement> passengerMovement;
+    private bool cyclic;
+    private float waitTime;
+    private float easeAmount = 0;
+    private bool isLoop = false;
+    private int fromWaypointIndex;
+    private float percentBetweenWaypoints;
+    private float nextMoveTime;
+    private bool isMoving;
+    private bool isWorked;
+    private bool isStop;
+    private float fallingDelayRemaining = -1f;
+    private float respawnDelayRemaining = -1f;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
     public override void Start()
     {
         base.Start();
@@ -41,138 +57,133 @@ public class StandFallingSpikedObject : RaycastController,IListener
         globalWaypoints[1] = transform.position + Vector3.down * 100;
     }
 
-    void Update()
+    private void Update()
     {
-       
+        if (respawnDelayRemaining >= 0f)
+        {
+            respawnDelayRemaining -= Time.deltaTime;
+            if (respawnDelayRemaining <= 0f)
+                RespawnPos();
+        }
+
+        if (fallingDelayRemaining >= 0f && !isStop)
+        {
+            fallingDelayRemaining -= Time.deltaTime;
+            if (fallingDelayRemaining <= 0f)
+            {
+                fallingDelayRemaining = -1f;
+                isMoving = true;
+                audioService?.PlaySfx(soundFalling);
+            }
+        }
 
         if (!isWorked)
         {
-            if (GameManager.Instance.Player.controller.collisions.below && GameManager.Instance.Player.controller.collisions.ClosestHit.collider.gameObject == gameObject)
-                Work();
-            if ((Mathf.Abs(transform.position.x - GameManager.Instance.Player.transform.position.x) <= detectPlayerDistanceX) && (Mathf.Abs(transform.position.y - GameManager.Instance.Player.transform.position.y) <= detectPlayerDistanceY) && (transform.position.y > GameManager.Instance.Player.transform.position.y))
-                Work();
-
+            TryStartWork();
             return;
         }
 
-        if (isStop)
+        if (isStop || !isMoving)
             return;
 
-        if (isMoving)
+        UpdateRaycastOrigins();
+        Vector3 velocity = CalculatePlatformMovement();
+        CalculatePassengerMovement(velocity);
+        MovePassengers(true);
+        transform.Translate(velocity, Space.World);
+        MovePassengers(false);
+
+        if (HasHitBlockingSurface())
         {
-            UpdateRaycastOrigins();
+            if (destroyFX != null)
+                Instantiate(destroyFX, transform.position, Quaternion.identity);
 
-            Vector3 velocity = CalculatePlatformMovement();
-
-            CalculatePassengerMovement(velocity);
-
-            MovePassengers(true);
-            transform.Translate(velocity, Space.World);
-            MovePassengers(false);
-
-            //var hit = Physics2D.CircleCast(transform.position, 0.5f, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Ground"));
-            //if (hit && hit.collider.GetComponent<StandFallingSpikedObject>()==null)
-            //{
-            //    Instantiate(destroyFX, transform.position, Quaternion.identity);
-            //    SoundManager.PlaySfx(soundDestroy);
-            //    Destroy(gameObject);
-            //}
-
-            var hits = Physics2D.CircleCastAll(transform.position + Vector3.down * 1, 0.2f, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Ground"));
-            if (hits.Length > 0)
-            {
-                foreach (var hit in hits)
-                {
-                    if (hit.collider.GetComponent<StandFallingSpikedObject>() == null)
-                    {
-                        Instantiate(destroyFX, transform.position, Quaternion.identity);
-                        SoundManager.PlaySfx(soundDestroy);
-                        //Destroy(gameObject);
-                        StopAllCoroutines();
-                        gameObject.SetActive(false);
-                    }
-                }
-            }
-            else
-            {
-                hits = Physics2D.CircleCastAll(transform.position + Vector3.down * 1, 0.2f, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Platform"));
-                if (hits.Length > 0)
-                {
-                    foreach (var hit in hits)
-                    {
-                        if (hit.collider.GetComponent<StandFallingSpikedObject>() == null)
-                        {
-                            Instantiate(destroyFX, transform.position, Quaternion.identity);
-                            SoundManager.PlaySfx(soundDestroy);
-                            //Destroy(gameObject);
-                            StopAllCoroutines();
-                            gameObject.SetActive(false);
-                        }
-                    }
-                }
-            }
+            audioService?.PlaySfx(soundDestroy);
+            gameObject.SetActive(false);
         }
     }
 
-    bool isWorked = false;
+    private void TryStartWork()
+    {
+        Player player = gameSession?.Player;
+        if (player == null)
+            return;
+
+        if (player.controller.collisions.below && player.controller.collisions.ClosestHit.collider.gameObject == gameObject)
+        {
+            Work();
+            return;
+        }
+
+        bool isPlayerInRange =
+            Mathf.Abs(transform.position.x - player.transform.position.x) <= detectPlayerDistanceX &&
+            Mathf.Abs(transform.position.y - player.transform.position.y) <= detectPlayerDistanceY &&
+            transform.position.y > player.transform.position.y;
+
+        if (isPlayerInRange)
+            Work();
+    }
+
     public void Work()
     {
         if (isWorked)
             return;
 
-        StartCoroutine(WorkCo());
+        isWorked = true;
+        GetComponent<Animator>().SetTrigger("shake");
+        fallingDelayRemaining = fallingDelay;
+
         if (respawnType == RespawnType.AfterTime)
-            Invoke("RespawnPos", delayRespawn);
+            respawnDelayRemaining = delayRespawn;
     }
 
-    void RespawnPos()
+    private void RespawnPos()
     {
-        StopAllCoroutines();
+        respawnDelayRemaining = -1f;
+        fallingDelayRemaining = -1f;
         transform.position = oriPos;
         percentBetweenWaypoints = 0;
+        fromWaypointIndex = 0;
         isWorked = false;
         isMoving = false;
         GetComponent<Animator>().SetTrigger("reset");
         gameObject.SetActive(true);
     }
 
-    IEnumerator WorkCo()
+    private bool HasHitBlockingSurface()
     {
-        isWorked = true;
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position + Vector3.down, 0.2f, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Ground"));
+        if (ContainsNonSpikeHit(hits))
+            return true;
 
-
-        while (isStop) { yield return null; }
-        GetComponent<Animator>().SetTrigger("shake");
-
-        float counter = fallingDelay;
-
-        while (counter > 0)
-        {
-            counter -= Time.deltaTime;
-
-
-            while (isStop) { yield return null; }
-
-            yield return null;
-        }
-
-        isMoving = true;
-        SoundManager.PlaySfx(soundFalling);
+        hits = Physics2D.CircleCastAll(transform.position + Vector3.down, 0.2f, Vector2.zero, 0, 1 << LayerMask.NameToLayer("Platform"));
+        return ContainsNonSpikeHit(hits);
     }
 
-    float Ease(float x)
+    private bool ContainsNonSpikeHit(RaycastHit2D[] hits)
+    {
+        if (hits == null || hits.Length == 0)
+            return false;
+
+        foreach (RaycastHit2D hit in hits)
+        {
+            if (hit.collider.GetComponent<StandFallingSpikedObject>() == null)
+                return true;
+        }
+
+        return false;
+    }
+
+    private float Ease(float x)
     {
         float a = easeAmount + 1;
         return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
     }
 
-    Vector3 CalculatePlatformMovement()
+    private Vector3 CalculatePlatformMovement()
     {
-
         if (Time.time < nextMoveTime)
-        {
             return Vector3.zero;
-        }
 
         fromWaypointIndex %= globalWaypoints.Length;
         int toWaypointIndex = (fromWaypointIndex + 1) % globalWaypoints.Length;
@@ -193,38 +204,32 @@ public class StandFallingSpikedObject : RaycastController,IListener
                 if (fromWaypointIndex >= globalWaypoints.Length - 1)
                 {
                     if (!isLoop)
-                    {
-                        //						if (SmokeFX)
-                        //							SmokeFX.SetActive (false);
                         enabled = false;
-                    }
+
                     fromWaypointIndex = 0;
                     System.Array.Reverse(globalWaypoints);
                 }
             }
+
             nextMoveTime = Time.time + waitTime;
         }
 
         return newPos - transform.position;
     }
 
-    void MovePassengers(bool beforeMovePlatform)
+    private void MovePassengers(bool beforeMovePlatform)
     {
         foreach (PassengerMovement passenger in passengerMovement)
         {
             if (!passengerDictionary.ContainsKey(passenger.transform))
-            {
                 passengerDictionary.Add(passenger.transform, passenger.transform.GetComponent<Controller2D>());
-            }
 
             if (passenger.moveBeforePlatform == beforeMovePlatform)
-            {
                 passengerDictionary[passenger.transform].Move(passenger.velocity, passenger.standingOnPlatform);
-            }
         }
     }
 
-    void CalculatePassengerMovement(Vector3 velocity)
+    private void CalculatePassengerMovement(Vector3 velocity)
     {
         HashSet<Transform> movedPassengers = new HashSet<Transform>();
         passengerMovement = new List<PassengerMovement>();
@@ -232,7 +237,6 @@ public class StandFallingSpikedObject : RaycastController,IListener
         float directionX = Mathf.Sign(velocity.x);
         float directionY = Mathf.Sign(velocity.y);
 
-        // Vertically moving platform
         if (velocity.y != 0)
         {
             float rayLength = Mathf.Abs(velocity.y) + skinWidth;
@@ -243,21 +247,16 @@ public class StandFallingSpikedObject : RaycastController,IListener
                 rayOrigin += Vector2.right * (verticalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
 
-                if (hit && hit.distance != 0)
+                if (hit && hit.distance != 0 && !movedPassengers.Contains(hit.transform))
                 {
-                    if (!movedPassengers.Contains(hit.transform))
-                    {
-                        movedPassengers.Add(hit.transform);
-                        float pushX = (directionY == 1) ? velocity.x : 0;
-                        float pushY = velocity.y - (hit.distance - skinWidth) * directionY;
-
-                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), directionY == 1, true));
-                    }
+                    movedPassengers.Add(hit.transform);
+                    float pushX = (directionY == 1) ? velocity.x : 0;
+                    float pushY = velocity.y - (hit.distance - skinWidth) * directionY;
+                    passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), directionY == 1, true));
                 }
             }
         }
 
-        // Horizontally moving platform
         if (velocity.x != 0)
         {
             float rayLength = Mathf.Abs(velocity.x) + skinWidth;
@@ -268,21 +267,16 @@ public class StandFallingSpikedObject : RaycastController,IListener
                 rayOrigin += Vector2.up * (horizontalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
 
-                if (hit && hit.distance != 0)
+                if (hit && hit.distance != 0 && !movedPassengers.Contains(hit.transform))
                 {
-                    if (!movedPassengers.Contains(hit.transform))
-                    {
-                        movedPassengers.Add(hit.transform);
-                        float pushX = velocity.x - (hit.distance - skinWidth) * directionX;
-                        float pushY = -skinWidth;
-
-                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), false, true));
-                    }
+                    movedPassengers.Add(hit.transform);
+                    float pushX = velocity.x - (hit.distance - skinWidth) * directionX;
+                    float pushY = -skinWidth;
+                    passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), false, true));
                 }
             }
         }
 
-        // Passenger on top of a horizontally or downward moving platform
         if (directionY == -1 || velocity.y == 0 && velocity.x != 0)
         {
             float rayLength = skinWidth * 2;
@@ -292,69 +286,43 @@ public class StandFallingSpikedObject : RaycastController,IListener
                 Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, passengerMask);
 
-                if (hit && hit.distance != 0)
+                if (hit && hit.distance != 0 && !movedPassengers.Contains(hit.transform))
                 {
-                    if (!movedPassengers.Contains(hit.transform))
-                    {
-                        movedPassengers.Add(hit.transform);
-                        float pushX = velocity.x;
-                        float pushY = velocity.y;
-
-                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), true, false));
-                    }
+                    movedPassengers.Add(hit.transform);
+                    passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(velocity.x, velocity.y), true, false));
                 }
             }
         }
     }
 
-    struct PassengerMovement
+    private struct PassengerMovement
     {
         public Transform transform;
         public Vector3 velocity;
         public bool standingOnPlatform;
         public bool moveBeforePlatform;
 
-        public PassengerMovement(Transform _transform, Vector3 _velocity, bool _standingOnPlatform, bool _moveBeforePlatform)
+        public PassengerMovement(Transform transform, Vector3 velocity, bool standingOnPlatform, bool moveBeforePlatform)
         {
-            transform = _transform;
-            velocity = _velocity;
-            standingOnPlatform = _standingOnPlatform;
-            moveBeforePlatform = _moveBeforePlatform;
+            this.transform = transform;
+            this.velocity = velocity;
+            this.standingOnPlatform = standingOnPlatform;
+            this.moveBeforePlatform = moveBeforePlatform;
         }
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position - Vector3.right * (detectPlayerDistanceX), transform.position + Vector3.right * (detectPlayerDistanceX));
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * (detectPlayerDistanceY));
+        Gizmos.DrawLine(transform.position - Vector3.right * detectPlayerDistanceX, transform.position + Vector3.right * detectPlayerDistanceX);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * detectPlayerDistanceY);
     }
 
-    bool isStop = false;
-    public void IPlay()
-    {
-      
-    }
-
-    public void ISuccess()
-    {
-      
-    }
-
-    public void IPause()
-    {
-      
-    }
-
-    public void IUnPause()
-    {
-       
-    }
-
-    public void IGameOver()
-    {
-        
-    }
+    public void IPlay() { }
+    public void ISuccess() { }
+    public void IPause() { }
+    public void IUnPause() { }
+    public void IGameOver() { }
 
     public void IOnRespawn()
     {

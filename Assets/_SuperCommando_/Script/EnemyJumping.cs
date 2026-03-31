@@ -1,6 +1,7 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class EnemyJumping : Enemy
 {
@@ -9,17 +10,27 @@ public class EnemyJumping : Enemy
     public bool moveRightFirst = true;
     public AudioClip jumpSound;
     Vector2 direction;
-    
+
     public float waitMin = 1;
     public float waitMax = 2;
 
+    private IAudioService audioService;
+
+    [Inject]
+    private void Construct(IAudioService audioService)
+    {
+        this.audioService = audioService;
+    }
+
     public override void Start()
     {
+        ProjectScope.Inject(this);
         base.Start();
         direction = moveRightFirst ? Vector2.right : Vector2.left;
 
         StartCoroutine(JumpCo());
     }
+
     public override void Update()
     {
         base.Update();
@@ -28,16 +39,15 @@ public class EnemyJumping : Enemy
     private void LateUpdate()
     {
         velocity.y += -gravity * Time.deltaTime;
-        
+
         controller.Move(velocity * Time.deltaTime, false);
 
         if (controller.collisions.above || controller.collisions.below)
         {
             velocity.x = 0;
             velocity.y = 0;
-           
         }
-        
+
         anim.SetBool("isGrounded", controller.collisions.below);
     }
 
@@ -45,7 +55,6 @@ public class EnemyJumping : Enemy
     {
         base.Die();
         StopAllCoroutines();
-        //Destroy(gameObject, 2);
     }
 
     public IEnumerator JumpCo()
@@ -58,17 +67,17 @@ public class EnemyJumping : Enemy
             {
                 yield return null;
             }
+
             while (!controller.collisions.below)
             {
                 yield return null;
             }
 
-
             yield return new WaitForSeconds(Random.Range(waitMin, waitMax));
         }
     }
 
-    //called by Anim
+    // called by Anim
     public void AnimJump()
     {
         if (isDead)
@@ -82,6 +91,6 @@ public class EnemyJumping : Enemy
         velocity = jumpForce;
         velocity.x *= direction.x;
 
-        SoundManager.PlaySfx(jumpSound);
+        audioService?.PlaySfx(jumpSound);
     }
 }

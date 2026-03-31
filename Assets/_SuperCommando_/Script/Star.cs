@@ -1,13 +1,31 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
+using VContainer;
 
-public class Star : MonoBehaviour {
-	float speed = 2f;
+public class Star : MonoBehaviour
+{
+    private const float Speed = 2f;
 
-	void Start(){
-	}
-	// Update is called once per frame
-	void Update () {
-		transform.position = Vector3.MoveTowards (transform.position, GameManager.Instance.Player.transform.position, speed * Time.deltaTime);
-	}
+    private IGameSessionService gameSession;
+
+    [Inject]
+    public void Construct(IGameSessionService gameSession)
+    {
+        this.gameSession = gameSession;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Update()
+    {
+        if (gameSession?.Player == null)
+            return;
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            gameSession.Player.transform.position,
+            Speed * Time.deltaTime);
+    }
 }

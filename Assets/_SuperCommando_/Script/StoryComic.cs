@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VContainer;
 
 public class StoryComic : MonoBehaviour
 {
@@ -15,13 +16,30 @@ public class StoryComic : MonoBehaviour
 
     public string nextSceneName = "MainMenu";
     public GameObject LoadingObj;
+    private ISceneLoader sceneLoader;
+    private IAudioService audioService;
+    private IGameplayPresentationService presentationService;
 
     [Header("Audio")]
     public AudioClip backgroundMusic;
     public SceneData[] sceneDatas;
+
+    [Inject]
+    public void Construct(IAudioService audioService, IGameplayPresentationService presentationService, ISceneLoader sceneLoader)
+    {
+        this.audioService = audioService;
+        this.presentationService = presentationService;
+        this.sceneLoader = sceneLoader;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
     IEnumerator Start()
     {
-        SoundManager.PlayMusic(backgroundMusic, 0.8f);
+        audioService.PlayMusic(backgroundMusic, 0.8f);
         textObj.SetActive(false);
         LoadingObj.SetActive(false);
         int numberOfScenes = sceneDatas.Length;
@@ -31,9 +49,9 @@ public class StoryComic : MonoBehaviour
         {
             textTyper.Reset(sceneDatas[i].message);
             anim.SetTrigger(animNextScene);
-            SoundManager.PlaySfx(sceneDatas[i].sound);
+            audioService.PlaySfx(sceneDatas[i].sound);
             if (sceneDatas[i].stopBackgroundMusic)
-                SoundManager.Instance.PauseMusic(true);
+                audioService.PauseMusic(true);
 
             if (sceneDatas[i].activeObj != null)
                 sceneDatas[i].activeObj.SetActive(true);
@@ -41,38 +59,20 @@ public class StoryComic : MonoBehaviour
             yield return new WaitForSeconds(sceneDatas[i].sceneLengthTime);
         }
 
-        if (BlackScreenUI.instance)
-        {
-            BlackScreenUI.instance.Show(2);
-            yield return new WaitForSeconds(2);
-        }
+        presentationService.ShowBlackScreen(2f, Color.black);
+        yield return new WaitForSeconds(2f);
 
         LoadScene();
     }
 
     void LoadScene()
     {
-        LoadingObj.SetActive(true);
-        StartCoroutine(LoadAsynchronously(nextSceneName));
+        sceneLoader.BeginLoad(this, nextSceneName, LoadingScreenViewResolver.Resolve(LoadingObj, slider, progressText));
     }
 
     [Header("LOADING PROGRESS")]
     public Slider slider;
     public Text progressText;
-    IEnumerator LoadAsynchronously(string name)
-    {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(name);
-        while (!operation.isDone)
-        {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            if (slider != null)
-                slider.value = progress;
-            if (progressText != null)
-                progressText.text = (int)progress * 100f + "%";
-            //			Debug.LogError (progress);
-            yield return null;
-        }
-    }
 
     public void Skip()
     {

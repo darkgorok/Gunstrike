@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class TornadoBullet : MonoBehaviour
 {
@@ -10,25 +9,36 @@ public class TornadoBullet : MonoBehaviour
     public float bulletSpeed = 5;
     public AudioClip sound;
 
-    public void Init(bool _TA_twoDirection, int _damagePerBullet, float _bulletSpeed)
+    private IAudioService audioService;
+
+    [Inject]
+    public void Construct(IAudioService audioService)
     {
-        TA_twoDirection = _TA_twoDirection;
-        damagePerBullet = _damagePerBullet;
-        bulletSpeed = _bulletSpeed;
+        this.audioService = audioService;
     }
 
-    // Start is called before the first frame update
-    void OnEnable()
+    private void Awake()
     {
-        float angle = 0;
-        SoundManager.PlaySfx(sound);
-        for (int i = 0; i < (TA_twoDirection?2:1); i++)
+        ProjectScope.Inject(this);
+    }
+
+    public void Init(bool taTwoDirection, int damagePerBullet, float bulletSpeed)
+    {
+        TA_twoDirection = taTwoDirection;
+        this.damagePerBullet = damagePerBullet;
+        this.bulletSpeed = bulletSpeed;
+    }
+
+    private void OnEnable()
+    {
+        audioService?.PlaySfx(sound);
+        for (int i = 0; i < (TA_twoDirection ? 2 : 1); i++)
         {
-            angle = 180 * i;
-            var _projectile = SpawnSystemHelper.GetNextObject(projectile.gameObject, false);
-            _projectile.transform.position = transform.position;
-            _projectile.GetComponent<Projectile>().Initialize(gameObject, UltiHelper.AngleToVector2(angle), Vector2.zero, false, false, damagePerBullet, bulletSpeed);
-            _projectile.SetActive(true);
+            float angle = 180 * i;
+            GameObject nextProjectile = SpawnSystemHelper.GetNextObject(projectile.gameObject, false);
+            nextProjectile.transform.position = transform.position;
+            nextProjectile.GetComponent<Projectile>().Initialize(gameObject, UltiHelper.AngleToVector2(angle), Vector2.zero, false, false, damagePerBullet, bulletSpeed);
+            nextProjectile.SetActive(true);
         }
 
         gameObject.SetActive(false);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VContainer;
 
 public class TheGate : MonoBehaviour {
 	public Transform gate;
@@ -16,11 +17,21 @@ public class TheGate : MonoBehaviour {
 	public AudioClip soundOpen, soundLocked, soundUnlock;
 	bool isOpening = false;
 	Vector3 oriGatePos;
+    private IAudioService audioService;
+    private IGameSessionService gameSession;
 
 	public FloatingTextParameter lockMessage;
 	public FloatingTextParameter unlockMessage;
 
+    [Inject]
+    public void Construct(IAudioService audioService, IGameSessionService gameSession)
+    {
+        this.audioService = audioService;
+        this.gameSession = gameSession;
+    }
+
 	void Awake(){
+        ProjectScope.Inject(this);
 		oriGatePos = gate.position;
 	}
 
@@ -42,7 +53,7 @@ public class TheGate : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds(0.1f);
-            var hit = Physics2D.CircleCast(transform.position, checkingRadius, Vector2.zero, 0, GameManager.Instance.playerLayer);
+            var hit = Physics2D.CircleCast(transform.position, checkingRadius, Vector2.zero, 0, gameSession.PlayerLayer);
             if (hit)
             {
                 buttonTrigger.SetActive(true);
@@ -51,7 +62,7 @@ public class TheGate : MonoBehaviour {
                 {
                     buttonTrigger.SetActive(false);
                     yield return new WaitForSeconds(1);
-                    SoundManager.PlaySfx(soundOpen);
+                    audioService.PlaySfx(soundOpen);
                     //open gate
                     while (true)
                     {
@@ -68,7 +79,7 @@ public class TheGate : MonoBehaviour {
 
                 while (hit)     //wait until player leave
                 {
-                    hit = Physics2D.CircleCast(transform.position, checkingRadius, Vector2.zero, 0, GameManager.Instance.playerLayer);
+                    hit = Physics2D.CircleCast(transform.position, checkingRadius, Vector2.zero, 0, gameSession.PlayerLayer);
                     yield return new WaitForSeconds(0.1f);
                 }
                 buttonTrigger.SetActive(false);
@@ -77,19 +88,19 @@ public class TheGate : MonoBehaviour {
 	}
 
 	public bool OpenGate(){
-        if (!GameManager.Instance.isHasKey && isLocked)
+        if (!gameSession.HasKey && isLocked)
         {
-            SoundManager.PlaySfx(soundLocked);
+            audioService.PlaySfx(soundLocked);
             FloatingTextManager.Instance.ShowText(lockMessage, transform.position);
             return false;
         }
-        else if (GameManager.Instance.isHasKey && isLocked)
+        else if (gameSession.HasKey && isLocked)
         {
             
-            GameManager.Instance.isHasKey = false;
+            gameSession.HasKey = false;
             isLocked = false;
             statusDoorSr.sprite = isLocked ? lockedSprite : openImage;
-            SoundManager.PlaySfx(soundUnlock);
+            audioService.PlaySfx(soundUnlock);
             FloatingTextManager.Instance.ShowText(unlockMessage, transform.position);
             return true;
         }

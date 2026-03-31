@@ -1,23 +1,37 @@
-﻿using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-public class MainMenu_World : MonoBehaviour {
-	public int worldNumber = 1;
-	public GameObject Locked;
+public class MainMenu_World : MonoBehaviour
+{
+    public int worldNumber = 1;
+    public GameObject Locked;
 
-	// Use this for initialization
-	void Start () {
-		var worldreached = PlayerPrefs.GetInt (GlobalValue.WorldReached, 1);
-		if (worldNumber <= worldreached)
-			Locked.SetActive (false);
-		else {
-			Locked.SetActive (true);
-			GetComponent<Button> ().interactable = false;
-		}
-	}
+    private IProgressService progressService;
 
-	//public void OpenWorld(){
-	//	MainMenuHomeScene.Instance.OpenWorld (worldNumber);
-	//}
+    [Inject]
+    public void Construct(IProgressService progressService)
+    {
+        this.progressService = progressService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        int worldReached = progressService.WorldReached;
+        if (worldNumber <= worldReached)
+        {
+            Locked.SetActive(false);
+        }
+        else
+        {
+            Locked.SetActive(true);
+            GetComponent<Button>().interactable = false;
+        }
+    }
 }

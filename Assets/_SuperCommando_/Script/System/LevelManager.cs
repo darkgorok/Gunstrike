@@ -1,18 +1,28 @@
-﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using VContainer;
 
-
-public class LevelManager : MonoBehaviour {
-	public static LevelManager Instance{ get; private set;}
+public class LevelManager : MonoBehaviour
+{
+    public static LevelManager Instance { get; private set; }
     public GameObject testLevelMap;
-    //public GameObject[] LevelMaps;
 
-	CameraFollow Camera;
+    private CameraFollow Camera;
+    private ILevelCatalogService levelCatalogService;
+    private IProgressService progressService;
 
-    void Awake()
+    [Inject]
+    public void Construct(ILevelCatalogService levelCatalogService, IProgressService progressService)
     {
+        this.levelCatalogService = levelCatalogService;
+        this.progressService = progressService;
+    }
+
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
         Instance = this;
 
         if (FindObjectOfType<LevelMapType>())
@@ -20,21 +30,21 @@ public class LevelManager : MonoBehaviour {
             Debug.LogError("Notice: There are a Level on this scene!");
             return;
         }
-            
+
         if (DefaultValue.Instance)
         {
-            //Instantiate(LevelMaps[GlobalValue.levelPlaying - 1], Vector2.zero, Quaternion.identity);
-            var _go = Resources.Load("LevelMap/Final Level/Level Map " + GlobalValue.levelPlaying ) as GameObject;
-            Instantiate(_go, Vector2.zero, Quaternion.identity);
+            GameObject levelMap = levelCatalogService.LoadLevelMap(progressService.LevelPlaying);
+            if (levelMap != null)
+                Instantiate(levelMap, Vector2.zero, Quaternion.identity);
         }
-        else
+        else if (testLevelMap)
         {
-            if (testLevelMap)
-                Instantiate(testLevelMap, Vector2.zero, Quaternion.identity); 
+            Instantiate(testLevelMap, Vector2.zero, Quaternion.identity);
         }
     }
 
-	void Start () {
-		Camera = FindObjectOfType<CameraFollow> ();
-	}
+    private void Start()
+    {
+        Camera = FindObjectOfType<CameraFollow>();
+    }
 }

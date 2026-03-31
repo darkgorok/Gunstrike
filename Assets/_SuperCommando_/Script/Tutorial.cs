@@ -1,32 +1,50 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-public class Tutorial : MonoBehaviour {
-	public static Tutorial Instance;
+public class Tutorial : MonoBehaviour
+{
+    public static Tutorial Instance;
 
-	public Image ImageTut;
-	public GameObject Panel;
-	public AudioClip sound;
+    public Image ImageTut;
+    public GameObject Panel;
+    public AudioClip sound;
 
-	// Use this for initialization
-	void Start () {
-		Instance = this;
+    private IGameSessionService gameSession;
+    private IAudioService audioService;
 
-		Panel.SetActive (false);
-	}
-	
-	public void Open(Sprite image){
-		GameManager.Instance.Player.velocity.x = 0;
-		SoundManager.PlaySfx (sound);
-		ImageTut.sprite = image;
-		Panel.SetActive (true);
-		Time.timeScale = 0;
-	}
+    [Inject]
+    public void Construct(IGameSessionService gameSession, IAudioService audioService)
+    {
+        this.gameSession = gameSession;
+        this.audioService = audioService;
+    }
 
-	public void Close(){
-		Panel.SetActive (false);
-		Time.timeScale = 1;
-	}
+    private void Awake()
+    {
+        ProjectScope.Inject(this);
+    }
+
+    private void Start()
+    {
+        Instance = this;
+        Panel.SetActive(false);
+    }
+
+    public void Open(Sprite image)
+    {
+        if (gameSession?.Player != null)
+            gameSession.Player.velocity.x = 0;
+
+        audioService?.PlaySfx(sound);
+        ImageTut.sprite = image;
+        Panel.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void Close()
+    {
+        Panel.SetActive(false);
+        Time.timeScale = 1;
+    }
 }

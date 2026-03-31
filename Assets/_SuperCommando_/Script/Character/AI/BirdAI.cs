@@ -20,9 +20,9 @@ public class BirdAI : EnemyAI {
 		if (!isChasing || !isPlaying)
 			base.LateUpdate ();
 		else if (isPlaying) {
-			if (Mathf.Abs (Vector3.Distance (transform.position, GameManager.Instance.Player.transform.position)) > finishDistance) {
-				transform.position = Vector3.MoveTowards (transform.position, GameManager.Instance.Player.transform.position + new Vector3(0,offsetPlayerY,0), chaseSpeed * Time.deltaTime);
-				_directionFace = transform.position.x > GameManager.Instance.Player.transform.position.x ? 1 : -1;
+			if (Mathf.Abs (Vector3.Distance (transform.position, GameSession.Player.transform.position)) > finishDistance) {
+				transform.position = Vector3.MoveTowards (transform.position, GameSession.Player.transform.position + new Vector3(0,offsetPlayerY,0), chaseSpeed * Time.deltaTime);
+				_directionFace = transform.position.x > GameSession.Player.transform.position.x ? 1 : -1;
 				transform.localScale = new Vector3 (Mathf.Abs(transform.localScale.x) * _directionFace, transform.localScale.y, transform.localScale.z);
 			}
 		}
