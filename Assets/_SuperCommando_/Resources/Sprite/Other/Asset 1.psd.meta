@@ -1,0 +1,3105 @@
+fileFormatVersion: 2
+guid: 34c64ab01d767e94c93e85f49542b069
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: question box
+  - first:
+      213: 21300002
+    second: brick box
+  - first:
+      213: 21300004
+    second: brick destroy 1
+  - first:
+      213: 21300006
+    second: brick destroy 2
+  - first:
+      213: 21300008
+    second: brick destroy 3
+  - first:
+      213: 21300010
+    second: brick destroy 4
+  - first:
+      213: 21300012
+    second: stone box
+  - first:
+      213: 21300014
+    second: metal box
+  - first:
+      213: 21300016
+    second: ice box
+  - first:
+      213: 21300018
+    second: coin 1
+  - first:
+      213: 21300020
+    second: coin 4
+  - first:
+      213: 21300022
+    second: coin 6
+  - first:
+      213: 21300024
+    second: coin 2
+  - first:
+      213: 21300026
+    second: coin 3
+  - first:
+      213: 21300028
+    second: coin 5
+  - first:
+      213: 21300030
+    second: spear head
+  - first:
+      213: 21300032
+    second: Pipe stone
+  - first:
+      213: 21300034
+    second: Wooden Head
+  - first:
+      213: 21300036
+    second: Pipe green
+  - first:
+      213: 21300038
+    second: Pipe metal
+  - first:
+      213: 21300040
+    second: key 1
+  - first:
+      213: 21300042
+    second: key 2
+  - first:
+      213: 21300044
+    second: key 3
+  - first:
+      213: 21300046
+    second: key 4
+  - first:
+      213: 21300048
+    second: key 5
+  - first:
+      213: 21300050
+    second: key 6
+  - first:
+      213: 21300052
+    second: key 7
+  - first:
+      213: 21300054
+    second: key 8
+  - first:
+      213: 21300056
+    second: key 9
+  - first:
+      213: 21300058
+    second: Moving Platform Wooden
+  - first:
+      213: 21300060
+    second: Moving Platform Metal
+  - first:
+      213: 21300062
+    second: Asset 1_11
+  - first:
+      213: 21300064
+    second: switch tick
+  - first:
+      213: 21300066
+    second: switch base
+  - first:
+      213: 21300068
+    second: Wheel
+  - first:
+      213: 21300070
+    second: Destroy Platform
+  - first:
+      213: 21300072
+    second: Destroy Platform FX 1
+  - first:
+      213: 21300074
+    second: Destroy Platform FX 2
+  - first:
+      213: 21300076
+    second: Destroy Platform FX 3
+  - first:
+      213: 21300078
+    second: Destroy Platform FX 4
+  - first:
+      213: 21300080
+    second: Destroy Platform Cracked
+  - first:
+      213: 21300082
+    second: Vase
+  - first:
+      213: 21300084
+    second: Vase FX 1
+  - first:
+      213: 21300086
+    second: Vase FX 2
+  - first:
+      213: 21300088
+    second: Vase FX 3
+  - first:
+      213: 21300090
+    second: Vase FX 4
+  - first:
+      213: 21300092
+    second: Vase FX 5
+  - first:
+      213: 21300094
+    second: metal box 2
+  - first:
+      213: 21300096
+    second: scythe
+  - first:
+      213: 21300098
+    second: Asset 1_1
+  - first:
+      213: 21300100
+    second: Asset 1_2
+  - first:
+      213: 21300102
+    second: Asset 1_3
+  - first:
+      213: 21300104
+    second: Asset 1_4
+  - first:
+      213: 21300106
+    second: Asset 1_5
+  - first:
+      213: 21300108
+    second: Asset 1_6
+  - first:
+      213: 21300110
+    second: Asset 1_7
+  - first:
+      213: 21300112
+    second: Asset 1_8
+  - first:
+      213: 21300114
+    second: Asset 1_9
+  - first:
+      213: 21300116
+    second: Asset 1_10
+  - first:
+      213: 21300118
+    second: Asset 1_12
+  - first:
+      213: 21300120
+    second: Asset 1_13
+  - first:
+      213: 21300122
+    second: Asset 1_14
+  - first:
+      213: 21300124
+    second: Asset 1_15
+  - first:
+      213: 21300126
+    second: Asset 1_16
+  - first:
+      213: 21300128
+    second: Asset 1_17
+  - first:
+      213: 21300130
+    second: Asset 1_18
+  - first:
+      213: 21300132
+    second: Asset 1_19
+  - first:
+      213: 21300134
+    second: Asset 1_20
+  - first:
+      213: 21300136
+    second: Asset 1_21
+  - first:
+      213: 21300138
+    second: Asset 1_22
+  - first:
+      213: 21300140
+    second: Asset 1_23
+  - first:
+      213: 21300142
+    second: Asset 1_24
+  - first:
+      213: 21300144
+    second: Asset 1_25
+  - first:
+      213: 21300146
+    second: Asset 1_26
+  - first:
+      213: 21300148
+    second: Asset 1_27
+  - first:
+      213: 21300150
+    second: Door
+  - first:
+      213: 21300152
+    second: Asset 1_29
+  - first:
+      213: 21300154
+    second: Asset 1_30
+  - first:
+      213: 21300156
+    second: Asset 1_31
+  - first:
+      213: 21300158
+    second: Asset 1_32
+  - first:
+      213: 21300160
+    second: Asset 1_33
+  - first:
+      213: 21300162
+    second: Asset 1_34
+  - first:
+      213: 21300164
+    second: Asset 1_35
+  - first:
+      213: 21300166
+    second: Asset 1_36
+  - first:
+      213: 21300168
+    second: Asset 1_37
+  - first:
+      213: 21300170
+    second: Asset 1_38
+  - first:
+      213: 21300172
+    second: Asset 1_39
+  - first:
+      213: 21300174
+    second: Asset 1_40
+  - first:
+      213: 21300176
+    second: Asset 1_41
+  - first:
+      213: 21300178
+    second: Asset 1_42
+  - first:
+      213: 21300180
+    second: Asset 1_43
+  - first:
+      213: 21300182
+    second: Asset 1_44
+  - first:
+      213: 21300184
+    second: Asset 1_45
+  - first:
+      213: 21300186
+    second: Asset 1_46
+  - first:
+      213: 21300188
+    second: bomb 1
+  - first:
+      213: 21300190
+    second: bomb 2
+  - first:
+      213: 21300192
+    second: Bridge
+  - first:
+      213: 21300194
+    second: Teleport base
+  - first:
+      213: 21300196
+    second: gun flame
+  - first:
+      213: 21300198
+    second: warning
+  - first:
+      213: 21300200
+    second: Dialogue
+  - first:
+      213: 21300202
+    second: chest 1
+  - first:
+      213: 21300204
+    second: chest 2
+  - first:
+      213: 21300206
+    second: hearth bottle
+  - first:
+      213: 21300208
+    second: boost bottle
+  - first:
+      213: 21300210
+    second: Asset 1_47
+  - first:
+      213: 21300212
+    second: dart 1
+  - first:
+      213: 21300214
+    second: dart 2
+  - first:
+      213: 21300216
+    second: dart 3
+  - first:
+      213: 21300218
+    second: dart 4
+  - first:
+      213: 21300220
+    second: dart icon
+  - first:
+      213: 21300222
+    second: Sign
+  - first:
+      213: 21300224
+    second: Spear
+  - first:
+      213: 21300226
+    second: Spriked long
+  - first:
+      213: 21300228
+    second: Box A
+  - first:
+      213: 21300230
+    second: Box B
+  - first:
+      213: 21300232
+    second: Platform wooden
+  - first:
+      213: 21300234
+    second: Bridge Platform
+  - first:
+      213: 21300236
+    second: broken treasure
+  - first:
+      213: 21300238
+    second: scroll
+  - first:
+      213: 21300240
+    second: Finish point
+  - first:
+      213: 21300242
+    second: Block dirt
+  - first:
+      213: 21300244
+    second: scroll UI
+  - first:
+      213: 21300246
+    second: Bridge 2
+  - first:
+      213: 21300248
+    second: Bridge Left
+  - first:
+      213: 21300250
+    second: Bridge Right
+  - first:
+      213: 21300252
+    second: scroll ui
+  - first:
+      213: 21300254
+    second: dart icon hit
+  - first:
+      213: 21300256
+    second: button play
+  - first:
+      213: 21300258
+    second: Btn Wooden
+  - first:
+      213: 21300260
+    second: Btn Play
+  - first:
+      213: 21300262
+    second: iron gate
+  - first:
+      213: 21300264
+    second: Stone
+  - first:
+      213: 21300266
+    second: Platform in-out 1
+  - first:
+      213: 21300268
+    second: Platform in-out 2
+  - first:
+      213: 21300270
+    second: Platform in-out 3
+  - first:
+      213: 21300272
+    second: trunk long
+  - first:
+      213: 21300274
+    second: trunk short
+  - first:
+      213: 21300276
+    second: Spring board 1
+  - first:
+      213: 21300278
+    second: Spring board 2
+  - first:
+      213: 21300280
+    second: Spring board 3
+  - first:
+      213: 21300282
+    second: Spiked
+  - first:
+      213: 21300284
+    second: Switch 1
+  - first:
+      213: 21300286
+    second: Switch 2
+  - first:
+      213: 21300288
+    second: Bubble
+  - first:
+      213: 21300290
+    second: Dart FX 1
+  - first:
+      213: 21300292
+    second: Dart FX 2
+  - first:
+      213: 21300294
+    second: Dart FX 3
+  - first:
+      213: 21300296
+    second: Dart FX 4
+  - first:
+      213: 21300298
+    second: Dart FX 5
+  - first:
+      213: 21300300
+    second: Dart FX 6
+  - first:
+      213: 21300302
+    second: spiked object
+  - first:
+      213: 21300304
+    second: spiked object box
+  - first:
+      213: 21300306
+    second: direction
+  - first:
+      213: 21300308
+    second: Barrel Bomb
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Asset 1_1
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 973
+        width: 104
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a7fa3550f94c5b408870469295d84ef
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_2
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 973
+        width: 51
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f42dba7af3dac6409178306a4aab9b2
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_3
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 962
+        width: 77
+        height: 58
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 302c05f14760b9f47851774889de631c
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_4
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 961
+        width: 77
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afce9338aca29724da9282b46a957062
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_5
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 961
+        width: 82
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8eb0c51c87094034fb41d0a6164d9ad2
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_6
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 968
+        width: 53
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3167a562a2cfc0a41943050a9dd53104
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_7
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 970
+        width: 133
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 936102c5667040243a88f4ddfa385c30
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_8
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 970
+        width: 72
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eded5fdac51c4b049b73640f67163b85
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 864
+        width: 51
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8852c0f62b8c2d49a559d59849f3eb0
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_10
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 943
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 040dbbbef82e3fc438d53769ec8045d6
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_11
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 937
+        width: 49
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa822b908752efb4b85928fadb877d48
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_12
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 937
+        width: 48
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f44524fed394eb429fa6fb022e8b96a
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_13
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 938
+        width: 59
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c99a3a3d72cba874bab23221530fed95
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_14
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 938
+        width: 37
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b09c46836d9b74f48a3f715707ff9289
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_15
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 884
+        width: 44
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 801f28a5622f8e7408f6abac1e8abd33
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_16
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 886
+        width: 43
+        height: 68
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9758f5d73691f784694ee4ef2b8a4b03
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_17
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 886
+        width: 38
+        height: 68
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1404af0da326d804baa66515993a72b5
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_18
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 886
+        width: 39
+        height: 68
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45781d1e639c7df43bfa2c86ceb17bbe
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_19
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 889
+        width: 41
+        height: 65
+      alignment: 9
+      pivot: {x: 0.48639512, y: 0.48712534}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a04427826083cbf47aac35e712350af7
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_20
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 887
+        width: 44
+        height: 67
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83e781ab0c549d64abbe7c5bda03f063
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_21
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 886
+        width: 37
+        height: 68
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c60a018dce4397142b0cb761f0dd940c
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_22
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 886
+        width: 39
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e07a1acb82ae45a478c4a7d1f3d4b03a
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_23
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 886
+        width: 44
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd1a1f162fd8f0b4eb0ee8aeff588e5c
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_24
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 914
+        width: 152
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24bd16c67ed3f1c49a1bce386b670c1e
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_25
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 892
+        width: 126
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 31, y: 0, z: 72, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63eb19765cf7c6c4c86fa6227de8c3fd
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_26
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 890
+        width: 152
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf17022c15c447b45b352671182d605d
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_27
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 868
+        width: 126
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ab2ec6626b77284db21f569ee3d91c8
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Door
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 599
+        width: 54
+        height: 262
+      alignment: 9
+      pivot: {x: 0.45235443, y: 0.012925009}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd90254771a8bb14089f0f3f50a24954
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_29
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 600
+        width: 64
+        height: 261
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 29, y: 34, z: 30, w: 51}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75f1120a21813ad4e82a6bac43bf34d6
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_30
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 825
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3790ea1c04929a14fb2132f1e7987285
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_31
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 733
+        width: 52
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f20d48fdffa0ae4ebb16a6f85fad307
+      internalID: 21300156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_32
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 704
+        width: 35
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63ee12642214bf94aacead7bb434dc5d
+      internalID: 21300158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_33
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 672
+        width: 27
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0258375c58371240bde26d672d6f443
+      internalID: 21300160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_34
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 678
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8525b4acc3200a54a8b5bd4a87526d28
+      internalID: 21300162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_35
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 489
+        width: 9
+        height: 70
+      alignment: 9
+      pivot: {x: 0.48526934, y: 0.0094100805}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c00b9f7c13bf1514eb71e13bb82dcf42
+      internalID: 21300164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_36
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 489
+        width: 43
+        height: 22
+      alignment: 9
+      pivot: {x: 0.5000003, y: 0.010896519}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34c85b67650f027438ef30695f31f8a9
+      internalID: 21300166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_37
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 704
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 334ccd7bd1137e04599f09edaf02a31c
+      internalID: 21300168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_38
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 652
+        width: 34
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22857511a0fa5fc42b17bbcc36adef0a
+      internalID: 21300170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_39
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 946
+        width: 30
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b25649468cedaa4bbe11f7cf2b1c17c
+      internalID: 21300172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_40
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 917
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9a81777bf23d064da592dba9bd02961
+      internalID: 21300174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_41
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 916
+        width: 29
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b90633993397fe24bb69ed82ed151346
+      internalID: 21300176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_42
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 2
+        width: 169
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 68, y: 0, z: 97, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e12c07d028aefeb4d84a35a1bb5f5a0d
+      internalID: 21300178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_43
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 242
+        width: 33
+        height: 201
+      alignment: 9
+      pivot: {x: 0.4999995, y: 0.0058511733}
+      border: {x: 0, y: 112, z: 0, w: 88}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a5932f5b41f52c439aa2cb58c122fc7
+      internalID: 21300180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_44
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 446
+        width: 33
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fac1996af06737a4481bba167d31364a
+      internalID: 21300182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_45
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 110
+        width: 129
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7aa817d82371812428ed075f16f7a787
+      internalID: 21300184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_46
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 3
+        width: 129
+        height: 101
+      alignment: 9
+      pivot: {x: 0.49072668, y: 0.8202441}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7204ef7a7c65b54abdf3cfd2d4fd638
+      internalID: 21300186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bomb 1
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 976
+        width: 32
+        height: 47
+      alignment: 9
+      pivot: {x: 0.5076313, y: 0.3425098}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ba4ce464d31f7045a17cc99111c21f7
+      internalID: 21300188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bomb 2
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 976
+        width: 32
+        height: 48
+      alignment: 9
+      pivot: {x: 0.5041599, y: 0.33076224}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 943203657fae4f649996e19c8feea429
+      internalID: 21300190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 861
+        width: 64
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83d336fd030962742b659a4a19dd1a5a
+      internalID: 21300192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teleport base
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 986
+        width: 105
+        height: 31
+      alignment: 9
+      pivot: {x: 0.50400275, y: 0.40830943}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7790e66af90dd5d45a268b667d7d725e
+      internalID: 21300194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: gun flame
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 912
+        width: 39
+        height: 57
+      alignment: 9
+      pivot: {x: 0.008455717, y: 0.50622773}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 233afdf2deb908f41a0dd1ecba9ddc97
+      internalID: 21300196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warning
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 939
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00b4cbeef7967da4a9f3cf0ffd93f0e4
+      internalID: 21300198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dialogue
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 890
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 10, y: 10, z: 10, w: 10}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 486feb4b9254d354285ada4aa61c8657
+      internalID: 21300200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chest 1
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 575
+        width: 67
+        height: 63
+      alignment: 9
+      pivot: {x: 0.49387088, y: 0.028207816}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: daad40bdff5855741bbff7bfda89e5dd
+      internalID: 21300202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chest 2
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 575
+        width: 67
+        height: 91
+      alignment: 9
+      pivot: {x: 0.4969359, y: 0.024202589}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91e1c6a8e6d4d834b8015dd5a35be876
+      internalID: 21300204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hearth bottle
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 918
+        width: 46
+        height: 58
+      alignment: 9
+      pivot: {x: 0.50966215, y: 0.31418696}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ea9dcb7080826e40a09dc55dbb856de
+      internalID: 21300206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: boost bottle
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 919
+        width: 46
+        height: 58
+      alignment: 9
+      pivot: {x: 0.50966215, y: 0.31418696}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a7689cf62d82d34da4e5049be43b704
+      internalID: 21300208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asset 1_47
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 973
+        width: 51
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ad2672c67440e649a25b82506916818
+      internalID: 21300210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart 1
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 993
+        width: 33
+        height: 31
+      alignment: 9
+      pivot: {x: 0.5057817, y: 0.30310255}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e6d759828ceeb14eaa4f1ccafb7f1ce
+      internalID: 21300212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart 2
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 993
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b4d204ef2d8e084d9a169926a29fa4a
+      internalID: 21300214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart 3
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 960
+        width: 29
+        height: 28
+      alignment: 9
+      pivot: {x: 0.49342504, y: 0.4318804}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 925ca6aa99da1484da40f870b8b5c2d9
+      internalID: 21300216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart 4
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 962
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c0846b369baa25409f24f5b3e4e2c49
+      internalID: 21300218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart icon
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 873
+        width: 40
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5000016, y: 0.48949552}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4567d9625351bf46bd51070c215efda
+      internalID: 21300220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sign
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 824
+        width: 79
+        height: 82
+      alignment: 9
+      pivot: {x: 0.49854752, y: 0.3744626}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8149888c8e6b7ae45ac01998842b3339
+      internalID: 21300222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scythe
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 243
+        width: 77
+        height: 229
+      alignment: 9
+      pivot: {x: 0.04677562, y: 0.024156995}
+      border: {x: 0, y: 12, z: 0, w: 57}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ac99dbf8001688408dc0f08f0d2e389
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 47
+        width: 13
+        height: 203
+      alignment: 9
+      pivot: {x: 0.4938906, y: 0.9908461}
+      border: {x: 0, y: 15, z: 0, w: 57}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 675cd36c1dd164541b5902fc8c9d4398
+      internalID: 21300224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spriked long
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 8
+        width: 171
+        height: 77
+      alignment: 9
+      pivot: {x: 0.4903156, y: 0.08600287}
+      border: {x: 28, y: 0, z: 27, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83d8d97db1cb2e949ae992bbcf4b2d60
+      internalID: 21300226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Box A
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 808
+        width: 72
+        height: 73
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d9bf517ed935dd45a037633d9d32269
+      internalID: 21300228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Box B
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 809
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cc79689b9fef8c4f85573b46a5ee142
+      internalID: 21300230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform wooden
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 809
+        width: 172
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 89, y: 33, z: 81, w: 27}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb15e3bdd33c4b448853b7ad13b20ab2
+      internalID: 21300232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge Platform
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 11
+        width: 195
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 64, y: 0, z: 60, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d15bb10ef274454c94e231945dc79db
+      internalID: 21300234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: broken treasure
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 787
+        width: 68
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b033091911313948ad4379037398f8d
+      internalID: 21300236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scroll
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 729
+        width: 88
+        height: 86
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8cb48483802c98644b76b2ca905e2071
+      internalID: 21300238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Finish point
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 575
+        width: 68
+        height: 113
+      alignment: 9
+      pivot: {x: 0.5, y: 0.020676333}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3d91a82dfcd136449288cd3bd12bee6
+      internalID: 21300240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Block dirt
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 524
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d43a33f222e6354799cb834f44328d8
+      internalID: 21300242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scroll UI
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 859
+        width: 60
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cee51c7124f204c4a9b0d0e4e969ce47
+      internalID: 21300244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge 2
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 57
+        width: 195
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 71, y: 0, z: 69, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eea60345d27f6bb46b4a81914927198b
+      internalID: 21300246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge Left
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 57
+        width: 126
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 71, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d300977491a6abe46bc734d8baecdace
+      internalID: 21300248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge Right
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 57
+        width: 124
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 69, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c54beb65ad7fc2c49ae27b1498812e4a
+      internalID: 21300250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: scroll ui
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 706
+        width: 176
+        height: 176
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 089ed3b7f0fa5be48a4df8f1aea06e79
+      internalID: 21300252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dart icon hit
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 825
+        width: 40
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5000016, y: 0.48949552}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00e103197c223034eab1fe866bb06cb0
+      internalID: 21300254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: button play
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 388
+        width: 169
+        height: 167
+      alignment: 9
+      pivot: {x: 0.4876382, y: 0.5275219}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70ab949fd92819d44bcccd5ba4709835
+      internalID: 21300256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Btn Wooden
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 188
+        width: 258
+        height: 259
+      alignment: 9
+      pivot: {x: 0.49999952, y: 0.5204119}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dec8775289449be47b130c5bfd956bfa
+      internalID: 21300258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Btn Play
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 732
+        width: 70
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e598e031cdf69864a98f19a4256cef80
+      internalID: 21300260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iron gate
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 690
+        width: 71
+        height: 112
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 78, z: 0, w: 2}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2fb6831ad3002348bc949f7058fea30
+      internalID: 21300262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stone
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 692
+        width: 107
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 115bc0455ef9b5140956651b8925b6e0
+      internalID: 21300264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform in-out 1
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 134
+        width: 118
+        height: 46
+      alignment: 9
+      pivot: {x: 0.48663175, y: 0.5457249}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d92d3e6c87445594083b996c1feb809a
+      internalID: 21300266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform in-out 2
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 142
+        width: 109
+        height: 39
+      alignment: 9
+      pivot: {x: 0.509648, y: 0.48651984}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99844a522ebe7124987c9ee448195281
+      internalID: 21300268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform in-out 3
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 142
+        width: 105
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf9a18680079c314d8a406c9da91d274
+      internalID: 21300270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trunk long
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 55
+        width: 90
+        height: 207
+      alignment: 9
+      pivot: {x: 0.3635771, y: 0.04953939}
+      border: {x: 0, y: 113, z: 0, w: 52}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ded874238ef39f44ebe7040a3baca9c3
+      internalID: 21300272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trunk short
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 101
+        width: 68
+        height: 100
+      alignment: 9
+      pivot: {x: 0.5091324, y: 0.09013977}
+      border: {x: 0, y: 44, z: 0, w: 47}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64eafb46b5322c248ad94e178b830df5
+      internalID: 21300274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring board 1
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 198
+        width: 72
+        height: 29
+      alignment: 9
+      pivot: {x: 0.49985844, y: 0.11349592}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8634af5707d825e44b2087b9d57b24df
+      internalID: 21300276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring board 2
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 197
+        width: 76
+        height: 42
+      alignment: 9
+      pivot: {x: 0.48165974, y: 0.107336864}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c85b2066b7251d841bbc6f389a35c885
+      internalID: 21300278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring board 3
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 198
+        width: 73
+        height: 62
+      alignment: 9
+      pivot: {x: 0.49389815, y: 0.04725967}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 292fac077f77ea149a7f52fdb9acdfe3
+      internalID: 21300280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spiked
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 272
+        width: 23
+        height: 35
+      alignment: 9
+      pivot: {x: 0.5240146, y: 0}
+      border: {x: 0, y: 2, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f693befcca42384492977f48a47d922
+      internalID: 21300282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Switch 1
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 271
+        width: 87
+        height: 33
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15231323}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 471d19ddc9860f74e8e78f043fd0bd71
+      internalID: 21300284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Switch 2
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 271
+        width: 87
+        height: 26
+      alignment: 9
+      pivot: {x: 0.5, y: 0.18990032}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45610fd57dc5efc4f9b5f8dc52d1739a
+      internalID: 21300286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 727
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68b7aeb91db09ca44a0875042ea1b23f
+      internalID: 21300288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 1
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1cad9de0dd59c94aa19c8ac6888fab8
+      internalID: 21300290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 2
+      rect:
+        serializedVersion: 2
+        x: 777
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 620e88e2c947b664fa346779ac46f19b
+      internalID: 21300292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 3
+      rect:
+        serializedVersion: 2
+        x: 818
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 303b1785fccf1344c84229c9a4b6d4f5
+      internalID: 21300294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 4
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 022e079989348c04aa5d5203b7824b21
+      internalID: 21300296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 5
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a355d85249e1e6e499121e3058d66001
+      internalID: 21300298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dart FX 6
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 656
+        width: 39
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e9b0e804e848b448811a43348d854a8
+      internalID: 21300300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spiked object
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 529
+        width: 186
+        height: 103
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecb957ab24330c8499be39607badeb63
+      internalID: 21300302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spiked object box
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 542
+        width: 105
+        height: 99
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 45, y: 40, z: 43, w: 40}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b3fe6e7d2ed43c4596ffc824a893f8a
+      internalID: 21300304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: direction
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 574
+        width: 80
+        height: 85
+      alignment: 9
+      pivot: {x: 0.40518838, y: 0.053827263}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 943c7f545ca47e542a5f7403584198e5
+      internalID: 21300306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barrel Bomb
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 658
+        width: 62
+        height: 71
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 603c87340e6360d48b5afcacc530026e
+      internalID: 21300308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 3c0a30c0b34d04e4e8f33f51fcb0b3e6
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Asset 1_1: 21300098
+      Asset 1_10: 21300116
+      Asset 1_11: 21300062
+      Asset 1_12: 21300118
+      Asset 1_13: 21300120
+      Asset 1_14: 21300122
+      Asset 1_15: 21300124
+      Asset 1_16: 21300126
+      Asset 1_17: 21300128
+      Asset 1_18: 21300130
+      Asset 1_19: 21300132
+      Asset 1_2: 21300100
+      Asset 1_20: 21300134
+      Asset 1_21: 21300136
+      Asset 1_22: 21300138
+      Asset 1_23: 21300140
+      Asset 1_24: 21300142
+      Asset 1_25: 21300144
+      Asset 1_26: 21300146
+      Asset 1_27: 21300148
+      Asset 1_29: 21300152
+      Asset 1_3: 21300102
+      Asset 1_30: 21300154
+      Asset 1_31: 21300156
+      Asset 1_32: 21300158
+      Asset 1_33: 21300160
+      Asset 1_34: 21300162
+      Asset 1_35: 21300164
+      Asset 1_36: 21300166
+      Asset 1_37: 21300168
+      Asset 1_38: 21300170
+      Asset 1_39: 21300172
+      Asset 1_4: 21300104
+      Asset 1_40: 21300174
+      Asset 1_41: 21300176
+      Asset 1_42: 21300178
+      Asset 1_43: 21300180
+      Asset 1_44: 21300182
+      Asset 1_45: 21300184
+      Asset 1_46: 21300186
+      Asset 1_47: 21300210
+      Asset 1_5: 21300106
+      Asset 1_6: 21300108
+      Asset 1_7: 21300110
+      Asset 1_8: 21300112
+      Asset 1_9: 21300114
+      Barrel Bomb: 21300308
+      Block dirt: 21300242
+      Box A: 21300228
+      Box B: 21300230
+      Bridge: 21300192
+      Bridge 2: 21300246
+      Bridge Left: 21300248
+      Bridge Platform: 21300234
+      Bridge Right: 21300250
+      Btn Play: 21300260
+      Btn Wooden: 21300258
+      Bubble: 21300288
+      Dart FX 1: 21300290
+      Dart FX 2: 21300292
+      Dart FX 3: 21300294
+      Dart FX 4: 21300296
+      Dart FX 5: 21300298
+      Dart FX 6: 21300300
+      Dialogue: 21300200
+      Door: 21300150
+      Finish point: 21300240
+      Platform in-out 1: 21300266
+      Platform in-out 2: 21300268
+      Platform in-out 3: 21300270
+      Platform wooden: 21300232
+      Sign: 21300222
+      Spear: 21300224
+      Spiked: 21300282
+      Spriked long: 21300226
+      Spring board 1: 21300276
+      Spring board 2: 21300278
+      Spring board 3: 21300280
+      Stone: 21300264
+      Switch 1: 21300284
+      Switch 2: 21300286
+      Teleport base: 21300194
+      bomb 1: 21300188
+      bomb 2: 21300190
+      boost bottle: 21300208
+      broken treasure: 21300236
+      button play: 21300256
+      chest 1: 21300202
+      chest 2: 21300204
+      dart 1: 21300212
+      dart 2: 21300214
+      dart 3: 21300216
+      dart 4: 21300218
+      dart icon: 21300220
+      dart icon hit: 21300254
+      direction: 21300306
+      gun flame: 21300196
+      hearth bottle: 21300206
+      iron gate: 21300262
+      scroll: 21300238
+      scroll UI: 21300244
+      scroll ui: 21300252
+      scythe: 21300096
+      spiked object: 21300302
+      spiked object box: 21300304
+      trunk long: 21300272
+      trunk short: 21300274
+      warning: 21300198
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

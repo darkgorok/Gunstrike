@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: '[BOSS] Caveman'
+  m_Controller: {fileID: 9100000, guid: f998ea5a4a94e434c9c884711729d512, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 6e317d304e1149a4b982b4b6704e8091, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ea465147ae7b2407aa0a8e0bcc5a578f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ae276b762de9a4986a080d9d7d011c5c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cbcba2a0594214600ba00f497b44ee7f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 103a328cea93645288a2d23f4c1213dd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 39754b5919c1249238f29bcbfd10f39c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 59dac633fdcae45a18f8f25eadc158b3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: fc2469523d6074267a79b978703b761d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: eaeb65302a4271246a198923c60a70ea, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ea465147ae7b2407aa0a8e0bcc5a578f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e3292b2d59467024a950a040a19941c1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 03b5576fee1674a9d9f7406018dd98a8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: f0e3527cc7aa64f44b6afac9d3ec1fc7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: db4ce545d7ba1415cb4d116b719f2f80, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 46342ac64d66c7b4295910be2fca58c7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: fc2469523d6074267a79b978703b761d, type: 2}

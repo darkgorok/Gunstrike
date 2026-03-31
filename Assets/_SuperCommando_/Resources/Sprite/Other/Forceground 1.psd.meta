@@ -1,0 +1,2010 @@
+fileFormatVersion: 2
+guid: 4b52b1453f5a93346bab1cf2633f3049
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: small ground
+  - first:
+      213: 21300002
+    second: DoorOpen
+  - first:
+      213: 21300004
+    second: DoorClosed
+  - first:
+      213: 21300006
+    second: Comic Talk
+  - first:
+      213: 21300008
+    second: Locked
+  - first:
+      213: 21300010
+    second: EntryDoor
+  - first:
+      213: 21300012
+    second: Foreground_13
+  - first:
+      213: 21300014
+    second: Moving Platform
+  - first:
+      213: 21300016
+    second: Rock and Grass
+  - first:
+      213: 21300018
+    second: Hidden
+  - first:
+      213: 21300020
+    second: Talk
+  - first:
+      213: 21300022
+    second: Spy
+  - first:
+      213: 21300024
+    second: Cancel
+  - first:
+      213: 21300026
+    second: Miner-on
+  - first:
+      213: 21300028
+    second: Miner-off
+  - first:
+      213: 21300030
+    second: Key
+  - first:
+      213: 21300032
+    second: Bubble
+  - first:
+      213: 21300034
+    second: Box
+  - first:
+      213: 21300036
+    second: Foreground_1
+  - first:
+      213: 21300038
+    second: Pipe
+  - first:
+      213: 21300040
+    second: Saw
+  - first:
+      213: 21300042
+    second: Saw Base
+  - first:
+      213: 21300044
+    second: Spike 2
+  - first:
+      213: 21300046
+    second: Platform 2
+  - first:
+      213: 21300048
+    second: Platform Off
+  - first:
+      213: 21300050
+    second: Platform On
+  - first:
+      213: 21300052
+    second: Spiked 1
+  - first:
+      213: 21300054
+    second: Spiked Base
+  - first:
+      213: 21300056
+    second: Spiked Alone
+  - first:
+      213: 21300058
+    second: Skull Off
+  - first:
+      213: 21300060
+    second: Skull On
+  - first:
+      213: 21300062
+    second: Go
+  - first:
+      213: 21300064
+    second: Arrow
+  - first:
+      213: 21300066
+    second: Laser base
+  - first:
+      213: 21300068
+    second: Teleport Base
+  - first:
+      213: 21300070
+    second: Platform Base
+  - first:
+      213: 21300072
+    second: Moving Platform 2
+  - first:
+      213: 21300074
+    second: Controller On
+  - first:
+      213: 21300076
+    second: Controller Off
+  - first:
+      213: 21300078
+    second: Box 2
+  - first:
+      213: 21300080
+    second: Barel 1
+  - first:
+      213: 21300082
+    second: Barel 2
+  - first:
+      213: 21300084
+    second: Trap Head
+  - first:
+      213: 21300086
+    second: Trap base
+  - first:
+      213: 21300088
+    second: Foreground_2
+  - first:
+      213: 21300090
+    second: Foreground_3
+  - first:
+      213: 21300092
+    second: Foreground_4
+  - first:
+      213: 21300094
+    second: Foreground_5
+  - first:
+      213: 21300096
+    second: Ray track
+  - first:
+      213: 21300098
+    second: Door Open
+  - first:
+      213: 21300100
+    second: Door Closed
+  - first:
+      213: 21300102
+    second: Foreground_9
+  - first:
+      213: 21300104
+    second: Foreground_10
+  - first:
+      213: 21300106
+    second: Foreground_11
+  - first:
+      213: 21300108
+    second: Barel Explosion 2
+  - first:
+      213: 21300110
+    second: Barel Nuclear
+  - first:
+      213: 21300112
+    second: Foreground_15
+  - first:
+      213: 21300114
+    second: Barel Posion 2
+  - first:
+      213: 21300116
+    second: Barel Explosion
+  - first:
+      213: 21300118
+    second: Barel Posion
+  - first:
+      213: 21300120
+    second: Barel Frezze
+  - first:
+      213: 21300122
+    second: Foreground_20
+  - first:
+      213: 21300124
+    second: FrameDoor
+  - first:
+      213: 21300126
+    second: Saw 2
+  - first:
+      213: 21300128
+    second: Ray track car
+  - first:
+      213: 21300130
+    second: Control base
+  - first:
+      213: 21300132
+    second: Control stick
+  - first:
+      213: 21300134
+    second: Ray track car 2
+  - first:
+      213: 21300136
+    second: Rope
+  - first:
+      213: 21300138
+    second: Fire Ball
+  - first:
+      213: 21300140
+    second: Spring 3
+  - first:
+      213: 21300142
+    second: Spring 2
+  - first:
+      213: 21300144
+    second: Spring 1
+  - first:
+      213: 21300146
+    second: Spear
+  - first:
+      213: 21300148
+    second: Warning
+  - first:
+      213: 21300150
+    second: Mine bomb
+  - first:
+      213: 21300152
+    second: Bonfire wood
+  - first:
+      213: 21300154
+    second: Marker
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: small ground
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 100
+        height: 9
+      alignment: 9
+      pivot: {x: 0.50000006, y: 0.011164106}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4402034d94741544091952f685b3c9d1
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Comic Talk
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 4
+        width: 151
+        height: 121
+      alignment: 9
+      pivot: {x: 0.35682142, y: 0.08719317}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f91374475db49ff4ca5564938a6e1392
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Locked
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 7
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0fe959102d9401142946302e694e30c2
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EntryDoor
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 7
+        width: 66
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84a3cbe457b5edc44a59e64b01dd7ca7
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_13
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 9
+        width: 32
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff666a29f792bf14e9b9798d03a36640
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Moving Platform
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 19
+        width: 176
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 38, y: 0, z: 40, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf64cc7dba7b42b45a01f5cfd29e4967
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rock and Grass
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 239
+        width: 270
+        height: 136
+      alignment: 9
+      pivot: {x: 0.52332944, y: 0.08672075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6c71d9d5f97469498fe54ac504055dd
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hidden
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 90
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43c9f713e66dd3745b3e09d31f6cfa57
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Talk
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 50
+        width: 89
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1a9af1b73efe4b4791d945c443a1a2f
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spy
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 88
+        width: 78
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1baf323bdf7bc54f90206f3179499ac
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cancel
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 52
+        width: 74
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3573f2763a4a7ba4caec57edfd57e64c
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Miner-on
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 235
+        width: 110
+        height: 43
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15006734}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9bdede828a7a037459f70168639e61a7
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Miner-off
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 282
+        width: 110
+        height: 43
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15006734}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86998af78d850e2429f7296300586060
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Key
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 129
+        width: 84
+        height: 42
+      alignment: 9
+      pivot: {x: 0.5529198, y: 0.47883242}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f77e8e630d98e049a209512fbde778b
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bubble
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 179
+        width: 96
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6920fe9ac8055a43970cb8587c214f2
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Box
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 134
+        width: 147
+        height: 141
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff84347c4f8c04446bb3f16e283e9639
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_1
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 283
+        width: 129
+        height: 87
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfddecd880e151745894ff388a2026aa
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pipe
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 285
+        width: 163
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 27, y: 12, z: 28, w: 12}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d605f2ec29d37d842bfd178fdc7a9454
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Saw
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 376
+        width: 145
+        height: 147
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f26666043773f8943a502dddce871286
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Saw Base
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 535
+        width: 143
+        height: 94
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffc3c425740850645864b99b33fc02bc
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spike 2
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 734
+        width: 130
+        height: 40
+      alignment: 9
+      pivot: {x: 0.5041497, y: 0.16391754}
+      border: {x: 13, y: 11, z: 13, w: 28}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34786c8e11aad334a831724c231c4ff9
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform 2
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 695
+        width: 131
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 63, y: 10, z: 63, w: 10}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c30bbf369965d7c478aa9430419bee91
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform Off
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 664
+        width: 131
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce7f1718bd53ae94d81697f94b409972
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform On
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 634
+        width: 131
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 478c33430464f544d8c607f3d5a96616
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spiked 1
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 229
+        width: 211
+        height: 99
+      alignment: 9
+      pivot: {x: 0.5, y: 0.08887982}
+      border: {x: 33, y: 20, z: 34, w: 75}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f346470a9d262404885ff806db7566e5
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spiked Base
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 330
+        width: 211
+        height: 19
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 20, y: 0, z: 21, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0056c2bdb17283e469bf5a3dfb4730ab
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spiked Alone
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 249
+        width: 183
+        height: 77
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 17, y: 7, z: 21, w: 63}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f074ec9b79478164792c205e2690c166
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skull Off
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 400
+        width: 79
+        height: 81
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b680f82e826554f488d9896c1b8f29da
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skull On
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 315
+        width: 79
+        height: 81
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da194aff3540d574ea523a030c94dd93
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Go
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 921
+        width: 146
+        height: 103
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6648a5ddea121f549ab6c22abc270847
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Arrow
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 836
+        width: 151
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46895afebc97310488f8ee32387c73e1
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Laser base
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 315
+        width: 68
+        height: 48
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b038b61302c918e42a828092113b85a0
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Teleport Base
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 371
+        width: 169
+        height: 47
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4979891}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44f163310f7773840be3e21105fc60b1
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platform Base
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 957
+        width: 515
+        height: 63
+      alignment: 9
+      pivot: {x: 0.5, y: 0.54631793}
+      border: {x: 28, y: 32, z: 28, w: 25}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5262f3a2b9c3d24abd191bf1036dc2b
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Moving Platform 2
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 865
+        width: 131
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1e70d7e02453354ab495e1491551d9a
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Controller On
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 764
+        width: 37
+        height: 129
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76b542704627b1849bd09bbd6d4e1ba8
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Controller Off
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 764
+        width: 37
+        height: 129
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98c9c1ef69c7fdb45bd8968b69bf149b
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Box 2
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 771
+        width: 89
+        height: 89
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73cb11b9c52e7d946a905a1ab82cebe3
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Trap Head
+      rect:
+        serializedVersion: 2
+        x: 790
+        y: 397
+        width: 229
+        height: 169
+      alignment: 9
+      pivot: {x: 0.5, y: 0.205}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f8c41955e627104c8f65f2a6ce1ef78
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Trap base
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 574
+        width: 163
+        height: 37
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42a77bf20a5a5654787aa0776fe18e55
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_2
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 952
+        width: 239
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33618af5356ff4149b4e3eb108ef6ed7
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_3
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 966
+        width: 78
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 727e9c89bd3bf4142884463108b5ef2b
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_4
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 891
+        width: 67
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aedbff2b0219b7d48a44f606cd3e04d4
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_5
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 903
+        width: 75
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd3020432310df84e8905b3053b0b9e2
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Door Closed
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 653
+        width: 136
+        height: 227
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f13017f99a2f344e9d78bfdae4c05e3
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_9
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 710
+        width: 77
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 044a3d2eaf85e1b44878a1db85a70cb5
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_10
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 617
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e671f60e74743a45ad39ebecf3f8b57
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_11
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 654
+        width: 77
+        height: 45
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b416774a431e00a44a25677cee51dd73
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barel Explosion 2
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 509
+        width: 88
+        height: 127
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09faebf73c6ae844bb9e3886afc2c8a3
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barel Posion 2
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 510
+        width: 88
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a60a2422703a0d84693b739ad4d755c5
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barel Explosion
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 353
+        width: 88
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c3f0a636756f024eaebed31ed1d72ba
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barel Posion
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 352
+        width: 88
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7d92d30341ae2f4fb97d8165845e34a
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Barel Frezze
+      rect:
+        serializedVersion: 2
+        x: 617
+        y: 353
+        width: 88
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 320afbd2fb392344dadd3416a942548d
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Foreground_20
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 224
+        width: 8
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68736f13564280442b5d03e79ba50cb8
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Saw 2
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 426
+        width: 167
+        height: 169
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00eae8698a7351d4fab23e72386f67cb
+      internalID: 21300126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Door Open
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 653
+        width: 136
+        height: 227
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb8ec4dd5d0fbcc46ac1fc56b318a27d
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ray track
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 652
+        width: 344
+        height: 53
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
+      border: {x: 109, y: 21, z: 109, w: 28}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e7343fe1806fb74f8f59a3c8bbdc83a
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ray track car
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 705
+        width: 113
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 42, y: 0, z: 42, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34ecd8ea34af6ce428c8d45c774359dd
+      internalID: 21300128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Control base
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 715
+        width: 38
+        height: 21
+      alignment: 9
+      pivot: {x: 0.5106731, y: 0.12661597}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5b8f5983bbd2294e92efd6e3d0c4d7e
+      internalID: 21300130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Control stick
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 716
+        width: 8
+        height: 60
+      alignment: 9
+      pivot: {x: 0.42817307, y: 0.0035817465}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ced0b2d528eee694093042fbff255600
+      internalID: 21300132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ray track car 2
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 754
+        width: 200
+        height: 113
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a253f5264c5f8a941aeff2fbaddf2903
+      internalID: 21300134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rope
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 714
+        width: 152
+        height: 14
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 19, y: 0, z: 18, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 015060a0c1d624f45a19e73132120a7f
+      internalID: 21300136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Ball
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 154
+        width: 84
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1022ace54b83b3942b42db8ab0a75a51
+      internalID: 21300138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring 3
+      rect:
+        serializedVersion: 2
+        x: 925
+        y: 3
+        width: 95
+        height: 126
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3592f9c3fde7a9644a2340e960162aac
+      internalID: 21300140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring 2
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 3
+        width: 97
+        height: 96
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8ee0cf3b85559649aa9189b08ef577e
+      internalID: 21300142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spring 1
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 4
+        width: 97
+        height: 74
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 843a7daad54fd3e4783d6fb3dfe17312
+      internalID: 21300144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 375
+        width: 14
+        height: 273
+      alignment: 9
+      pivot: {x: 0.47767857, y: 0.8496141}
+      border: {x: 0, y: 63, z: 0, w: 153}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 814bd399111600f448bc2b200a8a8324
+      internalID: 21300146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Warning
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 892
+        width: 68
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8030cbc27e4704b4794f37aff4e6e436
+      internalID: 21300148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mine bomb
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 539
+        width: 94
+        height: 96
+      alignment: 9
+      pivot: {x: 0.45837927, y: 0.47811502}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd8e01fc988487241833c1f3a5796201
+      internalID: 21300150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bonfire wood
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 93
+        width: 129
+        height: 131
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c324b379c719024ab8b0b0ad84b1bbd
+      internalID: 21300152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Marker
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 4
+        width: 61
+        height: 78
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5ef3827370e8044aaa46bda5bee367b
+      internalID: 21300154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 838abcb4d9690874fa684e0f4fc13844
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Arrow: 21300064
+      Barel Explosion: 21300116
+      Barel Explosion 2: 21300108
+      Barel Frezze: 21300120
+      Barel Posion: 21300118
+      Barel Posion 2: 21300114
+      Bonfire wood: 21300152
+      Box: 21300034
+      Box 2: 21300078
+      Bubble: 21300032
+      Cancel: 21300024
+      Comic Talk: 21300006
+      Control base: 21300130
+      Control stick: 21300132
+      Controller Off: 21300076
+      Controller On: 21300074
+      Door Closed: 21300100
+      Door Open: 21300098
+      EntryDoor: 21300010
+      Fire Ball: 21300138
+      Foreground_1: 21300036
+      Foreground_10: 21300104
+      Foreground_11: 21300106
+      Foreground_13: 21300012
+      Foreground_2: 21300088
+      Foreground_20: 21300122
+      Foreground_3: 21300090
+      Foreground_4: 21300092
+      Foreground_5: 21300094
+      Foreground_9: 21300102
+      Go: 21300062
+      Hidden: 21300018
+      Key: 21300030
+      Laser base: 21300066
+      Locked: 21300008
+      Marker: 21300154
+      Mine bomb: 21300150
+      Miner-off: 21300028
+      Miner-on: 21300026
+      Moving Platform: 21300014
+      Moving Platform 2: 21300072
+      Pipe: 21300038
+      Platform 2: 21300046
+      Platform Base: 21300070
+      Platform Off: 21300048
+      Platform On: 21300050
+      Ray track: 21300096
+      Ray track car: 21300128
+      Ray track car 2: 21300134
+      Rock and Grass: 21300016
+      Rope: 21300136
+      Saw: 21300040
+      Saw 2: 21300126
+      Saw Base: 21300042
+      Skull Off: 21300058
+      Skull On: 21300060
+      Spear: 21300146
+      Spike 2: 21300044
+      Spiked 1: 21300052
+      Spiked Alone: 21300056
+      Spiked Base: 21300054
+      Spring 1: 21300144
+      Spring 2: 21300142
+      Spring 3: 21300140
+      Spy: 21300022
+      Talk: 21300020
+      Teleport Base: 21300068
+      Trap Head: 21300084
+      Trap base: 21300086
+      Warning: 21300148
+      small ground: 21300000
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

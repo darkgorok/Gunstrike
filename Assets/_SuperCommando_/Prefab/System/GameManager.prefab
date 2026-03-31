@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &181166
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493458}
+  - component: {fileID: 11405142}
+  - component: {fileID: 11483550}
+  - component: {fileID: 7692734163795400350}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &493458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181166}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.563, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11405142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01d2700ef87d15b40b4daa0a75590fd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  continueCoinCost: 50
+  FadeInEffect: {fileID: 195662, guid: 8934df31d3546f54cb754d5cbbeb5a51, type: 3}
+  FloatingText: {fileID: 166564, guid: 8db5fc80da1e288418f7c55aae2eea25, type: 3}
+  currentCheckpoint: {x: 0, y: 0}
+  isNoLives: 0
+  hideGUI: 0
+--- !u!114 &11483550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c27426c23a9a64aa481cdb251e8976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beginSoundInMainMenu: {fileID: 8300000, guid: b6cde3bb201d0b2418b2b5879db231d6,
+    type: 3}
+  musicsMenu: {fileID: 0}
+  musicMenuVolume: 0.5
+  musicsGame: {fileID: 8300000, guid: 06b0b99aaa0e3dc498f998672a43b864, type: 3}
+  musicsGameVolume: 1
+  musicFinishPanel: {fileID: 8300000, guid: d0791dbc094e70345b48107e60efb3d1, type: 3}
+  swapGun: {fileID: 0}
+  soundPurchased: {fileID: 8300000, guid: 15136a26ec172473c8795e3358d0f864, type: 3}
+  soundUpgrade: {fileID: 0}
+  soundNotEnoughCoin: {fileID: 0}
+  soundClick: {fileID: 8300000, guid: 7320e96c1fa355d429cd961aa0b30a73, type: 3}
+  soundGamefinish: {fileID: 8300000, guid: f6ff4589c1e3b9a40b9f2f7e745726c9, type: 3}
+  soundGameover: {fileID: 8300000, guid: c34edd0d0460a9345908507f262f6f5a, type: 3}
+--- !u!114 &7692734163795400350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e718bc665d86414b8e53711c74825ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FloatingText: {fileID: 1124642983650704, guid: 80738b837bd43824f96b24d6688de4d1,
+    type: 3}

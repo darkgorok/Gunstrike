@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!95 &133604982711416383
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40521656622591865}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cb56b011d53db37469648e3631d3be7c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1001 &40521656622551153
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 114440, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_Name
+      value: '[EBULLET] fire ball'
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421434, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420768, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: Speed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420768, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: timeToLive
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420768, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: soundHitEnemy
+      value: 
+      objectReference: {fileID: 8300000, guid: 9b2db00aee5fa9b4c9a4d6979868d830, type: 3}
+    - target: {fileID: 11420768, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: soundHitNothing
+      value: 
+      objectReference: {fileID: 8300000, guid: 9b2db00aee5fa9b4c9a4d6979868d830, type: 3}
+    - target: {fileID: 21297390, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d832b9ab0e30dc549a827a08b43ac26c,
+        type: 3}
+    - target: {fileID: 21297390, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 21297390, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5030902, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+    - {fileID: 5719412365617196235, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: c4380a96669f7784d965147fece7fde5, type: 3}
+--- !u!1 &40521656622591865 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 114440, guid: c4380a96669f7784d965147fece7fde5,
+    type: 3}
+  m_PrefabInstance: {fileID: 40521656622551153}
+  m_PrefabAsset: {fileID: 0}

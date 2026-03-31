@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5752447393267425830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5752447393267425828}
+  - component: {fileID: 5752447393267425829}
+  m_Layer: 19
+  m_Name: '[TRAP] Spear Trap'
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5752447393267425828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5752447393267425830}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -76.031, y: 2.251, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5752447393267425829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5752447393267425830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0056bf63496c5e148a2ed370b266dc68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spearObj: {fileID: 6433266494390409828, guid: 4711d2f10bcd8b14e83936697bbe3317,
+    type: 3}
+  numberOfSpear: 12
+  widthOfSpear: 0.5
+  arrangeToRight: 0
+  offset: {x: 3, y: 0}
+  localWaypoints:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 1.59, z: 0}
+  speed: 10
+  delayWarning: 0.5
+  delayPerSpear: 0.1
+  sound: {fileID: 8300000, guid: 50306ad99310cc342b696d8dbc938e32, type: 3}
+  checkSize: {x: 0.29, y: 2.12}
+  checkOffset: {x: 0, y: 0.83, z: 0}

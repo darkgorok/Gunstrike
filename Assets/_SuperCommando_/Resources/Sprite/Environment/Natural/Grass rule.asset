@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
+  m_Name: Grass rule
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 21300000, guid: 72de9d0d8a11c5a46a03026f483dbd1c, type: 3}
+  m_DefaultColliderType: 0
+  m_TilingRules:
+  - m_Neighbors: 0000000000000000000000000000000000000000000000000000000000000000
+    m_Sprites:
+    - {fileID: 21300000, guid: 4cda2804b2165cd4d9f1b20c43285be4, type: 3}
+    - {fileID: 21300000, guid: db2b9f244aca85a4b84e865b374d8e90, type: 3}
+    - {fileID: 21300000, guid: d1f616b8fa5bccd42bd586212f525330, type: 3}
+    - {fileID: 21300000, guid: 4d5fd94ca7f1ad34d91e26488c0863cb, type: 3}
+    - {fileID: 21300000, guid: 7dc0e70a413c5a74c92070fc77466669, type: 3}
+    - {fileID: 21300000, guid: 381df506c3519f841bbb53373e68898e, type: 3}
+    - {fileID: 21300000, guid: 5955efbd1bd72d44fa23d2fe6f709ffd, type: 3}
+    - {fileID: 21300000, guid: 4b6552aa6a1da6945a540a030499bce2, type: 3}
+    - {fileID: 21300000, guid: c5c89a5d9334d624aadf361edba57144, type: 3}
+    - {fileID: 21300000, guid: e70c549aab702ef40ba85cd71dd5ff9a, type: 3}
+    m_AnimationSpeed: 1
+    m_PerlinScale: 0.5
+    m_RuleTransform: 0
+    m_Output: 1
+    m_ColliderType: 0
+    m_RandomTransform: 0

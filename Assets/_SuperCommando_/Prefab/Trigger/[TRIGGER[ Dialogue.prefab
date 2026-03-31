@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3920363896604129539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3920363896604129542}
+  - component: {fileID: 3920363896604129536}
+  - component: {fileID: 3920363896604129537}
+  m_Layer: 19
+  m_Name: '[TRIGGER[ Dialogue'
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &3920363896604129542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920363896604129539}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.14, y: 0.83, z: 0.1644943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3920363896604129536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920363896604129539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9944926e5b86b844a69c00326267d12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFinishLevel: 0
+  disableWhenDone: 0
+  canTalkAgain: 0
+  hideSmallFaceIcon: 0
+  givePlayerAKey: 0
+  soundDetectPlayer: {fileID: 8300000, guid: 48d05869bb6d23849853322003d3c879, type: 3}
+  dialogs:
+  - leftIcon: {fileID: 21300000, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    rightIcon: {fileID: 21300004, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    isLeftFirst: 0
+    messages: THIS IS THE SAMPLE DIALOGUE!
+    soundMessages: {fileID: 8300000, guid: db019ed97f31f064da3216e1f0d04926, type: 3}
+  - leftIcon: {fileID: 21300000, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    rightIcon: {fileID: 21300004, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    isLeftFirst: 1
+    messages: OK
+    soundMessages: {fileID: 8300000, guid: db019ed97f31f064da3216e1f0d04926, type: 3}
+  - leftIcon: {fileID: 21300000, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    rightIcon: {fileID: 21300004, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    isLeftFirst: 0
+    messages: SET THE TEXT IN THE DIALOGUE OBJECT
+    soundMessages: {fileID: 8300000, guid: db019ed97f31f064da3216e1f0d04926, type: 3}
+  - leftIcon: {fileID: 21300000, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    rightIcon: {fileID: 21300004, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    isLeftFirst: 1
+    messages: OK GOT IT!
+    soundMessages: {fileID: 8300000, guid: db019ed97f31f064da3216e1f0d04926, type: 3}
+  - leftIcon: {fileID: 21300000, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    rightIcon: {fileID: 21300004, guid: 5a0ac655a6275e84ebb641ea07a988c1, type: 3}
+    isLeftFirst: 0
+    messages: NOW IT'S TIME TO FIGHT!
+    soundMessages: {fileID: 8300000, guid: db019ed97f31f064da3216e1f0d04926, type: 3}
+  talkAgainDialogs: []
+  hideBossOnStart: 1
+  showBossEffect: {fileID: 100000, guid: 9df8d807bb5c6204188aba983be9692a, type: 3}
+  bossVisibleSound: {fileID: 0}
+  activeBoss: 1
+  bossObject: {fileID: 0}
+  changeMusic: 1
+  music: {fileID: 8300000, guid: 2d07dbdfbf831174f9db65a12e4da3f4, type: 3}
+  musicVolume: 0.8
+  limitLeftPos: 6
+  limitRightPos: 15
+  setCameraLimitMin: 1
+  setCameraLimitMax: 1
+  keyItem: {fileID: 0}
+  isTalk: 0
+  isTalking: 0
+  isTakingFinish: 0
+--- !u!61 &3920363896604129537
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920363896604129539}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 20}
+  m_EdgeRadius: 0

@@ -1,0 +1,1560 @@
+fileFormatVersion: 2
+guid: 34526790772f7b04caef58ae0dbb5ec5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: Enemy Vampire_0
+  - first:
+      213: 21300002
+    second: Enemy Vampire_1
+  - first:
+      213: 21300004
+    second: Enemy Vampire_2
+  - first:
+      213: 21300006
+    second: Enemy Vampire_3
+  - first:
+      213: 21300008
+    second: Enemy Vampire_4
+  - first:
+      213: 21300010
+    second: Enemy Vampire_5
+  - first:
+      213: 21300012
+    second: Enemy Vampire_6
+  - first:
+      213: 21300014
+    second: Enemy Vampire_7
+  - first:
+      213: 21300016
+    second: Enemy Vampire_8
+  - first:
+      213: 21300018
+    second: Enemy Vampire_9
+  - first:
+      213: 21300020
+    second: Enemy Vampire_10
+  - first:
+      213: 21300022
+    second: Enemy Vampire_11
+  - first:
+      213: 21300024
+    second: Enemy Vampire_12
+  - first:
+      213: 21300026
+    second: Enemy Vampire_13
+  - first:
+      213: 21300028
+    second: Enemy Vampire_14
+  - first:
+      213: 21300030
+    second: Enemy Vampire_15
+  - first:
+      213: 21300032
+    second: Enemy Vampire_16
+  - first:
+      213: 21300034
+    second: Enemy Vampire_17
+  - first:
+      213: 21300036
+    second: Enemy Vampire_18
+  - first:
+      213: 21300038
+    second: Enemy Vampire_19
+  - first:
+      213: 21300040
+    second: Enemy Vampire_20
+  - first:
+      213: 21300042
+    second: Enemy Vampire_21
+  - first:
+      213: 21300044
+    second: Enemy Vampire_22
+  - first:
+      213: 21300046
+    second: Enemy Vampire_23
+  - first:
+      213: 21300048
+    second: Enemy Vampire_24
+  - first:
+      213: 21300050
+    second: Enemy Vampire_25
+  - first:
+      213: 21300052
+    second: Enemy Vampire_26
+  - first:
+      213: 21300054
+    second: Enemy Vampire_27
+  - first:
+      213: 21300056
+    second: Enemy Vampire_28
+  - first:
+      213: 21300058
+    second: punch 1
+  - first:
+      213: 21300060
+    second: punch 2
+  - first:
+      213: 21300062
+    second: punch 3
+  - first:
+      213: 21300064
+    second: punch 4
+  - first:
+      213: 21300066
+    second: Enemy Vampire_33
+  - first:
+      213: 21300068
+    second: Fly attack 1
+  - first:
+      213: 21300070
+    second: Fly attack 2
+  - first:
+      213: 21300072
+    second: Fly attack 3
+  - first:
+      213: 21300074
+    second: Die 3
+  - first:
+      213: 21300076
+    second: Throw 1
+  - first:
+      213: 21300078
+    second: Throw 2
+  - first:
+      213: 21300080
+    second: Throw 3
+  - first:
+      213: 21300082
+    second: Throw 4
+  - first:
+      213: 21300084
+    second: Throw 5
+  - first:
+      213: 21300086
+    second: Enemy Vampire_29
+  - first:
+      213: 21300088
+    second: Enemy Vampire_30
+  - first:
+      213: 21300090
+    second: Enemy Vampire_31
+  - first:
+      213: 21300092
+    second: Enemy Vampire_32
+  - first:
+      213: 21300094
+    second: Enemy Vampire_34
+  - first:
+      213: 21300096
+    second: Die 1
+  - first:
+      213: 21300098
+    second: Die 2
+  - first:
+      213: 21300100
+    second: Die 4
+  - first:
+      213: 21300102
+    second: Die 5
+  - first:
+      213: 21300104
+    second: Die 6
+  - first:
+      213: 21300106
+    second: Die 7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 50
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Enemy Vampire_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 928
+        width: 68
+        height: 96
+      alignment: 9
+      pivot: {x: 0.52365994, y: 0.04357338}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 570782a0188daa54ea3ad88afc61d52b
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_1
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 929
+        width: 67
+        height: 95
+      alignment: 9
+      pivot: {x: 0.53842074, y: 0.030483527}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43db781005c983a49a6cc973577af9e4
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_2
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 928
+        width: 69
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5326436, y: 0.036869686}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e72c46a050468a4081fdbc3ce828160
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_3
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 928
+        width: 68
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5378555, y: 0.04022153}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1446ee95b263a54f95efee35de09e7b
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_4
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 928
+        width: 67
+        height: 96
+      alignment: 9
+      pivot: {x: 0.54802555, y: 0.04022153}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e04576bd9afa9341bb516da9a6b80fe
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_5
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 919
+        width: 51
+        height: 105
+      alignment: 9
+      pivot: {x: 0.51945287, y: 0.13228004}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4ceffb68ccc4e4418383c103e944d27
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_6
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 919
+        width: 53
+        height: 105
+      alignment: 9
+      pivot: {x: 0.5000006, y: 0.13164121}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd7b7befc956c874eb727e1f17154651
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_7
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 916
+        width: 49
+        height: 107
+      alignment: 9
+      pivot: {x: 0.5191239, y: 0.1510757}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b7469cf06c67e24b96a5c932399246f
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_8
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 919
+        width: 49
+        height: 105
+      alignment: 9
+      pivot: {x: 0.5286865, y: 0.12940964}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0a3b93e078d4fa41b28a129b90d246c
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_9
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 919
+        width: 51
+        height: 105
+      alignment: 9
+      pivot: {x: 0.52296835, y: 0.13387218}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b8117a98e48ee34e8ee78b840a62f3f
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_10
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 813
+        width: 71
+        height: 97
+      alignment: 9
+      pivot: {x: 0.5746826, y: 0.112973556}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0867aaaabd48b1a42b4e2bf1fd2b36c0
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_11
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 810
+        width: 150
+        height: 103
+      alignment: 9
+      pivot: {x: 0.4693636, y: 0.11325695}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b6eac9b50b9b47439b017c6a8e050d0
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_12
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 810
+        width: 99
+        height: 103
+      alignment: 9
+      pivot: {x: 0.37502652, y: 0.10982476}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a7e6675029e94b4aaae0196198e327d
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_13
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 810
+        width: 80
+        height: 103
+      alignment: 9
+      pivot: {x: 0.47348785, y: 0.12012074}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a48b6787fc72bc74e9be2ad07eb3152c
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_14
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 808
+        width: 50
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5454083, y: 0.036789577}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c845ce0ffbafb7479bb866b4ab9e34f
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_15
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 810
+        width: 50
+        height: 92
+      alignment: 9
+      pivot: {x: 0.52522707, y: 0.021936167}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb4a281c1248a66429b67be69b000a5c
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_16
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 808
+        width: 52
+        height: 94
+      alignment: 9
+      pivot: {x: 0.53881013, y: 0.042939533}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfb1258154a4fa943a96a289c3ddfb29
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_17
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 810
+        width: 53
+        height: 92
+      alignment: 9
+      pivot: {x: 0.5190395, y: 0.01370969}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b8a97625fffbb3469f4e4c29736f4c8
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_18
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 810
+        width: 49
+        height: 93
+      alignment: 9
+      pivot: {x: 0.54723376, y: 0.019909931}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f67fbe49ea808c44b41c5a11d2e74cd
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_19
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 703
+        width: 68
+        height: 97
+      alignment: 9
+      pivot: {x: 0.50429165, y: 0.021060275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ae357f483d22f04bad343bd9494e9b5
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_20
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 703
+        width: 70
+        height: 97
+      alignment: 9
+      pivot: {x: 0.50000024, y: 0.030085297}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9848f5b5e950a26498f8d95c00211d61
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_21
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 708
+        width: 72
+        height: 93
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dde9fe204fea94145a328b2e6265a95e
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_22
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 704
+        width: 71
+        height: 97
+      alignment: 9
+      pivot: {x: 0.49589002, y: 0.024068616}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 435f8057d54c1d348bbd3415f2609c6d
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_23
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 703
+        width: 73
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.01987966}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4641e459d3002a6499f0da1af9d02834
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_24
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 589
+        width: 68
+        height: 96
+      alignment: 9
+      pivot: {x: 0.48655674, y: 0.016664505}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7916a92a50302a40bf8b0e2cab68576
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_25
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 588
+        width: 70
+        height: 98
+      alignment: 9
+      pivot: {x: 0.49347067, y: 0.025652204}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aae5451d84fa62e41b99957b52fec8ef
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_26
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 592
+        width: 71
+        height: 95
+      alignment: 9
+      pivot: {x: 0.50000024, y: 0.012028423}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 973ece71fbcbb0a488155aafe8f44193
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_27
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 591
+        width: 70
+        height: 95
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29e8752ab0c03a94da0ddf3b6862768f
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_28
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 589
+        width: 70
+        height: 96
+      alignment: 9
+      pivot: {x: 0.49673548, y: 0.023806253}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38d9709f84f5cb94e97e1d6ceadd0e24
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: punch 1
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 704
+        width: 69
+        height: 93
+      alignment: 9
+      pivot: {x: 0.52003676, y: 0.027999386}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 776cfac43c1a67640921a064d91b8769
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: punch 2
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 704
+        width: 67
+        height: 93
+      alignment: 9
+      pivot: {x: 0.50515884, y: 0.024282804}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9418575b6068d114394d565d3bb76f88
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: punch 3
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 704
+        width: 82
+        height: 92
+      alignment: 9
+      pivot: {x: 0.41569778, y: 0.022868944}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e03aeed9a9937a44afc036137296df9
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: punch 4
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 704
+        width: 67
+        height: 92
+      alignment: 9
+      pivot: {x: 0.48452348, y: 0.03789686}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8574d5724d88d294fa3eafec5943fd60
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_33
+      rect:
+        serializedVersion: 2
+        x: 707
+        y: 735
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce799740c212313469b9874d622b9b33
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Throw 1
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 492
+        width: 66
+        height: 88
+      alignment: 9
+      pivot: {x: 0.5080511, y: 0.029003836}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdea456837d45e9478b192c4a6d15568
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Throw 2
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 492
+        width: 64
+        height: 89
+      alignment: 9
+      pivot: {x: 0.5705737, y: 0.031311035}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edd9665d8944121448347616d9067c7a
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Throw 3
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 492
+        width: 67
+        height: 90
+      alignment: 9
+      pivot: {x: 0.51586163, y: 0.03651835}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b01bbcb2f0af4a4a8719a0a4a077f35
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Throw 4
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 492
+        width: 66
+        height: 92
+      alignment: 9
+      pivot: {x: 0.5040251, y: 0.037930366}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d788d165fd580e47ad973cc52ede1f1
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Throw 5
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 492
+        width: 65
+        height: 90
+      alignment: 9
+      pivot: {x: 0.5286119, y: 0.033566285}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f435a82a0bcf094d98caec1ba256e25
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_29
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 593
+        width: 69
+        height: 93
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: accca7a705d9086478bc136be42a69f5
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_30
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 593
+        width: 67
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5daf8421c947f9e45a831a0cc714bb53
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_31
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 593
+        width: 82
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3dd64b74cb6a1aa4cb1d4cefbb77658d
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_32
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 593
+        width: 76
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb69c353024a8bd40a32f3f1c3e07fbc
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly attack 1
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 12
+        width: 213
+        height: 109
+      alignment: 9
+      pivot: {x: 0.75594336, y: 0.2525051}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c9b04e23216ac84684fd6a640ea1909
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly attack 2
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 11
+        width: 223
+        height: 113
+      alignment: 9
+      pivot: {x: 0.76210797, y: 0.24634512}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4882f7c8d8974c046963869da4a34f51
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly attack 3
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 11
+        width: 229
+        height: 113
+      alignment: 9
+      pivot: {x: 0.76996595, y: 0.24634512}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: effca87ecf296f544b3abf1e75f3e463
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enemy Vampire_34
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 384
+        width: 53
+        height: 98
+      alignment: 9
+      pivot: {x: 0.55513585, y: 0.041543767}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d825ab1a33be8941968650d66dbfed2
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 1
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 385
+        width: 82
+        height: 101
+      alignment: 9
+      pivot: {x: 0.50445455, y: 0.0262288}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d97337a836f9ecb4481c103b210422dc
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 2
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 385
+        width: 82
+        height: 101
+      alignment: 9
+      pivot: {x: 0.48663628, y: 0.029845284}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e274fbeb543d2340927ccd6db41244b
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 3
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 384
+        width: 76
+        height: 96
+      alignment: 9
+      pivot: {x: 0.45193762, y: 0.047212284}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e02627c33b98a243b2f614521056dfc
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 4
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 272
+        width: 71
+        height: 97
+      alignment: 9
+      pivot: {x: 0.50920296, y: 0.017245263}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c97a801c9112693478b98d372f2599a2
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 5
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 272
+        width: 74
+        height: 82
+      alignment: 9
+      pivot: {x: 0.4999999, y: 0.037836585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cd7575f14f5db14a978a9b840dd3a5d
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 6
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 265
+        width: 97
+        height: 65
+      alignment: 9
+      pivot: {x: 0.34469306, y: 0.18782583}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa4003045d49d7743a82ceac1b4d833a
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Die 7
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 265
+        width: 97
+        height: 65
+      alignment: 9
+      pivot: {x: 0.34152347, y: 0.18309608}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c27ced4841879b43aac918a19932219
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a9cb646b3d09fac4fb1c286ab3567f43
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Die 1: 21300096
+      Die 2: 21300098
+      Die 3: 21300074
+      Die 4: 21300100
+      Die 5: 21300102
+      Die 6: 21300104
+      Die 7: 21300106
+      Enemy Vampire_0: 21300000
+      Enemy Vampire_1: 21300002
+      Enemy Vampire_10: 21300020
+      Enemy Vampire_11: 21300022
+      Enemy Vampire_12: 21300024
+      Enemy Vampire_13: 21300026
+      Enemy Vampire_14: 21300028
+      Enemy Vampire_15: 21300030
+      Enemy Vampire_16: 21300032
+      Enemy Vampire_17: 21300034
+      Enemy Vampire_18: 21300036
+      Enemy Vampire_19: 21300038
+      Enemy Vampire_2: 21300004
+      Enemy Vampire_20: 21300040
+      Enemy Vampire_21: 21300042
+      Enemy Vampire_22: 21300044
+      Enemy Vampire_23: 21300046
+      Enemy Vampire_24: 21300048
+      Enemy Vampire_25: 21300050
+      Enemy Vampire_26: 21300052
+      Enemy Vampire_27: 21300054
+      Enemy Vampire_28: 21300056
+      Enemy Vampire_29: 21300086
+      Enemy Vampire_3: 21300006
+      Enemy Vampire_30: 21300088
+      Enemy Vampire_31: 21300090
+      Enemy Vampire_32: 21300092
+      Enemy Vampire_33: 21300066
+      Enemy Vampire_34: 21300094
+      Enemy Vampire_4: 21300008
+      Enemy Vampire_5: 21300010
+      Enemy Vampire_6: 21300012
+      Enemy Vampire_7: 21300014
+      Enemy Vampire_8: 21300016
+      Enemy Vampire_9: 21300018
+      Fly attack 1: 21300068
+      Fly attack 2: 21300070
+      Fly attack 3: 21300072
+      Throw 1: 21300076
+      Throw 2: 21300078
+      Throw 3: 21300080
+      Throw 4: 21300082
+      Throw 5: 21300084
+      punch 1: 21300058
+      punch 2: 21300060
+      punch 3: 21300062
+      punch 4: 21300064
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

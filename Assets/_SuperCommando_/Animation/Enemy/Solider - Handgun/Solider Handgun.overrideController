@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Solider Handgun
+  m_Controller: {fileID: 9100000, guid: 0d168db32fdff83459c861eff1781fab, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 877c43af2dbc114489b68727a6ffdcf5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a689dc3a4bd54467ea203427dfc1fadd, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ad7c1e000a9284345968a0e7d1ce2d11, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 48504db4085094f3aafddcc05ab5a1ed, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 74cf29ec853f5a24eaf69173de1419a7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 071eafa91757846c7926440436370c3c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: c3e307621cf28d24bb33f633c57ec055, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 89a9fdf97212f451b93678e23711438d, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: c913e9b607041414c9bf7d096f51310c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f13a4f7cdc9f845a9ae4e5f4aa1ee052, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: b8dd75facb213044783e0f4ec2334587, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5e8c62c95e6b74ea693587d8317f02d2, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 0d85354d2e942c74b8319a39701b004c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 48504db4085094f3aafddcc05ab5a1ed, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 5031c5d5a838349409cdeec46329b0b9, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a96ca1609f8a24e269bea4e6dde61f2f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7412aa403f1234e14ad9eee935210fbe, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9bcccb67ba6494fe3942bf577fa5358a, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 17c5a53c8b2654051ae994e09c1b81b1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4ea75bdda423c4bb5ac2f8e03de6e5f1, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 3e6afb3140dc94947ba8be545daab7ae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 23b1311edd1194f19b62be43a4f4d464, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7f143a5a80dca4028862f09608c40580, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 538a6e171a1534ddda938f666098382d, type: 2}

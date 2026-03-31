@@ -1,0 +1,1794 @@
+fileFormatVersion: 2
+guid: 4b000f86246d8df46b8f17b96f7fcab8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: MonsterSimple_0
+  - first:
+      213: 21300002
+    second: MonsterSimple_1
+  - first:
+      213: 21300004
+    second: MonsterSimple_2
+  - first:
+      213: 21300006
+    second: MonsterSimple_3
+  - first:
+      213: 21300008
+    second: MonsterSimple_4
+  - first:
+      213: 21300010
+    second: MonsterSimple_5
+  - first:
+      213: 21300012
+    second: MonsterSimple_6
+  - first:
+      213: 21300014
+    second: MonsterSimple_7
+  - first:
+      213: 21300016
+    second: MonsterSimple_8
+  - first:
+      213: 21300018
+    second: MonsterSimple_9
+  - first:
+      213: 21300020
+    second: MonsterSimple_10
+  - first:
+      213: 21300022
+    second: MonsterSimple_11
+  - first:
+      213: 21300024
+    second: MonsterSimple_12
+  - first:
+      213: 21300026
+    second: MonsterSimple_13
+  - first:
+      213: 21300028
+    second: MonsterSimple_14
+  - first:
+      213: 21300030
+    second: MonsterSimple_15
+  - first:
+      213: 21300032
+    second: MonsterSimple_16
+  - first:
+      213: 21300034
+    second: MonsterSimple_17
+  - first:
+      213: 21300036
+    second: MonsterSimple_18
+  - first:
+      213: 21300038
+    second: MonsterSimple_19
+  - first:
+      213: 21300040
+    second: MonsterSimple_20
+  - first:
+      213: 21300042
+    second: MonsterSimple_21
+  - first:
+      213: 21300044
+    second: MonsterSimple_22
+  - first:
+      213: 21300046
+    second: MonsterSimple_23
+  - first:
+      213: 21300048
+    second: Wed
+  - first:
+      213: 21300050
+    second: MonsterSimple_24
+  - first:
+      213: 21300052
+    second: MonsterSimple_25
+  - first:
+      213: 21300054
+    second: MonsterSimple_26
+  - first:
+      213: 21300056
+    second: MonsterSimple_27
+  - first:
+      213: 21300058
+    second: MonsterSimple_28
+  - first:
+      213: 21300060
+    second: MonsterSimple_29
+  - first:
+      213: 21300062
+    second: MonsterSimple_30
+  - first:
+      213: 21300064
+    second: MonsterSimple_31
+  - first:
+      213: 21300066
+    second: MonsterSimple_32
+  - first:
+      213: 21300068
+    second: MonsterSimple_33
+  - first:
+      213: 21300070
+    second: MonsterSimple_34
+  - first:
+      213: 21300072
+    second: MonsterSimple_35
+  - first:
+      213: 21300074
+    second: MonsterSimple_36
+  - first:
+      213: 21300076
+    second: MonsterSimple_37
+  - first:
+      213: 21300078
+    second: MonsterSimple_38
+  - first:
+      213: 21300080
+    second: MonsterSimple_39
+  - first:
+      213: 21300082
+    second: MonsterSimple_40
+  - first:
+      213: 21300084
+    second: MonsterSimple_41
+  - first:
+      213: 21300086
+    second: MonsterSimple_42
+  - first:
+      213: 21300088
+    second: MonsterSimple_43
+  - first:
+      213: 21300090
+    second: MonsterSimple_44
+  - first:
+      213: 21300092
+    second: MonsterSimple_45
+  - first:
+      213: 21300094
+    second: MonsterSimple_46
+  - first:
+      213: 21300096
+    second: MonsterSimple_47
+  - first:
+      213: 21300098
+    second: Fly 1
+  - first:
+      213: 21300100
+    second: Fly 2
+  - first:
+      213: 21300102
+    second: Fly 3
+  - first:
+      213: 21300104
+    second: Fly 4
+  - first:
+      213: 21300106
+    second: Fly 5
+  - first:
+      213: 21300108
+    second: Fly 6
+  - first:
+      213: 21300110
+    second: Fly 7
+  - first:
+      213: 21300112
+    second: Fly 8
+  - first:
+      213: 21300114
+    second: Fly 9
+  - first:
+      213: 21300116
+    second: Fly 10
+  - first:
+      213: 21300118
+    second: Fly 11
+  - first:
+      213: 21300120
+    second: Bird 1
+  - first:
+      213: 21300122
+    second: Bird 2
+  - first:
+      213: 21300124
+    second: Bird 3
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MonsterSimple_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 983
+        width: 62
+        height: 41
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 434b550340028404eb82e0d42f26409e
+      internalID: 21300000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_1
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 983
+        width: 62
+        height: 40
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cea2d2a49bf9e884ab551d3331245a03
+      internalID: 21300002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_2
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 983
+        width: 50
+        height: 41
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a56d39a4389b623458c16d22deaa45f7
+      internalID: 21300004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_3
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 979
+        width: 52
+        height: 45
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 172d9d2f0d01ba8489b2ac6d90a866f6
+      internalID: 21300006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 927
+        width: 62
+        height: 42
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1694324d63d8ade44868647ed60677ce
+      internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_5
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 927
+        width: 62
+        height: 40
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69353f797343cda4a8184bd54e65243a
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_6
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 927
+        width: 50
+        height: 39
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a8bc519584241346aae4df0145044c4
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 868
+        width: 62
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 952673739bf7cbe40b7155cfb4862605
+      internalID: 21300014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_8
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 868
+        width: 62
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4a34f1aa84bdd24796acaf5132db1b0
+      internalID: 21300016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_9
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 869
+        width: 53
+        height: 48
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b3cd39363f0bbd4bb965e98882a7d9d
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 810
+        width: 62
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3c2a267865bc8644965320d63d8ffdf
+      internalID: 21300020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_11
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 810
+        width: 62
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fcaf3f659225aec4baff214e9492451a
+      internalID: 21300022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_12
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 808
+        width: 53
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86de0c79597409946b1e8797015c8636
+      internalID: 21300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 750
+        width: 62
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ac3288b46649bc4fb23b54d7405ea4d
+      internalID: 21300026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_14
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 750
+        width: 62
+        height: 48
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88609b538a879284599b2784bbe80ef4
+      internalID: 21300028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_15
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 748
+        width: 53
+        height: 52
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17670901ee856f44da0d045acfa4e47a
+      internalID: 21300030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_16
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5a2358eaaa6d3742b887ffe817d5b21
+      internalID: 21300032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_17
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9db29f295041c62499dae9b6c5d893fd
+      internalID: 21300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_18
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5ef1fdadf2f5c240a073ee1efa66e7d
+      internalID: 21300036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_19
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5abc9109a010ac4ebce451a5914ed2b
+      internalID: 21300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_20
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b88560bb6592ea499872a9f8d3f1b68
+      internalID: 21300040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_21
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e5057d4657d4e64f8a3ff6af2ac6a85
+      internalID: 21300042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_22
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfa53eeaa6b76c749b3644bef193cd7e
+      internalID: 21300044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_23
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 19
+        width: 66
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a77ebc46636d01c4a9e46b899870105a
+      internalID: 21300046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Wed
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 892
+        width: 131
+        height: 131
+      alignment: 9
+      pivot: {x: 0.525478, y: 0.48592046}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4959b987765cb524d8e191f626563e5c
+      internalID: 21300048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 395
+        width: 82
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56c0c1b489ca27047a17c667425a107c
+      internalID: 21300050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_25
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 395
+        width: 80
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6c65a3c6d5ef4a4198441fa57084e70
+      internalID: 21300052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_26
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 395
+        width: 80
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9873817b54e8644e9fcb41373874af0
+      internalID: 21300054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_27
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 395
+        width: 80
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70e1ad9463429344ab66c1032e478ea9
+      internalID: 21300056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_28
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 307
+        width: 31
+        height: 6
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb235317932cdf340ae8eb8a659e9acf
+      internalID: 21300058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_29
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 307
+        width: 31
+        height: 11
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88fbea730979a8049a20caf102b09e06
+      internalID: 21300060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_30
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 307
+        width: 54
+        height: 33
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5da162ff477ca36469de75886f3a661f
+      internalID: 21300062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_31
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 307
+        width: 71
+        height: 51
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba7db4ffc3425a742b4cb32d5223c995
+      internalID: 21300064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_32
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 307
+        width: 80
+        height: 57
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48aed80d2f47cf7489053cd24ace6701
+      internalID: 21300066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_33
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 304
+        width: 80
+        height: 68
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66603526a465ece48b41be3769dd6a0a
+      internalID: 21300068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_34
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 207
+        width: 79
+        height: 66
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c21e9a05320334e4798ed35c787e951b
+      internalID: 21300070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_35
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 207
+        width: 80
+        height: 57
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08fd8fb7d7176d84e9d20b37b3134a3c
+      internalID: 21300072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_36
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 207
+        width: 72
+        height: 51
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27177651170c9594c92c276446358423
+      internalID: 21300074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_37
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 207
+        width: 54
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ad5340a52367ea46982c75c93ae3f89
+      internalID: 21300076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_38
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 207
+        width: 31
+        height: 12
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98ed2e04c8c34c643871dbf0b8f84ee4
+      internalID: 21300078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_39
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 207
+        width: 31
+        height: 7
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4386fb49616d2c0458731b84633c40e2
+      internalID: 21300080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_40
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 110
+        width: 78
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8809be0b45fba14989cbd661654fca4
+      internalID: 21300082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_41
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 110
+        width: 76
+        height: 66
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4c38dc367b9ed34a8ff386e806cba80
+      internalID: 21300084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_42
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 110
+        width: 72
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc77c5b7946659d4dbb83af6c8467c03
+      internalID: 21300086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_43
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 110
+        width: 71
+        height: 74
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25c933b04e03efd4cb418a2c9e909841
+      internalID: 21300088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_44
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 108
+        width: 73
+        height: 71
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed2127d0027a44c42b40c79024d1602e
+      internalID: 21300090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_45
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 110
+        width: 80
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8c26eb0abd23fc4ea45b3191d6177b3
+      internalID: 21300092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_46
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 110
+        width: 78
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 370aefa5edf157a41b5fc2e7e1f4dcf1
+      internalID: 21300094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MonsterSimple_47
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 110
+        width: 71
+        height: 66
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47ff1970c3b6ad5439304038598773c6
+      internalID: 21300096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 1
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 926
+        width: 104
+        height: 98
+      alignment: 9
+      pivot: {x: 0.47658247, y: 0.5598468}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dc76b1cce73bec40923e85135e233fb
+      internalID: 21300098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 2
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 926
+        width: 106
+        height: 98
+      alignment: 9
+      pivot: {x: 0.5009276, y: 0.53651524}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aea65a01d650d7348a464e5c9a628c3e
+      internalID: 21300100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 3
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 926
+        width: 98
+        height: 98
+      alignment: 9
+      pivot: {x: 0.50977063, y: 0.45041144}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b0c772d532932d4dadf8622a8a3db5c
+      internalID: 21300102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 4
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 927
+        width: 103
+        height: 97
+      alignment: 9
+      pivot: {x: 0.4751492, y: 0.52303356}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6e1bfabebb186740a2dfc1dc7490174
+      internalID: 21300104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 5
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 926
+        width: 103
+        height: 98
+      alignment: 9
+      pivot: {x: 0.4968712, y: 0.5364965}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2641fa39f3076a84bad2340d741f371d
+      internalID: 21300106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 6
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 822
+        width: 95
+        height: 102
+      alignment: 9
+      pivot: {x: 0.4701596, y: 0.5043748}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c28644a3a0456df459cf26b734a12f5a
+      internalID: 21300108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 7
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 821
+        width: 103
+        height: 103
+      alignment: 9
+      pivot: {x: 0.49034342, y: 0.50046515}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a98e2f9a5f4c5a42acf0c2bb91e28c7
+      internalID: 21300110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 8
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 821
+        width: 101
+        height: 103
+      alignment: 9
+      pivot: {x: 0.47781643, y: 0.5428064}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27c5d28bfc7e8a2498b2a23a871c6d57
+      internalID: 21300112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 9
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 821
+        width: 101
+        height: 103
+      alignment: 9
+      pivot: {x: 0.48983735, y: 0.44224593}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b78422be1bce4524b840e58e23056a65
+      internalID: 21300114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 10
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 821
+        width: 101
+        height: 105
+      alignment: 9
+      pivot: {x: 0.48351687, y: 0.43726632}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25b2da6b991813542a0af63882a73de5
+      internalID: 21300116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fly 11
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 727
+        width: 103
+        height: 95
+      alignment: 9
+      pivot: {x: 0.5024106, y: 0.53610325}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b3439a84294c374abe71a3b5a861950
+      internalID: 21300118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bird 1
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 506
+        width: 94
+        height: 53
+      alignment: 9
+      pivot: {x: 0.5041109, y: 0.2845286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff7925a636740524487c756639ce8f9e
+      internalID: 21300120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bird 2
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 482
+        width: 88
+        height: 56
+      alignment: 9
+      pivot: {x: 0.5043911, y: 0.65180534}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaf7b27e8981b0c4d9bb3c63d05f76e7
+      internalID: 21300122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bird 3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 496
+        width: 102
+        height: 44
+      alignment: 9
+      pivot: {x: 0.56819093, y: 0.51756424}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afe87cc0d65391a45a1bdc070680e162
+      internalID: 21300124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: cd29bf242d81ea44b896768e04ad6540
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Bird 1: 21300120
+      Bird 2: 21300122
+      Bird 3: 21300124
+      Fly 1: 21300098
+      Fly 10: 21300116
+      Fly 11: 21300118
+      Fly 2: 21300100
+      Fly 3: 21300102
+      Fly 4: 21300104
+      Fly 5: 21300106
+      Fly 6: 21300108
+      Fly 7: 21300110
+      Fly 8: 21300112
+      Fly 9: 21300114
+      MonsterSimple_0: 21300000
+      MonsterSimple_1: 21300002
+      MonsterSimple_10: 21300020
+      MonsterSimple_11: 21300022
+      MonsterSimple_12: 21300024
+      MonsterSimple_13: 21300026
+      MonsterSimple_14: 21300028
+      MonsterSimple_15: 21300030
+      MonsterSimple_16: 21300032
+      MonsterSimple_17: 21300034
+      MonsterSimple_18: 21300036
+      MonsterSimple_19: 21300038
+      MonsterSimple_2: 21300004
+      MonsterSimple_20: 21300040
+      MonsterSimple_21: 21300042
+      MonsterSimple_22: 21300044
+      MonsterSimple_23: 21300046
+      MonsterSimple_24: 21300050
+      MonsterSimple_25: 21300052
+      MonsterSimple_26: 21300054
+      MonsterSimple_27: 21300056
+      MonsterSimple_28: 21300058
+      MonsterSimple_29: 21300060
+      MonsterSimple_3: 21300006
+      MonsterSimple_30: 21300062
+      MonsterSimple_31: 21300064
+      MonsterSimple_32: 21300066
+      MonsterSimple_33: 21300068
+      MonsterSimple_34: 21300070
+      MonsterSimple_35: 21300072
+      MonsterSimple_36: 21300074
+      MonsterSimple_37: 21300076
+      MonsterSimple_38: 21300078
+      MonsterSimple_39: 21300080
+      MonsterSimple_4: 21300008
+      MonsterSimple_40: 21300082
+      MonsterSimple_41: 21300084
+      MonsterSimple_42: 21300086
+      MonsterSimple_43: 21300088
+      MonsterSimple_44: 21300090
+      MonsterSimple_45: 21300092
+      MonsterSimple_46: 21300094
+      MonsterSimple_47: 21300096
+      MonsterSimple_5: 21300010
+      MonsterSimple_6: 21300012
+      MonsterSimple_7: 21300014
+      MonsterSimple_8: 21300016
+      MonsterSimple_9: 21300018
+      Wed: 21300048
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

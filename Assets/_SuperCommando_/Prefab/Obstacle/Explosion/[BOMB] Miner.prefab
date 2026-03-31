@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8142905643521286763
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1707778511053500, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_Name
+      value: '[BOMB]Miner'
+      objectReference: {fileID: 0}
+    - target: {fileID: 114005084562161090, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: sprite
+      value: 
+      objectReference: {fileID: 8355642472929083911}
+    - target: {fileID: 114005084562161090, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: checkRadius
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114005084562161090, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 2304
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469727812177400, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 212897359196512364, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300028, guid: 4b52b1453f5a93346bab1cf2633f3049,
+        type: 3}
+    - target: {fileID: 212897359196512364, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 55945855
+      objectReference: {fileID: 0}
+    - target: {fileID: 212897359196512364, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212897359196512364, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 61491291727339130, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 29b18081bb3e04e419e9fc322a02fcd1, type: 3}
+--- !u!212 &8355642472929083911 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 212897359196512364, guid: 29b18081bb3e04e419e9fc322a02fcd1,
+    type: 3}
+  m_PrefabInstance: {fileID: 8142905643521286763}
+  m_PrefabAsset: {fileID: 0}
