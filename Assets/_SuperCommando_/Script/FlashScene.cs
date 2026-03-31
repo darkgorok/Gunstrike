@@ -8,6 +8,7 @@ public class FlashScene : MonoBehaviour {
 
 	public string sceneLoad = "scene name";
 	public float delay = 2;
+    [SerializeField] private GameObject loadingScreenRoot;
     private IAdsService adsService;
     private ISceneLoader sceneLoader;
     private IConsentService consentService;
@@ -43,8 +44,7 @@ public class FlashScene : MonoBehaviour {
 	IEnumerator LoadSceneCo(){
         adsService.ShowRectBanner(true);
 		yield return new WaitForSeconds (delay);
-		//SceneManager.LoadSceneAsync (sceneLoad);
-        sceneLoader.BeginLoad(this, sceneLoad, LoadingScreenViewResolver.Resolve(gameObject, slider, progressText), new SceneLoadOptions
+        sceneLoader.BeginLoad(this, sceneLoad, LoadingScreenViewResolver.Resolve(loadingScreenRoot, slider, progressText), new SceneLoadOptions
         {
             OnLoadingTick = () =>
             {

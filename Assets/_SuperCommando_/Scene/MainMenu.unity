@@ -879,7 +879,7 @@ MonoBehaviour:
   musicImageOn: {fileID: 21300000, guid: 9214c0d2b14b98447ac94b7087567932, type: 3}
   musicImageOff: {fileID: 21300000, guid: 49ce1f53fbe93f84cadce3afab7d690c, type: 3}
   slider: {fileID: 0}
-  progressText: {fileID: 2131605998}
+  progressText: {fileID: 0}
 --- !u!224 &389770941 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22474666, guid: 06a1893173af4d447b4516eb9e533223,
@@ -1130,81 +1130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &744745685
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 744745686}
-  - component: {fileID: 744745688}
-  - component: {fileID: 744745687}
-  m_Layer: 5
-  m_Name: Image
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &744745686
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744745685}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1189035751}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000015258789, y: 139}
-  m_SizeDelta: {x: 1120.42, y: 112.04}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &744745687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744745685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &744745688
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744745685}
-  m_CullTransparentMesh: 1
 --- !u!114 &753834854 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 11455734, guid: 06a1893173af4d447b4516eb9e533223,
@@ -1722,7 +1647,6 @@ RectTransform:
   - {fileID: 393169001048604186}
   - {fileID: 1610559198}
   - {fileID: 1890181847}
-  - {fileID: 744745686}
   m_Father: {fileID: 343587168}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2675,18 +2599,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 488747491514386791}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2131605998 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7828816423011717735, guid: 0b5f19b400e412e4cada77cc948d60b5,
-    type: 3}
-  m_PrefabInstance: {fileID: 8467970369255786490}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &318138933570272306
 GameObject:
   m_ObjectHideFlags: 0
@@ -2889,7 +2801,7 @@ RectTransform:
   m_AnchorMin: {x: 0.32055506, y: 0.6131775}
   m_AnchorMax: {x: 0.6325699, y: 0.7061107}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &488747491514386791
 PrefabInstance:
@@ -8295,7 +8207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8169468485174464657
 RectTransform:
   m_ObjectHideFlags: 0

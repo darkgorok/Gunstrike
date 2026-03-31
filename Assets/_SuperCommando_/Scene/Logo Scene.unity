@@ -452,8 +452,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneLoad: MainMenu
   delay: 3
+  loadingScreenRoot: {fileID: 2034500502}
   slider: {fileID: 0}
-  progressText: {fileID: 0}
+  progressText: {fileID: 1167912396}
 --- !u!4 &765931751
 Transform:
   m_ObjectHideFlags: 0
@@ -469,6 +470,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1167912396 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7828816422021541861, guid: 0b5f19b400e412e4cada77cc948d60b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 1423972158}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1214926189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,6 +1163,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2034500502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7828816422097576685, guid: 0b5f19b400e412e4cada77cc948d60b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 1423972158}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2053658470 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6023584853527948996, guid: bc8a7a0d48d0afc4989af078d6424ecc,
