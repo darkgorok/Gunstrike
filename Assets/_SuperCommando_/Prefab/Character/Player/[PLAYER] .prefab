@@ -255,6 +255,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d27a14ec8f7638042ae482ea80007ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GunState: 0
+  gunTypeID: {fileID: 0}
+  firePoint: {fileID: 6554253454397463766}
+  maxGrenade: 6
+  grenadeRemaining: 0
+  grenade: {fileID: 4678611348438232822, guid: cf0375a23f26d4d9c8d80c403a2c9779, type: 3}
+  throwPoint: {fileID: 9098700204974353108}
+  throwForce: 350
+  grenade_damage: 100
+  grenade_radius: 2
   anim: {fileID: 7382103577803410512}
   standUpCollider: {fileID: 5649186841325764427}
   moveSpeed: 4
@@ -264,7 +274,7 @@ MonoBehaviour:
   numberOfJumpMax: 1
   JumpEffect: {fileID: 134412, guid: ad29f047d4624364cbd49ca286a0d486, type: 3}
   landingFX: {fileID: 134412, guid: ad29f047d4624364cbd49ca286a0d486, type: 3}
-  maxHealth: 100
+  maxHealth: 500
   HurtEffect: {fileID: 113216, guid: 20400a4349ca29f41b9c336e87901ff8, type: 3}
   respawnFX: {fileID: 100000, guid: 59a64bd1b0b372b48b4b1745fc37d9f0, type: 3}
   rateGetDmg: 0.5
@@ -293,16 +303,6 @@ MonoBehaviour:
   _eqTime: 0.1
   _eqSpeed: 60
   _eqSize: 1
-  GunState: 0
-  gunTypeID: {fileID: 0}
-  firePoint: {fileID: 6554253454397463766}
-  maxGrenade: 6
-  grenadeRemaining: 0
-  grenade: {fileID: 4678611348438232822, guid: cf0375a23f26d4d9c8d80c403a2c9779, type: 3}
-  throwPoint: {fileID: 9098700204974353108}
-  throwForce: 350
-  grenade_damage: 100
-  grenade_radius: 2
 --- !u!1001 &1171809671633163776
 PrefabInstance:
   m_ObjectHideFlags: 0

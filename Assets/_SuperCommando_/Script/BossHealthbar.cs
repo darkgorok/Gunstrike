@@ -9,6 +9,7 @@ public class BossHealthbar : MonoBehaviour
     public Transform forceGroundSprite;
     float maxHealth = 0;
     CanvasGroup canvasG;
+
     void Awake()
     {
         canvasG = GetComponent<CanvasGroup>();
@@ -18,14 +19,20 @@ public class BossHealthbar : MonoBehaviour
     public void Init(Sprite icon, int _maxHealth)
     {
         bossIcon.sprite = icon;
-        maxHealth = (float)_maxHealth;
+        maxHealth = Mathf.Max(1f, _maxHealth);
         UpdateHealth(_maxHealth);
         canvasG.alpha = 1;
     }
 
     public void UpdateHealth(int current)
     {
-        var healthPercent = (float)current / maxHealth;
+        if (maxHealth <= 0f)
+        {
+            Debug.LogError("BossHealthbar.UpdateHealth called before Init or with invalid maxHealth.");
+            return;
+        }
+
+        var healthPercent = Mathf.Clamp01((float)current / maxHealth);
         forceGroundSprite.localScale = new Vector3(healthPercent, 1, 1);
 
         canvasG.alpha = healthPercent > 0 ? 1 : 0;

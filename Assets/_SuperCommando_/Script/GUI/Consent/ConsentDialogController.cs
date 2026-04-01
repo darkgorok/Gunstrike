@@ -6,12 +6,11 @@ using UnityEngine.UI;
 
 public sealed class ConsentDialogController : MonoBehaviour
 {
-    private const string Title = "USER CONSENT";
-    private const string BodyCopy =
-        "We collect limited data (such as device info and gameplay activity) to operate, improve, and analyze the app, and to provide relevant content or ads.\n\n" +
-        "By tapping \"Accept\", you agree to this data use. Third-party services (e.g., analytics) may also process data. You can withdraw consent anytime in settings or by uninstalling the app.\n\n" +
-        "See our Privacy Policy for details.";
-    private const string Footer = "Consent is required to continue.";
+    private string title;
+    private string body;
+    private string footer;
+
+    [SerializeField] private ConsentDialogConfig config;
 
     [Header("ROOT")]
     [SerializeField] private GameObject dialogRoot;
@@ -49,8 +48,25 @@ public sealed class ConsentDialogController : MonoBehaviour
         if (persistAcrossScenes)
             DontDestroyOnLoad(gameObject);
 
-        WireButtons();
+        Init();
         Hide();
+    }
+
+    void OnEnable()
+    {
+        acceptButton.onClick.AddListener(HandleAccept);
+    }
+
+    void OnDisable()
+    {
+        acceptButton.onClick.RemoveListener(HandleAccept);
+    }
+
+    private void Init()
+    {
+        title = config.Title;
+        body = config.Body;
+        footer = config.Footer;
     }
 
     public void Show(Action onAccept)
@@ -58,13 +74,13 @@ public sealed class ConsentDialogController : MonoBehaviour
         this.onAccept = onAccept;
 
         if (titleText != null)
-            titleText.text = Title;
+            titleText.text = title;
 
         if (bodyText != null)
-            bodyText.text = BodyCopy;
+            bodyText.text = body;
 
         if (footerText != null)
-            footerText.text = Footer;
+            footerText.text = footer;
 
         if (acceptButton != null)
             acceptButton.gameObject.SetActive(true);
@@ -77,15 +93,6 @@ public sealed class ConsentDialogController : MonoBehaviour
     {
         if (dialogRoot != null)
             dialogRoot.SetActive(false);
-    }
-
-    private void WireButtons()
-    {
-        if (acceptButton != null)
-        {
-            acceptButton.onClick.RemoveListener(HandleAccept);
-            acceptButton.onClick.AddListener(HandleAccept);
-        }
     }
 
     private void SelectPrimaryButton()

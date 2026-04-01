@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9026ccc2cf9a847478baec08eeddc7ab, type: 3}
+  m_Name: ConsentDialogConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ConsentDialogConfig
+  Title: USER CONSENT
+  Body: We collect limited data (such as device info and gameplay activity) to operate,
+    improve, and analyze the app, and to provide relevant content or ads.\n\nBy tapping
+    "Accept", you agree to this data use. Third-party services (e.g., analytics)
+    may also process data. You can withdraw consent anytime in settings or by uninstalling
+    the app.\n\nSee our Privacy Policy for details.
+  Footer: Consent is required to continue.

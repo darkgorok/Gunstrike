@@ -41,6 +41,12 @@ public sealed class LegacyMenuFlowService : IMenuFlowService
             Current.GameOver();
     }
 
+    public void ShowGameFinish()
+    {
+        if (Current != null)
+            Current.Gamefinish();
+    }
+
     public void LoadNextLevel()
     {
         if (Current != null)

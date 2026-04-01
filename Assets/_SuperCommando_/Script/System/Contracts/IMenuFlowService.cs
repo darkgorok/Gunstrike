@@ -7,5 +7,6 @@ public interface IMenuFlowService
     void RestartGame();
     void OpenSaveMe(bool open);
     void ShowGameOver();
+    void ShowGameFinish();
     void LoadNextLevel();
 }

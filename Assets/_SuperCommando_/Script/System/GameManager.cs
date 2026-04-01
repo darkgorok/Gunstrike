@@ -363,6 +363,7 @@ public class GameManager : MonoBehaviour
         pendingTransitionTimer = -1f;
         audioService.PauseMusic(true);
         audioService.PlaySfx(audioService.GameFinishClip, 0.3f);
+        menuFlowService.ShowGameFinish();
     }
 
     private void CompleteContinueTransition()

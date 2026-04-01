@@ -300,6 +300,8 @@ public partial class Player
         if (HurtEffect)
             SpawnSystemHelper.GetNextObject(HurtEffect, true).transform.position = hitPoint == Vector3.zero ? instigator.transform.position : hitPoint;
 
+        Health -= damage;
+
         if (Health <= 0)
         {
             gameSession.GameOver();
