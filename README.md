@@ -2,9 +2,6 @@
 
 Unity action-platformer/shooter project based on the `_SuperCommando_` gameplay package, now with a staged DI/service migration using VContainer.
 
-## Changes Since
-
-
 Full project refactor
 
 - Introduced a VContainer-based composition root with `ProjectLifetimeScope`, bootstrap helpers, and explicit service registration.
@@ -236,7 +233,8 @@ The app now has a dedicated launch-consent and analytics layer:
 - `IConsentService`
 - `IAnalyticsService`
 - `ConsentService`
-- `ReflectionFirebaseAnalyticsService`
+- `FirebaseAnalyticsService`
+- `FirebaseRuntimeInitializer`
 - `ConsentDialogController`
 
 What this adds:
@@ -245,7 +243,8 @@ What this adds:
 - the consent dialog is now expected to be authored in the Unity editor instead of being generated at runtime
 - tapping `ACCEPT` persists consent locally
 - tapping `ACCEPT` triggers the analytics event `consent_accepted`
-- if Firebase Analytics is present in the project, the event is forwarded automatically through the reflection-based adapter
+- Firebase Analytics is now initialized explicitly at runtime before queued events are flushed
+- Android Firebase config is now included through `google-services.json`
 - the app also syncs Google UMP consent state after acceptance when running on Android/iOS
 
 Related startup polish included in this slice:
@@ -506,6 +505,10 @@ The project is not fully migrated yet. The largest remaining legacy areas are:
 - older enemy bases are partially migrated, but still need deeper extraction of combat/state responsibilities into reusable state-machine-driven components
 - runtime scene state still centered around `GameManager`
 - old ad classes still exist as implementation details behind adapters
+- menu audio data is still partly scene-driven; for example, some scenes rely on fallback behavior when a dedicated menu track is not assigned
+- Firebase Analytics is now wired for Android, but iOS still needs its own Firebase config file and final device-side validation
+- generated Android/Firebase resolver artifacts are still committed as build-support assets rather than being reduced to a leaner curated set
+- the startup flow still combines consent, ads, analytics, and scene transition responsibilities in a small number of scene controllers
 
 ## Recommended Next Steps
 
@@ -516,6 +519,18 @@ If the migration continues, the next bounded contexts should be:
 3. save/profile/progression persistence split away from `GlobalValue`
 4. ad implementation cleanup so only `IAdsService` remains visible to game code
 5. gradual removal of compatibility singletons once all callers are migrated
+
+## Further Improvement Opportunities
+
+Additional practical improvements that would raise quality and reduce maintenance cost:
+
+1. assign an explicit dedicated menu music clip in all menu scenes and prefabs so menu audio no longer depends on runtime fallback logic
+2. add a small startup diagnostics layer for consent, Firebase initialization, ads initialization, and loading transitions to make device-side issues easier to trace
+3. validate the `consent_accepted` event end-to-end in Firebase DebugView on real Android hardware and document the verification steps for future regressions
+4. add iOS Firebase support by supplying `GoogleService-Info.plist` and validating the same consent analytics flow on iOS builds
+5. trim or isolate Firebase package payloads and generated Android resolver assets if repository size becomes a recurring issue
+6. continue splitting large legacy MonoBehaviours such as `GameManager`, menu controllers, and older enemies into smaller runtime/state/presentation components
+7. add targeted smoke tests or editor validation checks for startup-critical flows: consent dialog presence, loading-screen references, boss health bar initialization, and menu audio assignment
 
 ## Setup Notes
 
