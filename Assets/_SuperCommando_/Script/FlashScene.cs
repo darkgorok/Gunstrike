@@ -7,7 +7,6 @@ using VContainer;
 public class FlashScene : MonoBehaviour {
 
 	public string sceneLoad = "scene name";
-	public float delay = 2;
     [SerializeField] private GameObject loadingScreenRoot;
     private IAdsService adsService;
     private ISceneLoader sceneLoader;
@@ -38,12 +37,12 @@ public class FlashScene : MonoBehaviour {
             return;
 
         isLaunchQueued = true;
-        StartCoroutine(LoadSceneCo());
+        LoadScene();
     }
-	
-	IEnumerator LoadSceneCo(){
+
+    private void LoadScene()
+    {
         adsService.ShowRectBanner(true);
-		yield return new WaitForSeconds (delay);
         sceneLoader.BeginLoad(this, sceneLoad, LoadingScreenViewResolver.Resolve(loadingScreenRoot, slider, progressText), new SceneLoadOptions
         {
             OnLoadingTick = () =>

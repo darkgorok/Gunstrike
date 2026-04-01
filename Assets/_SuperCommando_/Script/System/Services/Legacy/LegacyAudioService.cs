@@ -120,8 +120,17 @@ public sealed class LegacyAudioService : IAudioService
 
     public void PlayMenuMusic()
     {
-        if (Current != null && MenuMusic != null)
-            Current.PlayMusicInstance(MenuMusic);
+        if (Current == null)
+            return;
+
+        if (MenuMusic != null)
+        {
+            Current.PlayMusicInstance(MenuMusic, Current.musicMenuVolume);
+            return;
+        }
+
+        if (Current.musicsGame != null)
+            Current.PlayGameMusicInstance();
     }
 
     public void PlayGameMusic()

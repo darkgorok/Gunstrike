@@ -25,7 +25,7 @@ public sealed class ProjectLifetimeScope : LifetimeScope
     protected override void Configure(IContainerBuilder builder)
     {
         builder.Register<UnityPrefsKeyValueStore>(Lifetime.Singleton).As<IKeyValueStore>();
-        builder.Register<ReflectionFirebaseAnalyticsService>(Lifetime.Singleton).As<IAnalyticsService>();
+        builder.Register<FirebaseAnalyticsService>(Lifetime.Singleton).As<IAnalyticsService>();
         builder.Register<ConsentService>(Lifetime.Singleton).As<IConsentService>();
         builder.Register<GameSessionRuntimeState>(Lifetime.Singleton).As<IGameSessionRuntimeState>();
         builder.Register<SceneListenerBroadcastService>(Lifetime.Singleton).As<IListenerBroadcastService>();

@@ -62,6 +62,7 @@ public class MainMenuHomeScene : MonoBehaviour
         LoadingScreen.SetActive(false);
         Settings.SetActive(false);
 
+        audioService.PauseMusic(false);
         audioService.PlayMenuMusic();
         if (progressService.IsFirstOpenMainMenu)
         {

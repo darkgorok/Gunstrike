@@ -1,5 +1,19 @@
 {
   "dependencies": {
+    "com.google.firebase.analytics": {
+      "version": "file:FirebaseAnalytics/package",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.google.firebase.app": "13.9.0"
+      }
+    },
+    "com.google.firebase.app": {
+      "version": "file:FirebaseApp/package",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.2d.animation": {
       "version": "13.0.4",
       "depth": 0,

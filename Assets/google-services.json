@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "523620429893",
+    "project_id": "test-project-for-dev-task",
+    "storage_bucket": "test-project-for-dev-task.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523620429893:android:6244c802c4d8248215f32c",
+        "android_client_info": {
+          "package_name": "com.islam360.gunstrikemissions"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmQrKT3BItE_9djUdcdcp5TuK_FEo3bMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

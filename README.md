@@ -2,6 +2,42 @@
 
 Unity action-platformer/shooter project based on the `_SuperCommando_` gameplay package, now with a staged DI/service migration using VContainer.
 
+## Changes Since
+
+
+Full project refactor
+
+- Introduced a VContainer-based composition root with `ProjectLifetimeScope`, bootstrap helpers, and explicit service registration.
+- Added a broad service-contract layer for scene loading, audio, ads, progression, inventory, upgrades, gameplay presentation, game session flow, input, persistence, menu flow, consent, analytics, and several UI/runtime bridges.
+- Replaced direct singleton-heavy runtime access with legacy adapters, allowing an incremental migration away from `GameManager.Instance`, `MenuManager.Instance`, `CameraFollow.Instance`, `KeyUI.Instance`, and similar template-era patterns.
+- Reworked the loading pipeline: removed the old timer-driven loading screen implementation, added `SceneLoaderService`, `SceneLoadOptions`, `LoadingScreenView`, and proper `AsyncOperation` progress handling.
+- Moved large parts of menu, level navigation, inventory, upgrade, and scene-transition logic behind service abstractions instead of direct `GlobalValue` and `PlayerPrefs` usage.
+- Added `UnityPrefsKeyValueStore` and routed persistence through `IKeyValueStore`, reducing scattered inline persistence code.
+- Started extracting runtime game-state orchestration into `IGameSessionService`, `IGameSessionRuntimeState`, and a dedicated listener broadcast service.
+- Added reusable enemy/runtime infrastructure such as `EnemyStateMachine`, `IEnemyState`, `BossDeathSequence`, and `BurstFireController` to replace hidden coroutine-driven logic with explicit timer/state-driven flows.
+- Refactored many bosses, enemies, traps, projectiles, and interactables to use injected services for audio, session state, presentation, and menu flow.
+- Split the player controller into partial classes so movement/runtime/combat responsibilities are no longer concentrated in a single monolithic file.
+- Cleaned up repeated component lookups and normalized dependency resolution with cached references and safer same-object binding patterns.
+- Added a dedicated launch consent flow with `IConsentService`, `ConsentService`, `IAnalyticsService`, and `ReflectionFirebaseAnalyticsService`.
+- Created an editor-authored `ConsentDialog` prefab and `ConsentDialogController`, so consent UI is now designed in Unity instead of being generated at runtime.
+- Gated startup progression in the logo/flash flow behind explicit user consent instead of always auto-advancing.
+- Persisted consent acceptance locally and added analytics tracking for the `consent_accepted` event, with optional Firebase forwarding through reflection when the SDK is present.
+- Added Google UMP synchronization for Android/iOS after consent acceptance.
+- Expanded the DI/service bridge layer further with camera, dialog, menu, tutorial, floating-text, boss-healthbar, gun-runtime, keyboard-binding, and level-map service contracts plus legacy adapters.
+- Continued runtime cleanup by moving more player, camera, HUD, menu, and bridge logic behind service abstractions.
+- Separated additional player responsibilities into `Player.Runtime.cs` and `Player.Combat.cs`, improving maintainability of the player codebase.
+- Fixed the startup loading flow so `FlashScene` resolves the loading UI from an explicit loading-screen root object instead of relying on an incorrect local reference path.
+- Re-enabled the relevant startup/loading objects in scenes so the loading screen can actually appear during scene transitions.
+- Removed an invalid or unused loading/progress text hookup from `MainMenu` and cleaned up redundant UI objects that interfered with the loading setup.
+- Adjusted scene UI sizing/activation to stabilize the loading-screen presentation after the consent-flow changes.
+- Fixed player damage handling by applying incoming damage to `Health` before death/game-over evaluation, which restores correct HP reduction behavior.
+- Increased player survivability via the player prefab/runtime update included in this pass.
+- Fixed the level-finish flow by exposing `ShowGameFinish()` through `IMenuFlowService` and calling it from `GameManager` when the finish transition starts.
+- Fixed a boss health bar initialization timing bug by buffering pending icon/max-health data in `LegacyBossHealthbarService` until the UI becomes available.
+- Reworked the consent dialog copy to be data-driven by introducing `ConsentDialogConfig` as a `ScriptableObject`.
+- Added a concrete `ConsentDialogConfig` asset under `Assets/_SuperCommando_/Data/Configs`, making consent text editable without code changes.
+- Simplified consent button wiring by moving button listener registration to `OnEnable`/`OnDisable`.
+
 ## Current Architecture
 
 The project now has a root composition layer built on VContainer:
