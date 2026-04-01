@@ -451,7 +451,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneLoad: MainMenu
-  delay: 3
   loadingScreenRoot: {fileID: 2034500502}
   slider: {fileID: 0}
   progressText: {fileID: 1167912396}
@@ -787,22 +786,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1403291280}
     m_Modifications:
-    - target: {fileID: 5439985265114389357, guid: 0b5f19b400e412e4cada77cc948d60b5,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 168.8212
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828816422021541862, guid: 0b5f19b400e412e4cada77cc948d60b5,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 148
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828816422097576674, guid: 0b5f19b400e412e4cada77cc948d60b5,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -4364034832326165938, guid: f475a5aba98a5c04695f0d6c9fa48eb3,
-        type: 3}
     - target: {fileID: 7828816422097576684, guid: 0b5f19b400e412e4cada77cc948d60b5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -812,11 +795,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828816422097576684, guid: 0b5f19b400e412e4cada77cc948d60b5,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7828816422097576684, guid: 0b5f19b400e412e4cada77cc948d60b5,
         type: 3}
@@ -912,11 +890,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Loading
-      objectReference: {fileID: 0}
-    - target: {fileID: 7828816423011717728, guid: 0b5f19b400e412e4cada77cc948d60b5,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 78
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
